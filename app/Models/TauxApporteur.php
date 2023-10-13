@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class TauxApporteur extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'id_tauxapp';
+
+    protected $fillable = [
+        'id_apporteur',
+        'id_branche',
+        'taux',
+    ];
 }

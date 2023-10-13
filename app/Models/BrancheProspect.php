@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class BrancheProspect extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'id_prosbranche';
+
+    protected $fillable = [
+        'id_prospect',
+        'id_branche',
+        'description',
+    ];
 }
