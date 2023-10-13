@@ -14,7 +14,8 @@ class CreateCategorieDepensesTable extends Migration
     public function up()
     {
         Schema::create('categorie_depenses', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id_catdep');
+            $table->string('nom_secteur');
             $table->timestamps();
         });
     }

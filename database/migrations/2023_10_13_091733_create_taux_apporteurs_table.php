@@ -14,7 +14,21 @@ class CreateTauxApporteursTable extends Migration
     public function up()
     {
         Schema::create('taux_apporteurs', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id_tauxapp');
+
+            $table->foreignId('id_apporteur');
+            $table->foreign('id_apporteur')
+                ->references('id_apporteur')
+                ->on('apporteurs')
+                ->onDelete('cascade');
+
+            $table->foreignId('id_branche');
+            $table->foreign('id_branche')
+                ->references('id_branche')
+                ->on('branches')
+                ->onDelete('cascade');
+
+            $table->integer('taux');
             $table->timestamps();
         });
     }

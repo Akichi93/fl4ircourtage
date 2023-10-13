@@ -14,8 +14,17 @@ class CreateAutomobileContratsTable extends Migration
     public function up()
     {
         Schema::create('automobile_contrats', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->unsignedBigInteger('id_automobile');
+            $table->foreign('id_automobile')
+                ->references('id_automobile')
+                ->on('automobiles')
+                ->onDelete('cascade');
+
+            $table->unsignedBigInteger('id_contrat');
+            $table->foreign('id_contrat')
+                ->references('id_contrat')
+                ->on('contrats')
+                ->onDelete('cascade');
         });
     }
 

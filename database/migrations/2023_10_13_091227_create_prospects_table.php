@@ -14,7 +14,18 @@ class CreateProspectsTable extends Migration
     public function up()
     {
         Schema::create('prospects', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id_prospect');
+            $table->string('civilite');
+            $table->string('nom_prospect');
+            $table->string('postal_prospect')->nullable();
+            $table->string('adresse_prospect');
+            $table->string('tel_prospect');
+            $table->string('profession_prospect');
+            $table->string('fax_prospect')->nullable();
+            $table->string('email_prospect')->nullable();
+            $table->string('etat')->default(0);
+            $table->string('statut')->nullable();
+            $table->string('supprimer_prospect')->comment('0 = encours, 1 = supprimé')->default(0);
             $table->timestamps();
         });
     }

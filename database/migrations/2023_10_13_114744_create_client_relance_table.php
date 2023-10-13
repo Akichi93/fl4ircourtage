@@ -14,8 +14,17 @@ class CreateClientRelanceTable extends Migration
     public function up()
     {
         Schema::create('client_relance', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->unsignedBigInteger('id_client');
+            $table->foreign('id_client')
+                ->references('id_client')
+                ->on('clients')
+                ->onDelete('cascade');
+
+            $table->unsignedBigInteger('id_relance');
+            $table->foreign('id_relance')
+                ->references('id_relance')
+                ->on('relances')
+                ->onDelete('cascade');
         });
     }
 

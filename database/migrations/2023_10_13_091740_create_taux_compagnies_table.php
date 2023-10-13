@@ -14,7 +14,21 @@ class CreateTauxCompagniesTable extends Migration
     public function up()
     {
         Schema::create('taux_compagnies', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id_tauxcomp');
+
+            $table->foreignId('id_compagnie');
+            $table->foreign('id_compagnie')
+                ->references('id_compagnie')
+                ->on('compagnies')
+                ->onDelete('cascade');
+
+            $table->foreignId('id_branche');
+            $table->foreign('id_branche')
+                ->references('id_branche')
+                ->on('branches')
+                ->onDelete('cascade');
+
+            $table->integer('tauxcomp');
             $table->timestamps();
         });
     }

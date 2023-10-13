@@ -14,7 +14,8 @@ class CreateLocalisationsTable extends Migration
     public function up()
     {
         Schema::create('localisations', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id_localisation');
+            $table->string('nom_ville');
             $table->timestamps();
         });
     }

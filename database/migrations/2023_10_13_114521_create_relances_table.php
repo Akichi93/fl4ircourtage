@@ -14,7 +14,9 @@ class CreateRelancesTable extends Migration
     public function up()
     {
         Schema::create('relances', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id_relance');
+            $table->date('date_relance');
+            $table->longText('message');
             $table->timestamps();
         });
     }

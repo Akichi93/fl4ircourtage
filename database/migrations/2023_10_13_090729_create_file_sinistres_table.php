@@ -14,7 +14,17 @@ class CreateFileSinistresTable extends Migration
     public function up()
     {
         Schema::create('file_sinistres', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id_fichier');
+            $table->string('nom_fichier');
+
+            $table->unsignedBigInteger('id_sinistre');
+            $table->foreign('id_sinistre')
+                ->references('id_sinistre')
+                ->on('sinistres')
+                ->onDelete('cascade');
+                
+            $table->string('titre');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

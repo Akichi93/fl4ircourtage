@@ -14,7 +14,8 @@ class CreateTypeDepensesTable extends Migration
     public function up()
     {
         Schema::create('type_depenses', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id_typedep');
+            $table->string('nom_type');
             $table->timestamps();
         });
     }

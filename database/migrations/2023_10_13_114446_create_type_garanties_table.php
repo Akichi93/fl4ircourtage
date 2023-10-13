@@ -14,7 +14,19 @@ class CreateTypeGarantiesTable extends Migration
     public function up()
     {
         Schema::create('type_garanties', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id_typegarantie');
+            $table->unsignedBigInteger('id_garantie');
+            $table->foreign('id_garantie')
+                ->references('id_garantie')
+                ->on('garanties')
+                ->onDelete('cascade');
+            // $table->unsignedBigInteger('id_contrat');
+            // $table->foreign('id_contrat')
+            //     ->references('id_contrat')
+            //     ->on('contrats')
+            //     ->onDelete('cascade');
+            $table->string('type_garantie');
+
             $table->timestamps();
         });
     }

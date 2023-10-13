@@ -14,8 +14,17 @@ class CreateAutomobileGarantiesTable extends Migration
     public function up()
     {
         Schema::create('automobile_garanties', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->unsignedBigInteger('id_automobile');
+            $table->foreign('id_automobile')
+                ->references('id_automobile')
+                ->on('automobiles')
+                ->onDelete('cascade');
+
+            $table->unsignedBigInteger('id_garantie');
+            $table->foreign('id_garantie')
+                ->references('id_garantie')
+                ->on('garanties')
+                ->onDelete('cascade');
         });
     }
 

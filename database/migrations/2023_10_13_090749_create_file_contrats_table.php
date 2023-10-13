@@ -14,7 +14,18 @@ class CreateFileContratsTable extends Migration
     public function up()
     {
         Schema::create('file_contrats', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id_filecontrat');
+
+            $table->foreignId('id_contrat');
+
+            $table->string('nom_file');
+            $table->string('titre')->nullable();
+
+            $table->foreign('id_contrat')
+                ->references('id_contrat')
+                ->on('contrats')
+                ->onDelete('cascade');
+
             $table->timestamps();
         });
     }

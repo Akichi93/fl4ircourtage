@@ -14,7 +14,15 @@ class CreateSalariesTable extends Migration
     public function up()
     {
         Schema::create('salaries', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id_salarie');
+            $table->string('nom');
+            $table->string('prenom');
+            $table->string('sexe')->nullable();
+            $table->date('date_naissance');
+            $table->string('secteur');
+            $table->string('renumeration');
+            $table->date('date_embauche')->nullable();
+            $table->integer('etat')->default(0);
             $table->timestamps();
         });
     }

@@ -14,7 +14,21 @@ class CreateCategorieTypesTable extends Migration
     public function up()
     {
         Schema::create('categorie_types', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id_result');
+            $table->foreignId('id_catdep');
+
+            $table->foreign('id_catdep')
+                ->references('id_catdep')
+                ->on('categorie_depenses')
+                ->onDelete('cascade');
+
+            $table->foreignId('id_typedep');
+
+            $table->foreign('id_typedep')
+                ->references('id_typedep')
+                ->on('type_depenses')
+                ->onDelete('cascade');
+
             $table->timestamps();
         });
     }

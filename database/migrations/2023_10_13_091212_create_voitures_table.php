@@ -14,7 +14,8 @@ class CreateVoituresTable extends Migration
     public function up()
     {
         Schema::create('voitures', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id_voiture');
+            $table->string('marque');
             $table->timestamps();
         });
     }

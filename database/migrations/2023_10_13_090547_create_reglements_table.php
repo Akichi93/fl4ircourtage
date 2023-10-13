@@ -14,7 +14,27 @@ class CreateReglementsTable extends Migration
     public function up()
     {
         Schema::create('reglements', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id_reglement');
+
+            $table->unsignedBigInteger('id_sinistre');
+            $table->foreign('id_sinistre')
+                ->references('id_sinistre')
+                ->on('sinistres')
+                ->onDelete('cascade');
+
+            $table->string('type_reglement');
+            $table->string('nom');
+            $table->string('mode');
+            $table->integer('montant');
+            $table->date('date_reglement');
+
+            $table->unsignedBigInteger('id_user');
+            $table->foreign('id_user')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+
+            $table->string('supprimer_reglement')->comment('0 = encours, 1 = supprimé')->default(0);
             $table->timestamps();
         });
     }

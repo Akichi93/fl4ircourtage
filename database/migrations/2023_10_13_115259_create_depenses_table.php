@@ -14,7 +14,25 @@ class CreateDepensesTable extends Migration
     public function up()
     {
         Schema::create('depenses', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id_depense');
+            $table->foreignId('id_catdep');
+
+            $table->foreign('id_catdep')
+                ->references('id_catdep')
+                ->on('categorie_depenses')
+                ->onDelete('cascade');
+
+            $table->foreignId('id_typedep');
+
+            $table->foreign('id_typedep')
+                ->references('id_typedep')
+                ->on('type_depenses')
+                ->onDelete('cascade');
+
+            $table->date('date_operation');
+            $table->string('montant');
+            $table->string('info_depense');
+            $table->integer('etat')->default(0);
             $table->timestamps();
         });
     }

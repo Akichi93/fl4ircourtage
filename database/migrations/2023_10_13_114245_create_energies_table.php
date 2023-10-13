@@ -14,7 +14,8 @@ class CreateEnergiesTable extends Migration
     public function up()
     {
         Schema::create('energies', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id_energie');
+            $table->string('energie');
             $table->timestamps();
         });
     }
