@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import login from "../pages/auth/login";
 import logout from "../pages/auth/logout";
-import dashboard from "../pages/dashboard"
+import dashboard from "../pages/dashboard";
+import courtage from "../pages/module/courtage";
+import listbranche from "../pages/branche/listBranche";
 const routes = [
   {
     path: '/',
@@ -17,6 +19,16 @@ const routes = [
     path: '/logout',
     name: 'logout',
     component: logout
+  },
+  {
+    path: '/courtage',
+    name: 'courtage',
+    component: courtage
+  },
+  {
+    path: '/listbranche',
+    name: 'listbranche',
+    component: listbranche
   },
 ];
 
