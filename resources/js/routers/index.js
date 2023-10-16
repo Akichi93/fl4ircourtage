@@ -4,6 +4,7 @@ import logout from "../pages/auth/logout";
 import dashboard from "../pages/dashboard";
 import courtage from "../pages/module/courtage";
 import listbranche from "../pages/branche/listBranche";
+import createbranche from "../pages/branche/createbranche";
 const routes = [
   {
     path: '/',
@@ -29,6 +30,11 @@ const routes = [
     path: '/listbranche',
     name: 'listbranche',
     component: listbranche
+  },
+  {
+    path: '/createbranche',
+    name: 'createbranche',
+    component: createbranche
   },
 ];
 
