@@ -33,8 +33,8 @@ export async function postBranche(rcv_data) {
 
 export async function getBranches(id_branche, rcv_data) {
     const response = await axios
-        .get("/editBranche/" + id_branche, rcv_data)
-    return response.data.user;
+        .get("api/auth/editBranche/" + id_branche, rcv_data)
+    return response.data;
 
 }
 
