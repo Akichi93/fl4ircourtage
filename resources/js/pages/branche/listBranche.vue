@@ -27,24 +27,16 @@
           <div class="col-md-8"></div>
           <div class="col-md-4">
             <div class="add-emp-section">
-              <router-link
-                to="/createbranche"
-                class="btn btn-success btn-add-emp"
-                style="width: auto"
-              >
-                Ajouter branche</router-link
-              >
+              <router-link to="/createbranche" class="btn btn-success btn-add-emp" style="width: auto">
+                Ajouter branche</router-link>
             </div>
           </div>
         </div>
 
         <div class="row">
           <div class="col-row">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Rechercher une branche"
-            />
+            <input type="text" class="form-control" placeholder="Rechercher une branche" v-model="q"
+              @keyup="searchtask" />
           </div>
           <div class="col-md-12">
             <div>
@@ -57,38 +49,30 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template
-                  v-for="(branche, i) in branches" :key="i"
-                  >
+                  <template v-for="(branche, i) in branches" :key="i">
                     <tr>
                       <td v-text="branche.id_branche"></td>
                       <td v-text="branche.nom_branche"></td>
                       <td class="text-end ico-sec d-flex justify-content-end">
-                        <a
-                          href="#"
-                          data-bs-toggle="modal"
-                          data-bs-target="#edit_branche"
-                          @click="editbranche(branche.id_branche)"
-                          ><i class="fas fa-pen"></i
-                        ></a>
-                        <a
-                          href="#"
-                          data-bs-toggle="modal"
-                          data-bs-target="#delete_project"
-                        
-                          ><i class="far fa-trash-alt"></i
-                        ></a>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#edit_branche"
+                          @click="editbranche(branche.id_branche)"><i class="fas fa-pen"></i></a>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#delete_project"><i
+                            class="far fa-trash-alt"></i></a>
                       </td>
                     </tr>
                   </template>
                 </tbody>
               </table>
             </div>
+
+            <paginationbranche />
+            
           </div>
         </div>
       </div>
 
       <editbranche v-bind:branchetoedit="branchetoedit"></editbranche>
+
 
     </div>
   </div>
@@ -98,6 +82,8 @@ import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import { getBranchesList } from "../../services/brancheservice";
 import editbranche from "./editbranche.vue";
+import paginationbranche from "../../components/pagination/paginationbranche.vue";
+
 
 export default {
   data() {
@@ -105,6 +91,9 @@ export default {
       branches: null,
       branchetoedit: "",
     };
+  },
+  created() {
+    this.getBranches();
   },
   methods: {
     getBranches: function () {
@@ -123,10 +112,7 @@ export default {
         .catch((error) => console.log(error));
     },
   },
-  created() {
-    this.getBranches();
-  },
-  components: { Header, Sidebar, editbranche },
+  components: { Header, Sidebar, editbranche, paginationbranche },
 };
 </script>
     

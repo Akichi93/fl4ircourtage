@@ -38,3 +38,16 @@ export async function getBranches(id_branche, rcv_data) {
 
 }
 
+export async function userUpdate(id_branche, rcv_data) {
+    const response = await axios
+        .put(`/sign-up/${id}`, rcv_data)
+    return response.data;
+
+}
+
+export async function searchbranche() {
+    const response = await axios.get("/branchesList/" + this.q)
+    return response.data;
+
+}
+

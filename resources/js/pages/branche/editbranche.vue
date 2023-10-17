@@ -1,5 +1,5 @@
 <template>
-    <div id="edit_branche" class="modal custom-modal fade" role="dialog">
+  <div id="edit_branche" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -12,14 +12,14 @@
           <form>
             <div class="form-group">
               <label>Nom de la branche <span class="text-danger">*</span></label>
-              <input class="form-control" v-model="branchetoedit.nom_branche"  type="text" />
+              <input class="form-control" v-model="branchetoedit.nom_branche" type="text" />
             </div>
             <div class="submit-section">
               <button class="btn btn-primary cancel-btn" data-bs-dismiss="modal" aria-label="Close">
                 Annuler
               </button>
               <button type="button" class="btn btn-primary submit-btn" data-bs-dismiss="modal"
-                >Modifier</button>
+                @click.prevent="userUpdate">Modifier</button>
             </div>
           </form>
         </div>
@@ -30,8 +30,22 @@
 
 <script>
 export default {
-    props: ['branchetoedit'],
-   
-    name: "editbranche"
+  props: ['branchetoedit'],
+
+  name: "editbranche",
+  methods: {
+    userUpdate() {
+      axios.patch("/api/auth/updateBranche/" + this.branchetoedit.id_branche, {
+        nom_branche: this.branchetoedit.nom_branche,
+      })
+        .then((response) => {
+          console.log(response)
+          this.branches = response
+        })
+        .catch((error) => {
+          console.log(error)
+        });
+    }
+  },
 }
 </script>
