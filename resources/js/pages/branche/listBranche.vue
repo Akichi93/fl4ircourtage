@@ -65,11 +65,13 @@
               </table>
             </div>
 
-            <paginationbranche />
+            
             
           </div>
         </div>
       </div>
+
+      <paginationbranche></paginationbranche>
 
       <editbranche v-bind:branchetoedit="branchetoedit"></editbranche>
 

@@ -1,13 +1,18 @@
 <template>
-    <Pagination align="center" :data="branches" :limit="5" :current_page="branches.current_page"
-        :last_page="branches.last_page" @pagination-change-page="getBranches" />
+    <!-- <pagination align="center" :data="branches" :limit="5" :current_page="branches.current_page"
+        :last_page="branches.last_page" @pagination-change-page="listbranche" ></pagination> -->
+
+        <pagination align="center" :data="branches" @pagination-change-page="listbranche"></pagination>
+
+       
 </template>
 <script>
-import LaravelVuePagination from 'laravel-vue-pagination';
+// import pagination from 'laravel-vue-pagination';
+import pagination from 'laravel-vue-pagination'
 export default {
     name: "paginationbranche",
     components: {
-        'Pagination': LaravelVuePagination
+        pagination
     },
     data() {
         return {
@@ -39,3 +44,9 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+    .pagination{
+        margin-bottom: 0;
+    }
+</style>

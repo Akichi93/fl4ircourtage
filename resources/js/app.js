@@ -11,6 +11,9 @@ import createbranche from "../js/pages/branche/createbranche";
 
 import User from '../js/utils/helpers/User';
 window.User = User
+
+// Vue.component('pagination', require('laravel-vue-pagination'));
+
 createApp({
     components: {
         login,
