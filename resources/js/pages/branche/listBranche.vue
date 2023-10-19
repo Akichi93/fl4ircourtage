@@ -65,13 +65,13 @@
               </table>
             </div>
 
-            
+            <paginationbranche></paginationbranche>
             
           </div>
         </div>
       </div>
 
-      <paginationbranche></paginationbranche>
+      
 
       <editbranche v-bind:branchetoedit="branchetoedit"></editbranche>
 
@@ -100,7 +100,7 @@ export default {
   methods: {
     getBranches: function () {
       getBranchesList().then((result) => {
-        console.log(result);
+        // console.log(result);
         this.branches = result;
       });
     },

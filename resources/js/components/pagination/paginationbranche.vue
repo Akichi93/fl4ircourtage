@@ -1,18 +1,16 @@
 <template>
-    <!-- <pagination align="center" :data="branches" :limit="5" :current_page="branches.current_page"
-        :last_page="branches.last_page" @pagination-change-page="listbranche" ></pagination> -->
-
-        <pagination align="center" :data="branches" @pagination-change-page="listbranche"></pagination>
+        <Pagination align="center" :data="branches" :limit="5" :current_page="branches.current_page"
+          :last_page="branches.last_page" @pagination-change-page="listbranche" />
 
        
 </template>
 <script>
-// import pagination from 'laravel-vue-pagination';
-import pagination from 'laravel-vue-pagination'
+
+import LaravelVuePagination from 'laravel-vue-pagination';
 export default {
     name: "paginationbranche",
     components: {
-        pagination
+        'Pagination': LaravelVuePagination
     },
     data() {
         return {
@@ -37,6 +35,7 @@ export default {
             
             axios.get("/api/auth/branchesList?page=" + page, { headers }).then((response) => {
                 this.branches = response.data;
+                // console.log(branches)
             });
         },
 
@@ -45,8 +44,8 @@ export default {
 };
 </script>
 
-<style scoped>
+<!-- <style scoped>
     .pagination{
         margin-bottom: 0;
     }
-</style>
+</style> -->
