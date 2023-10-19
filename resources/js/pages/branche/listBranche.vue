@@ -34,10 +34,8 @@
         </div>
 
         <div class="row">
-          <div class="col-row">
-            <input type="text" class="form-control" placeholder="Rechercher une branche" v-model="q"
-              @keyup="searchtask" />
-          </div>
+          <searchbranche></searchbranche>
+         
           <div class="col-md-12">
             <div>
               <table class="table table-striped custom-table mb-0">
@@ -85,7 +83,7 @@ import Sidebar from "../../layout/Sidebar.vue";
 import { getBranchesList } from "../../services/brancheservice";
 import editbranche from "./editbranche.vue";
 import paginationbranche from "../../components/pagination/paginationbranche.vue";
-
+import searchbranche from "../../components/search/searchbranche.vue"
 
 export default {
   data() {
@@ -114,7 +112,7 @@ export default {
         .catch((error) => console.log(error));
     },
   },
-  components: { Header, Sidebar, editbranche, paginationbranche },
+  components: { Header, Sidebar, editbranche, paginationbranche, searchbranche },
 };
 </script>
     
