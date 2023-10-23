@@ -34,8 +34,8 @@
         </div>
 
         <div class="row">
-          <searchbranche></searchbranche>
-         
+          <searchbranche placeholder="Rechercher une branche" v-model="q" @keyup="searchtask"></searchbranche>
+
           <div class="col-md-12">
             <div>
               <table class="table table-striped custom-table mb-0">
@@ -64,12 +64,12 @@
             </div>
 
             <paginationbranche></paginationbranche>
-            
+
           </div>
         </div>
       </div>
 
-      
+
 
       <editbranche v-bind:branchetoedit="branchetoedit"></editbranche>
 
@@ -90,6 +90,7 @@ export default {
     return {
       branches: null,
       branchetoedit: "",
+      q: ""
     };
   },
   created() {
@@ -111,6 +112,21 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+
+    searchtask() {
+      const token = localStorage.getItem("token");
+
+      // Configurez les en-têtes de la requête
+      const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+      };
+
+      axios
+        .get("/api/auth/branchesList/" + this.q, { headers })
+        .then((response) => (this.branches = response.data))
+        .catch((error) => console.log(error));
+    }
   },
   components: { Header, Sidebar, editbranche, paginationbranche, searchbranche },
 };

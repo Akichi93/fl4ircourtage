@@ -22177,32 +22177,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "searchbranche",
-  data: function data() {
-    return {
-      branches: {},
-      q: ""
-    };
-  },
-  methods: {
-    searchtask: function searchtask() {
-      var _this = this;
-      var token = localStorage.getItem("token");
-
-      // Configurez les en-têtes de la requête
-      var headers = {
-        Authorization: "Bearer " + token,
-        "x-access-token": token
-      };
-      axios.get("/api/auth/branchesList/" + this.q, {
-        headers: headers
-      }).then(function (response) {
-        return _this.branches = response.data;
-      })["catch"](function (error) {
-        return console.log(error);
-      });
-    }
-  }
+  name: "searchbranche"
 });
 
 /***/ }),
@@ -22383,7 +22358,8 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       branches: null,
-      branchetoedit: ""
+      branchetoedit: "",
+      q: ""
     };
   },
   created: function created() {
@@ -22401,6 +22377,23 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
       axios.get("api/auth/editBranche/" + id_branche).then(function (response) {
         _this2.branchetoedit = response.data;
+      })["catch"](function (error) {
+        return console.log(error);
+      });
+    },
+    searchtask: function searchtask() {
+      var _this3 = this;
+      var token = localStorage.getItem("token");
+
+      // Configurez les en-têtes de la requête
+      var headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token
+      };
+      axios.get("/api/auth/branchesList/" + this.q, {
+        headers: headers
+      }).then(function (response) {
+        return _this3.branches = response.data;
       })["catch"](function (error) {
         return console.log(error);
       });
@@ -22515,18 +22508,13 @@ __webpack_require__.r(__webpack_exports__);
 var _hoisted_1 = {
   "class": "col-row"
 };
+var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  type: "text",
+  "class": "form-control"
+}, null, -1 /* HOISTED */);
+var _hoisted_3 = [_hoisted_2];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-    type: "text",
-    "class": "form-control",
-    placeholder: "Rechercher une branche",
-    "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
-      return $data.q = $event;
-    }),
-    onKeyup: _cache[1] || (_cache[1] = function () {
-      return $options.searchtask && $options.searchtask.apply($options, arguments);
-    })
-  }, null, 544 /* HYDRATE_EVENTS, NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.q]])]);
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, _hoisted_3);
 }
 
 /***/ }),
@@ -23184,7 +23172,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Ajouter branche")];
     }),
     _: 1 /* STABLE */
-  })])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_searchbranche), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_11, [_hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.branches, function (branche, i) {
+  })])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_searchbranche, {
+    placeholder: "Rechercher une branche",
+    modelValue: $data.q,
+    "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
+      return $data.q = $event;
+    }),
+    onKeyup: $options.searchtask
+  }, null, 8 /* PROPS */, ["modelValue", "onKeyup"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_11, [_hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.branches, function (branche, i) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
       key: i
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", {
