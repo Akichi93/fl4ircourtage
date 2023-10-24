@@ -22177,7 +22177,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "searchbranche"
+  name: "searchbranche",
+  props: ['modelValue', 'placeholder']
 });
 
 /***/ }),
@@ -22383,6 +22384,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     searchtask: function searchtask() {
       var _this3 = this;
+      alert(this.q);
       var token = localStorage.getItem("token");
 
       // Configurez les en-têtes de la requête
@@ -22508,13 +22510,13 @@ __webpack_require__.r(__webpack_exports__);
 var _hoisted_1 = {
   "class": "col-row"
 };
-var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-  type: "text",
-  "class": "form-control"
-}, null, -1 /* HOISTED */);
-var _hoisted_3 = [_hoisted_2];
+var _hoisted_2 = ["placeholder"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, _hoisted_3);
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "text",
+    "class": "form-control",
+    placeholder: $props.placeholder
+  }, null, 8 /* PROPS */, _hoisted_2)]);
 }
 
 /***/ }),
@@ -23173,7 +23175,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }),
     _: 1 /* STABLE */
   })])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_searchbranche, {
-    placeholder: "Rechercher une branche",
+    placeholder: 'Rechercher une branche',
     modelValue: $data.q,
     "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
       return $data.q = $event;

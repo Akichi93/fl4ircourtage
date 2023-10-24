@@ -34,7 +34,7 @@
         </div>
 
         <div class="row">
-          <searchbranche placeholder="Rechercher une branche" v-model="q" @keyup="searchtask"></searchbranche>
+          <searchbranche :placeholder="'Rechercher une branche'" v-model="q" @keyup="searchtask"></searchbranche>
 
           <div class="col-md-12">
             <div>
@@ -114,6 +114,7 @@ export default {
     },
 
     searchtask() {
+      alert(this.q)
       const token = localStorage.getItem("token");
 
       // Configurez les en-têtes de la requête
