@@ -55,6 +55,8 @@ class ApporteurRepository extends BaseRepository
             // }
             $ref= "AB@#$";
 
+          
+
             $all = $data;
             $apporteurs = new Apporteur();
             $apporteurs->nom_apporteur = $data['nom_apporteur'];
@@ -63,8 +65,8 @@ class ApporteurRepository extends BaseRepository
             $apporteurs->adresse_apporteur = $data['adresse_apporteur'];
             $apporteurs->code_postal = $data['code_postal'];
             $apporteurs->code_apporteur =   $ref;
-            $apporteurs->id_entreprise = 1;
-            $apporteurs->user_id = 1;
+            $apporteurs->id_entreprise = $data['id_entreprise'];
+            $apporteurs->user_id = $data['id'];
             $apporteurs->apporteur_url = bcrypt($ref);
             $apporteurs->save();
 
@@ -123,7 +125,7 @@ class ApporteurRepository extends BaseRepository
 
     public function editTauxApporteur($id_tauxapp)
     {
-        return TauxApporteur::findOrFail($id_tauxapp);
+        return TauxApporteur::where('id_tauxapp',$id_tauxapp)->first();
     }
 
     public function postTauxApporteur(array $data)

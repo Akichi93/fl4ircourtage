@@ -5,7 +5,7 @@
         <div class="modal-body">
           <div class="form-header">
             <h3>Supprimer apporteur</h3>
-            <p>Voulez vous supprimer l'apporteur?</p>
+            <p>Voulez vous supprimer l'apporteur <b>{{ apporteurtoedit.nom_apporteur }}</b>?</p>
           </div>
           <div class="modal-btn delete-action">
             <div class="row">
@@ -33,3 +33,31 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  props: ["apporteurtoedit"],
+
+  name: "deletebranche",
+  data() {
+    return {
+      branches: {},
+    };
+  },
+  methods: {
+    brancheDelete() {
+      axios
+      .patch("/deleteApporteur/" + this.apporteurtoedit.id_apporteur)
+        .patch("/api/auth/deleteBranche/" + this.branchetoedit.id_branche, {
+          nom_branche: this.branchetoedit.nom_branche,
+        })
+        .then((response) => {
+          this.$emit("task-delete", response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+  },
+};
+</script>

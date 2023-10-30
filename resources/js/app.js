@@ -10,6 +10,7 @@ import listbranche from "../js/pages/branche/listBranche";
 import createbranche from "../js/pages/branche/createbranche";
 import listapporteur from "../js/pages/apporteur/listApporteur";
 import createapporteur from "../js/pages/apporteur/createApporteur";
+import tauxapporteur from "../js/pages/apporteur/tauxapporteur";
 
 import User from '../js/utils/helpers/User';
 window.User = User
@@ -23,7 +24,8 @@ createApp({
         listbranche,
         createbranche,
         listapporteur,
-        createapporteur
+        createapporteur,
+        tauxapporteur
       
     }
 }).use(router)

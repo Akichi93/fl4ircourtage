@@ -113,11 +113,11 @@ import Header from "../layout/Header";
 import Sidebar from "../layout/Sidebar";
 
 export default {
-  // created() {
-  //       if (!User.loggedIn()) {
-  //           this.$router.push({ name: 'welcome' })
-  //       }
-    // },
+  created() {
+        if (!User.loggedIn()) {
+            this.$router.push({ name: 'welcome' })
+        }
+    },
   name: "dashboard",
   components: { Header, Sidebar },
 };

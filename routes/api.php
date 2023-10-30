@@ -32,6 +32,8 @@ Route::group([
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/me', [AuthController::class, 'me']);
 
+    Route::get('/user/profile', [AuthController::class, 'userProfile']);
+
     // Branche
     Route::controller(BrancheController::class)->group(function () {
         Route::get('/branchesList/{q?}', 'branchesList'); // Listes des branches avec pagignation et recherche
@@ -74,10 +76,10 @@ Route::group([
         Route::get('editApporteur/{id_apporteur}', 'editApporteur'); // Recuperer les infos d'un apporteur
         Route::patch('deleteApporteur/{id_apporteur}', 'deleteApporteur'); // Supprimer un apporteur
         Route::patch('updateApporteur/{id_apporteur}', 'updateApporteur'); // Update d'un apporteur
-        Route::get('getTauxApporteur', 'getTauxApporteur'); // Obtenir les taux d'un apporteur
-        Route::get('getNameApporteur', 'getNameApporteur'); // Obtenir le nom de l'apporteur choisi
+        Route::get('getTauxApporteur/{id_apporteur}', 'getTauxApporteur'); // Obtenir les taux d'un apporteur
+        Route::get('getNameApporteur/{id_apporteur}', 'getNameApporteur'); // Obtenir le nom de l'apporteur choisi
         Route::get('editTauxApporteur/{id_tauxapp}', 'editTauxApporteur'); //Recuperer les infos d'un taux
-        Route::get('getBrancheDiffApporteur', 'getBrancheDiffApporteur'); // Obtenir branche
+        Route::get('getBrancheDiffApporteur/{id_tauxapp}', 'getBrancheDiffApporteur'); // Obtenir branche
         Route::post('postTauxApporteur', 'postTauxApporteur');
         Route::post('updateTauxApporteur', 'updateTauxApporteur');
         Route::get('getApporteur', 'getApporteur'); // Obtenir les compagnies

@@ -36,14 +36,13 @@ class ApporteurController extends Controller
         $data = strlen($request->q);
         if ($data > 0) {
             $apporteurs['data'] = Apporteur::orderBy('id_apporteur', 'DESC')
-                ->where('id_entreprise', Auth::user()->id_entreprise)
+                // ->where('id_entreprise', auth()->user()->id_entreprise)
                 ->where('supprimer_apporteur', '=', '0')
                 ->where('nom_apporteur', 'like', '%' . request('q') . '%')
                 ->get();
             return response()->json($apporteurs);
         } else {
-            $apporteurs = Apporteur::where('id_entreprise', Auth::user()->id_entreprise)
-                ->where('supprimer_apporteur', '=', '0')->latest()->paginate(10);
+            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->latest()->get();
             return response()->json($apporteurs);
         }
     }
@@ -156,26 +155,26 @@ class ApporteurController extends Controller
       |
      */
 
-    public function getTauxApporteur(Request $request)
+    public function getTauxApporteur($id_apporteur)
     {
         $apporteurs = TauxApporteur::join("branches", 'taux_apporteurs.id_branche', '=', 'branches.id_branche')
-            ->where('taux_apporteurs.id_apporteur', $request->apporteur)->get();
+            ->where('taux_apporteurs.id_apporteur', $id_apporteur)->get();
         return response()->json($apporteurs);
     }
 
-    public function getNameApporteur(Request $request)
+    public function getNameApporteur($id_apporteur)
     {
-        $names = Apporteur::select('nom_apporteur')->where('id_apporteur', $request->apporteur)->first();
+        $names = Apporteur::select('nom_apporteur')->where('id_apporteur',$id_apporteur)->first();
         return response()->json($names);
     }
 
-    public function getBrancheDiffApporteur(Request $request)
+    public function getBrancheDiffApporteur(Request $request,$id_apporteur)
     {
         // Branche de l'entreprise
-        $getbranches = Branche::where('id_entreprise', Auth::user()->id_entreprise)->pluck('id_branche')->toArray();
+        $getbranches = Branche::pluck('id_branche')->toArray();
 
         $result = TauxApporteur::join("branches", 'taux_apporteurs.id_branche', '=', 'branches.id_branche')
-            ->where('taux_apporteurs.id_apporteur', $request->apporteur)->pluck('branches.id_branche')->toArray();
+            ->where('taux_apporteurs.id_apporteur', $id_apporteur)->pluck('branches.id_branche')->toArray();
 
         $array = array_diff($getbranches, $result);
 

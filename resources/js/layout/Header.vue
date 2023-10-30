@@ -197,7 +197,7 @@
             <li class="nav-item dropdown has-arrow main-drop">
                 <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
                     <span class="user-img"><img src="assets/img/profiles/avatar-21.jpg" alt></span>
-                    <span>Admin</span>
+                    <span>{{ user.name }}</span>
                 </a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="profile.html">Mon profile</a>
@@ -214,12 +214,54 @@
             <div class="dropdown-menu dropdown-menu-right">
                 <a class="dropdown-item" href="profile.html">Mon profile</a>
                 <router-link to="/logout" class="dropdown-item">Se deconnecter</router-link>
-              
+
             </div>
         </div>
 
     </div>
 </template>
+<script>
+export default {
+    data() {
+        return {
+            loading: true,
+            user: '',
+            error: null,
+        };
+    },
+    methods: {
+        info() {
+            const token = localStorage.getItem("token");
+
+            // Configurez les en-têtes de la requête
+            const headers = {
+                Authorization: "Bearer " + token,
+                "x-access-token": token,
+            };
+
+            axios
+                .get("/api/auth/me" , { headers })
+                .then((response) => (
+                    this.user = response.data))
+                .catch((error) => console.log(error));
+        },
+
+        logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            axios.post('/api/auth/logout').then(() => {
+                this.$router.push({ name: "welcome" });
+            })
+        }
+    },
+    created() {
+        this.info()
+    },
+    name: "Header"
+}
+</script>
+
+<style scoped></style>
 
 
 

@@ -27,11 +27,7 @@
           <div class="col-md-8"></div>
           <div class="col-md-4">
             <div class="add-emp-section">
-                <router-link
-                to="/createapporteur"
-                class="btn btn-success btn-add-emp"
-                style="width: auto"
-              >
+              <router-link to="/createapporteur" class="btn btn-success btn-add-emp" style="width: auto">
                 Ajouter apporteur
               </router-link>
             </div>
@@ -39,17 +35,10 @@
         </div>
 
         <div class="row">
-          <searchbranche
-            :placeholder="'Rechercher un apporteur'"
-            v-model="q"
-            @keyup="searchtask"
-          ></searchbranche>
+          <searchbranche :placeholder="'Rechercher un apporteur'" v-model="q" @keyup="searchtask"></searchbranche>
           <div class="col-md-12">
             <div class="table-responsive">
-              <table
-                id="tbl_exporttable_to_xls"
-                class="table table-striped custom-table mb-0"
-              >
+              <table id="tbl_exporttable_to_xls" class="table table-striped custom-table mb-0">
                 <thead>
                   <tr>
                     <th>Code</th>
@@ -62,10 +51,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template
-                    v-for="apporteur in apporteurs.data"
-                    :key="apporteur.id_apporteur"
-                  >
+                  <template v-for="(apporteur, i) in apporteurs" :key="i">
                     <tr>
                       <td v-text="apporteur.code_apporteur"></td>
                       <td v-text="apporteur.nom_apporteur"></td>
@@ -74,28 +60,18 @@
                       <td v-text="apporteur.contact_apporteur"></td>
                       <td v-text="apporteur.email_apporteur"></td>
                       <td class="text-end ico-sec d-flex justify-content-end">
-                        <a
-                          href="#"
-                          @click="modifTaux(apporteur.id_apporteur)"
-                          title="Modifier les taux"
-                          ><i class="fa fa-pen-fancy"></i>
+                        <router-link :to="{
+                          name: 'tauxapporteur',
+                          params: { id_apporteur: apporteur.id_apporteur },
+                        }">
+                        <i class="fa fa-pen-fancy"></i>
+                        </router-link>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#edit_department"
+                          @click="editApporteur(apporteur.id_apporteur)" title="Modifier"><i class="fas fa-pen"></i>
                         </a>
-                        <a
-                          href="#"
-                          data-bs-toggle="modal"
-                          data-bs-target="#edit_department"
-                          @click="getApporteur(apporteur.id_apporteur)"
-                          title="Modifier"
-                          ><i class="fas fa-pen"></i>
-                        </a>
-                        <a
-                          v-if="roles == 'ADMIN'"
-                          href="#"
-                          data-bs-toggle="modal"
-                          data-bs-target="#delete_apporteur"
-                          @click="getApporteur(apporteur.id_apporteur)"
-                          title="supprimer"
-                          ><i class="fas fa-trash-alt"></i>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#delete_apporteur"
+                          @click="editApporteur(apporteur.id_apporteur)" title="supprimer"><i
+                            class="fas fa-trash-alt"></i>
                         </a>
                       </td>
                     </tr>
@@ -103,111 +79,55 @@
                 </tbody>
               </table>
             </div>
-            
+            <editApporteur v-bind:apporteurtoedit="apporteurtoedit"></editApporteur>
+            <deleteApporteur v-bind:apporteurtoedit="apporteurtoedit"></deleteApporteur>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  
-
- 
 </template>
 <script>
 import LaravelVuePagination from "laravel-vue-pagination";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import searchbranche from "../../components/search/searchbranche.vue";
+import { getApporteursList } from "../../services/apporteurservice";
+import editApporteur from "./editApporteur.vue";
+import deleteApporteur from "./deleteApporteur.vue";
 
 export default {
   components: {
     Pagination: LaravelVuePagination,
     Header,
     Sidebar,
-    searchbranche
+    searchbranche,
+    editApporteur,
+    deleteApporteur
   },
   data() {
     return {
       value: null,
-      apporteurs: {},
-      localisations: {},
-      apporteurstoedit: "",
+      apporteurs: [],
+      apporteurtoedit: "",
       q: "",
-      roles: "",
+
     };
   },
   created() {
-    this.fetchData();
-    this.listapporteur();
-    this.getRole();
+   this.getApporteurs()
   },
-  mounted() {
-    this.fetchData();
-    this.listapporteur();
-    this.getRole();
-  },
-
   methods: {
-    getApporteur(id_apporteur) {
-      axios
-        .get("/editApporteur/" + id_apporteur)
-        .then((response) => (this.apporteurstoedit = response.data))
-        .catch((error) => console.log(error));
-    },
-
-    listapporteur(page = 1) {
-      axios.get("/apporteurList?page=" + page).then((response) => {
-        this.apporteurs = response.data;
+    getApporteurs: function () {
+      getApporteursList().then((result) => {
+        this.apporteurs = result;
       });
     },
 
-    // modifTaux(id) {
-    //   window.location.href = "/modifapporteur?apporteur=" + id;
-    // },
-
-    editApporteur() {
+    editApporteur(id_apporteur) {
       axios
-        .patch("/updateApporteur/" + this.apporteurstoedit.id_apporteur, {
-          nom_apporteur: this.apporteurstoedit.nom_apporteur,
-          email_apporteur: this.apporteurstoedit.email_apporteur,
-          contact_apporteur: this.apporteurstoedit.contact_apporteur,
-          adresse_apporteur: this.apporteurstoedit.adresse_apporteur,
-          code_postal: this.apporteurstoedit.code_postal,
-        })
-        .then((response) => {
-          this.listapporteur();
-          if (response.status === 200) {
-            toaster.success(`Apporteur modifié avec succès`, {
-              position: "top-right",
-            });
-          }
-        })
-        .catch((error) => console.log(error));
-    },
-
-    getRole() {
-      axios
-        .get("/getrole")
-        .then((response) => {
-          this.roles = response.data;
-        })
-        .catch((error) => console.log(error));
-    },
-
-   
-
-    deleteApporteur() {
-      axios
-        .patch("/deleteApporteur/" + this.apporteurstoedit.id_apporteur)
-        .then((response) => {
-          this.listapporteur();
-          if (response.status === 200) {
-            toaster.success(`Apporteur supprimé avec succes`, {
-              position: "top-right",
-            });
-          }
-        })
+        .get("api/auth/editApporteur/" + id_apporteur)
+        .then((response) => (this.apporteurtoedit = response.data))
         .catch((error) => console.log(error));
     },
 

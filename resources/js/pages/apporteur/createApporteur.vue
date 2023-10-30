@@ -15,7 +15,7 @@
                     <a href="admin-dashboard.html">Tableau de bord</a>
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
-                    Apporteur
+                    Apporteur 
                   </li>
                 </ol>
               </nav>
@@ -197,6 +197,7 @@
                         placeholder="Entrez le taux"
                         :key="branche.id_branche"
                         v-model="branche.value"
+                        min="0" max="100"
                       />
                     </div>
                   </div>
@@ -250,6 +251,8 @@ export default {
   methods: {
     storeApporteur() {
       const token = localStorage.getItem("token");
+      const entrepriseId = localStorage.getItem("id_entreprise");
+      const userId = localStorage.getItem("id");
 
       // Configurez les en-têtes de la requête
       const headers = {
@@ -278,33 +281,36 @@ export default {
           code_postal: this.code_postal,
           accidents: donnees,
           ids: datas,
+          id_entreprise: entrepriseId,
+          id: userId
         },)
         .then((response) => {
+          this.$router.push("/listapporteur");
           // if (response.status === 200) {
-          toaster.success(`Apporteur ajouté avec succès`, {
-            position: "top-right",
-          });
+          // toaster.success(`Apporteur ajouté avec succès`, {
+          //   position: "top-right",
+          // });
           // }
           window.location.href = "/apporteur";
         })
         .catch((error) => {
           // console.log(error.response.headers);
 
-          if (error.response.status === 422) {
-            this.errors = error.response.data.errors;
-            toaster.error(`Veuillez remplir tous les champs`, {
-              position: "top-right",
-            });
-          } else if (error.request) {
-            // The request was made but no response was received
-            console.log(error.request);
-            toaster.error(`Veuillez remplir les champs`, {
-              position: "top-right",
-            });
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            console.log("Error", error.message);
-          }
+          // if (error.response.status === 422) {
+          //   this.errors = error.response.data.errors;
+          //   toaster.error(`Veuillez remplir tous les champs`, {
+          //     position: "top-right",
+          //   });
+          // } else if (error.request) {
+          //   // The request was made but no response was received
+          //   console.log(error.request);
+          //   toaster.error(`Veuillez remplir les champs`, {
+          //     position: "top-right",
+          //   });
+          // } else {
+          //   // Something happened in setting up the request that triggered an Error
+          //   console.log("Error", error.message);
+          // }
         });
     },
     storeAdresse() {

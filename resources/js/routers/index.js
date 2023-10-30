@@ -6,7 +6,8 @@ import courtage from "../pages/module/courtage";
 import listbranche from "../pages/branche/listBranche";
 import createbranche from "../pages/branche/createbranche";
 import listapporteur from "../pages/apporteur/listApporteur";
-import createapporteur from "../pages/apporteur/createApporteur"
+import createapporteur from "../pages/apporteur/createApporteur";
+import tauxapporteur from "../pages/apporteur/tauxapporteur";
 const routes = [
   {
     path: '/',
@@ -48,6 +49,12 @@ const routes = [
     name: 'createapporteur',
     component: createapporteur
   },
+  {
+    path: '/tauxapporteur/:id_apporteur',
+    name: 'tauxapporteur',
+    component: tauxapporteur,
+    props: true
+},
 ];
 
 
