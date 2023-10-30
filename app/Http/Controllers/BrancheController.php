@@ -11,14 +11,14 @@ class BrancheController extends Controller
     public function branchesList(Request $request)
     {
         $data = strlen($request->q);
+
         if ($data > 0) {
-            $branches['data'] =  Branche::where('id_entreprise', Auth::user()->id_entreprise)
-                ->where('supprimer_branche', '=', '0')
-                ->where('nom_branche', 'like', '%' . request('q') . '%')
+            $branches['data'] =  Branche::where('supprimer_branche', '=', '0')
+                ->where('nom_branche', 'like', '%' .request('q') . '%')
                 ->get();
             return response()->json($branches);
         } else {
-            $branches = Branche::where('supprimer_branche', '=', '0')->latest()->paginate(10);
+            $branches = Branche::where('supprimer_branche', '=', '0')->orderBy('id_branche','DESC')->get();
             return response()->json($branches);
         }
     }
@@ -35,7 +35,13 @@ class BrancheController extends Controller
         $branches->nom_branche = $request->nom_branche;
         $branches->save();
 
-        return response()->json($branches);
+        if($branches){
+            $branches = Branche::where('supprimer_branche', '=', '0')->orderBy('id_branche', 'DESC')->get();
+
+            return response()->json($branches);
+        }
+
+        
     }
 
     public function deleteBranche($id_branche)
@@ -44,6 +50,16 @@ class BrancheController extends Controller
         $branches->supprimer_branche = 1;
         $branches->save();
 
-        return response()->json($branches);
+        if($branches){
+            $branches = Branche::where('supprimer_branche', '=', '0')->orderBy('id_branche', 'DESC')->get();
+
+            return response()->json($branches);
+        }
+    }
+
+    private function refresh()
+    {
+        $branches = Branche::where('supprimer_branche', '=', '0')->orderBy('id_branche','DESC')->get();
+            return response()->json($branches);
     }
 }

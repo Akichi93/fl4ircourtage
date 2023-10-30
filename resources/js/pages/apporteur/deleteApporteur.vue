@@ -1,13 +1,11 @@
 <template>
-  <div class="modal custom-modal fade" id="delete_branche" role="dialog">
+   <div class="modal custom-modal fade" id="delete_apporteur" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body">
           <div class="form-header">
-            <h3>Supprimer branche</h3>
-            <p>
-              Voulez vous supprimer la branche  <b>{{ branchetoedit.nom_branche }}</b> ?
-            </p>
+            <h3>Supprimer apporteur</h3>
+            <p>Voulez vous supprimer l'apporteur?</p>
           </div>
           <div class="modal-btn delete-action">
             <div class="row">
@@ -16,7 +14,7 @@
                   href="javascript:void(0);"
                   class="btn btn-primary continue-btn"
                   data-bs-dismiss="modal"
-                  @click.prevent="brancheDelete"
+                  
                   >supprimer</a
                 >
               </div>
@@ -35,30 +33,3 @@
     </div>
   </div>
 </template>
-  
-  <script>
-export default {
-  props: ["branchetoedit"],
-
-  name: "deletebranche",
-  data() {
-    return {
-      branches: {},
-    };
-  },
-  methods: {
-    brancheDelete() {
-      axios
-        .patch("/api/auth/deleteBranche/" + this.branchetoedit.id_branche, {
-          nom_branche: this.branchetoedit.nom_branche,
-        })
-        .then((response) => {
-          this.$emit("task-delete", response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-  },
-};
-</script>

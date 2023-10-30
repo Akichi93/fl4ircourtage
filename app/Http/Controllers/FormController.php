@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branche;
 use Illuminate\Http\Request;
 use App\Repositories\FormRepository;
 use App\Http\Requests\BrancheRequest;
@@ -361,11 +362,15 @@ class FormController extends Controller
 
         // Insertion dans la bdd
         $Data = $this->branche->postBranches($data);
+        
+        if ($Data) {
+            $branches = Branche::where('supprimer_branche', '=', '0')->orderBy('id_branche', 'DESC')->get();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Genre enregistré avec succès',
-            'genre' => $Data
-        ], Response::HTTP_OK);
+            return response()->json([
+                'success' => true,
+                'message' => 'Genre enregistré avec succès',
+                'genre' => $branches
+            ], Response::HTTP_OK);
+        }
     }
 }

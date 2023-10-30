@@ -5,6 +5,8 @@ import dashboard from "../pages/dashboard";
 import courtage from "../pages/module/courtage";
 import listbranche from "../pages/branche/listBranche";
 import createbranche from "../pages/branche/createbranche";
+import listapporteur from "../pages/apporteur/listApporteur";
+import createapporteur from "../pages/apporteur/createApporteur"
 const routes = [
   {
     path: '/',
@@ -35,6 +37,16 @@ const routes = [
     path: '/createbranche',
     name: 'createbranche',
     component: createbranche
+  },
+  {
+    path: '/listapporteur',
+    name: 'listapporteur',
+    component: listapporteur
+  },
+  {
+    path: '/createapporteur',
+    name: 'createapporteur',
+    component: createapporteur
   },
 ];
 

@@ -8,11 +8,12 @@ import dashboard from "../js/pages/dashboard";
 import courtage from "../js/pages/module/courtage";
 import listbranche from "../js/pages/branche/listBranche";
 import createbranche from "../js/pages/branche/createbranche";
+import listapporteur from "../js/pages/apporteur/listApporteur";
+import createapporteur from "../js/pages/apporteur/createApporteur";
 
 import User from '../js/utils/helpers/User';
 window.User = User
 
-// Vue.component('pagination', require('laravel-vue-pagination'));
 
 createApp({
     components: {
@@ -20,7 +21,9 @@ createApp({
         dashboard,
         courtage,
         listbranche,
-        createbranche
+        createbranche,
+        listapporteur,
+        createapporteur
       
     }
 }).use(router)

@@ -33,14 +33,18 @@ export default {
   props: ['branchetoedit'],
 
   name: "editbranche",
+  data() {
+    return {
+      branches: {},
+    };
+  },
   methods: {
     userUpdate() {
       axios.patch("/api/auth/updateBranche/" + this.branchetoedit.id_branche, {
         nom_branche: this.branchetoedit.nom_branche,
       })
         .then((response) => {
-          console.log(response)
-          this.branches = response
+          this.$emit('task-updated', response)
         })
         .catch((error) => {
           console.log(error)

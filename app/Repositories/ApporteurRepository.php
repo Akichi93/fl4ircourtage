@@ -34,25 +34,26 @@ class ApporteurRepository extends BaseRepository
         // try {
 
         $apporteur = $data['nom_apporteur'];
-        if (Apporteur::where('nom_apporteur', '=', $apporteur)->where('id_entreprise', Auth::user()->id_entreprise)->count() > 0) {
+        if (Apporteur::where('nom_apporteur', '=', $apporteur)->count() > 0) {
             return response()->json(['message' => 'Apporteur existant'], 422);
         } else {
-            $lastID = Apporteur::max('id_apporteur');
-            if ($lastID == null) {
-                $id = 1;
-                $day = date('d');
-                $month = date('m');
-                $year = date('Y');
-                $a = "AP";
-                $ref = $a . '-' . $id . '-' . intval($month) . intval($day) . $year;
-            } else {
-                $id = intval($lastID) + 1;
-                $day = date('d');
-                $month = date('m');
-                $year = date('Y');
-                $a = "AP";
-                $ref = $a . '-' . $id . '-' . $month . $day . $year;
-            }
+            // $lastID = Apporteur::max('id_apporteur');
+            // if ($lastID == null) {
+            //     $id = 1;
+            //     $day = date('d');
+            //     $month = date('m');
+            //     $year = date('Y');
+            //     $a = "AP";
+            //     $ref = $a . '-' . $id . '-' . intval($month) . intval($day) . $year;
+            // } else {
+            //     $id = intval($lastID) + 1;
+            //     $day = date('d');
+            //     $month = date('m');
+            //     $year = date('Y');
+            //     $a = "AP";
+            //     $ref = $a . '-' . $id . '-' . $month . $day . $year;
+            // }
+            $ref= "AB@#$";
 
             $all = $data;
             $apporteurs = new Apporteur();
@@ -62,12 +63,12 @@ class ApporteurRepository extends BaseRepository
             $apporteurs->adresse_apporteur = $data['adresse_apporteur'];
             $apporteurs->code_postal = $data['code_postal'];
             $apporteurs->code_apporteur =   $ref;
-            $apporteurs->id_entreprise = Auth::user()->id_entreprise;
-            $apporteurs->user_id = Auth::user()->id;
+            $apporteurs->id_entreprise = 1;
+            $apporteurs->user_id = 1;
             $apporteurs->apporteur_url = bcrypt($ref);
             $apporteurs->save();
 
-            $id = $apporteurs['id_apporteur'];
+            $id = $apporteurs->id_apporteur;
 
             $leads = $all['accidents'];  // valeur
             $firsts = $all['ids']; // id

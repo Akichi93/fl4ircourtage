@@ -12,7 +12,7 @@ export async function getBranchesList(page = 1) {
     };
 
     const response = await axios.get("/api/auth/branchesList?page=" + page, { headers })
-    return response.data.data;
+    return response.data;
 
 }
 
@@ -45,9 +45,9 @@ export async function userUpdate(id_branche, rcv_data) {
 
 }
 
-export async function searchbranche() {
-    const response = await axios.get("/branchesList/" + this.q)
-    return response.data;
+export async function searchbrancheList() {
+    const response = await axios.get("/branchesList/" + this.rcv_data)
+    return response.data.data;
 
 }
 

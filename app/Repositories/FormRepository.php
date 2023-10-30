@@ -111,8 +111,7 @@ class FormRepository extends BaseRepository
 
     public function getBranches()
     {
-        return Branche::where('id_entreprise', Auth::user()->id_entreprise)
-            ->where('supprimer_branche', '=', '0')
+        return Branche::where('supprimer_branche', '=', '0')
             ->orderBy('created_at', 'DESC')
             ->get();
     }
