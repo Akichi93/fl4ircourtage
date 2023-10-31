@@ -33,16 +33,17 @@ class ApporteurController extends Controller
 
     public function apporteursList(Request $request)
     {
+        // dd(Auth()->user()->id_entreprise);
         $data = strlen($request->q);
         if ($data > 0) {
             $apporteurs['data'] = Apporteur::orderBy('id_apporteur', 'DESC')
-                // ->where('id_entreprise', auth()->user()->id_entreprise)
+                ->where('id_entreprise', Auth()->user()->id_entreprise)
                 ->where('supprimer_apporteur', '=', '0')
                 ->where('nom_apporteur', 'like', '%' . request('q') . '%')
                 ->get();
             return response()->json($apporteurs);
         } else {
-            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->latest()->get();
+            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->where('id_entreprise', Auth()->user()->id_entreprise)->latest()->get();
             return response()->json($apporteurs);
         }
     }
@@ -218,5 +219,7 @@ class ApporteurController extends Controller
 
         return response()->json($apporteurs);
     }
+
+    
 }
 

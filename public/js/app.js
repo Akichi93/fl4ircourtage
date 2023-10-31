@@ -22552,86 +22552,27 @@ var toaster = (0,_meforma_vue_toaster__WEBPACK_IMPORTED_MODULE_0__.createToaster
   /* options */
 });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "edittaux",
+  name: "addtauxapporteur",
+  props: ['tauxapporteurtoedit'],
   data: function data() {
     return {
-      value: null,
-      // get fetchTask
-      apporteurs: {},
-      tauxtoedit: "",
-      names: "",
       branches: {},
       accidents: [],
       ids: []
     };
   },
   methods: {
-    viewRoute: function viewRoute() {
-      var urlParams = new URLSearchParams(window.location.search);
-      var myParam = urlParams.get("apporteur");
-      this.id_apporteur = myParam;
-    },
-    getTaux: function getTaux(id_tauxapp) {
-      var _this = this;
-      axios.get("/editTauxApporteur/" + id_tauxapp).then(function (response) {
-        return _this.tauxtoedit = response.data;
-      })["catch"](function (error) {
-        return console.log(error);
-      });
-    },
-    getauto: function getauto() {
-      var _this2 = this;
-      var urlParams = new URLSearchParams(window.location.search);
-      var myParam = urlParams.get("apporteur");
-      axios.get("/getTauxApporteur?apporteur=" + myParam).then(function (response) {
-        // this.loading = true;
-        _this2.apporteurs = response.data;
-        // console.log(response.data);
-      })["catch"](function (error) {
-        // this.loading = false;
-        _this2.error = error.response.data.message || error.message;
-      });
-    },
-    getname: function getname() {
-      var _this3 = this;
-      var urlParams = new URLSearchParams(window.location.search);
-      var myParam = urlParams.get("apporteur");
-      axios.get("/getNameApporteur?apporteur=" + myParam).then(function (response) {
-        // this.loading = true;
-        _this3.names = response.data;
-        // console.log(response.data);
-      })["catch"](function (error) {
-        // this.loading = false;
-        _this3.error = error.response.data.message || error.message;
-      });
-    },
     getbranche: function getbranche() {
-      var _this4 = this;
-      var urlParams = new URLSearchParams(window.location.search);
-      var myParam = urlParams.get("apporteur");
-      axios.get("/getBrancheDiffApporteur?apporteur=" + myParam).then(function (response) {
-        _this4.branches = response.data;
+      var _this = this;
+      axios.get("/api/auth/getBrancheDiffApporteur/".concat(this.$route.params.id_apporteur)).then(function (response) {
+        _this.branches = response.data;
       })["catch"](function (error) {
         // this.loading = false;
-        _this4.error = error.response.data.message || error.message;
-      });
-    },
-    editTaux: function editTaux() {
-      var _this5 = this;
-      axios.post("updateTauxApporteur", {
-        id_tauxapp: this.tauxtoedit.id_tauxapp,
-        taux: this.tauxtoedit.taux
-      }).then(function (response) {
-        _this5.getauto();
-        if (response.status === 200) {
-          toaster.success("Taux modifié", {
-            position: "top-right"
-          });
-        }
+        _this.error = error.response.data.message || error.message;
       });
     },
     addTaux: function addTaux() {
-      var _this6 = this;
+      var _this2 = this;
       var test = JSON.parse(JSON.stringify(this.branches));
       var donnees = [];
       for (var i = 0; i < Object.keys(test).length; i++) {
@@ -22642,31 +22583,22 @@ var toaster = (0,_meforma_vue_toaster__WEBPACK_IMPORTED_MODULE_0__.createToaster
       for (var _i = 0; _i < Object.keys(testing).length; _i++) {
         datas.push(testing[_i]["id_branche"]);
       }
-      axios.post("postTauxApporteur", {
-        name: this.names.nom_apporteur,
-        taux: this.tauxtoedit.taux,
+      axios.post("/api/auth/postTauxApporteur", {
+        id: this.tauxapporteurtoedit.id_apporteur,
         accidents: donnees,
         ids: datas
       }).then(function (response) {
-        _this6.getauto();
-        _this6.getbranche();
-        if (response.status === 200) {
-          toaster.success("Taux ajouté", {
-            position: "top-right"
-          });
-        }
+        _this2.$emit('taux-add', response);
+        // if (response.status === 200) {
+        //   toaster.success("Taux ajouté", {
+        //     position: "top-right",
+        //   });
+        // }
       });
     }
   },
   created: function created() {
-    this.getTaux();
-    this.viewRoute();
-    this.getauto();
-    this.getname();
     this.getbranche();
-  },
-  mounted: function mounted() {
-    this.getauto();
   }
 });
 
@@ -22908,13 +22840,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['tauxtoedit'],
   name: "edittauxapporteur",
-  data: function data() {
-    return {
-      branches: {}
-    };
-  },
   methods: {
-    // apporteurUpdate() {
+    editTaux: function editTaux() {
+      var _this = this;
+      axios.post("/api/auth/updateTauxApporteur", {
+        id_tauxapp: this.tauxtoedit.id_tauxapp,
+        taux: this.tauxtoedit.taux,
+        id: this.tauxtoedit.id_apporteur
+      }).then(function (response) {
+        _this.$emit('taux-update', response);
+        if (response.status === 200) {
+          toaster.success("Taux modifié", {
+            position: "top-right"
+          });
+        }
+      });
+    } // apporteurUpdate() {
     //   axios.patch("/api/auth/updateBranche/" + this.apporteurtoedit.id_branche, {
     //     nom_apporteur: this.apporteurstoedit.nom_apporteur,
     //     email_apporteur: this.apporteurstoedit.email_apporteur,
@@ -23045,6 +22986,7 @@ var toaster = (0,_meforma_vue_toaster__WEBPACK_IMPORTED_MODULE_2__.createToaster
       value: null,
       apporteurs: "",
       tauxtoedit: "",
+      tauxapporteurtoedit: "",
       names: "",
       branches: {},
       accidents: [],
@@ -23052,10 +22994,18 @@ var toaster = (0,_meforma_vue_toaster__WEBPACK_IMPORTED_MODULE_2__.createToaster
     };
   },
   methods: {
-    getTaux: function getTaux(id_tauxapp) {
+    getApporteur: function getApporteur() {
       var _this = this;
+      axios.get("/api/auth/getNameApporteur/".concat(this.$route.params.id_apporteur)).then(function (response) {
+        return _this.tauxapporteurtoedit = response.data;
+      })["catch"](function (error) {
+        return console.log(error);
+      });
+    },
+    getTaux: function getTaux(id_tauxapp) {
+      var _this2 = this;
       axios.get("/api/auth/editTauxApporteur/" + id_tauxapp).then(function (response) {
-        return _this.tauxtoedit = response.data;
+        return _this2.tauxtoedit = response.data;
       })["catch"](function (error) {
         return console.log(error);
       });
@@ -23070,51 +23020,14 @@ var toaster = (0,_meforma_vue_toaster__WEBPACK_IMPORTED_MODULE_2__.createToaster
         that.branches = branches.data;
       }));
     },
-    editTaux: function editTaux() {
-      var _this2 = this;
-      axios.post("updateTauxApporteur", {
-        id_tauxapp: this.tauxtoedit.id_tauxapp,
-        taux: this.tauxtoedit.taux
-      }).then(function (response) {
-        _this2.getauto();
-        if (response.status === 200) {
-          toaster.success("Taux modifié", {
-            position: "top-right"
-          });
-        }
-      });
-    },
-    addTaux: function addTaux() {
-      var _this3 = this;
-      var test = JSON.parse(JSON.stringify(this.branches));
-      var donnees = [];
-      for (var i = 0; i < Object.keys(test).length; i++) {
-        donnees.push(test[i]["value"]);
-      }
-      var testing = JSON.parse(JSON.stringify(this.branches));
-      var datas = [];
-      for (var _i = 0; _i < Object.keys(testing).length; _i++) {
-        datas.push(testing[_i]["id_branche"]);
-      }
-      axios.post("postTauxApporteur", {
-        name: this.names.nom_apporteur,
-        taux: this.tauxtoedit.taux,
-        accidents: donnees,
-        ids: datas
-      }).then(function (response) {
-        _this3.getauto();
-        _this3.getbranche();
-        if (response.status === 200) {
-          toaster.success("Taux ajouté", {
-            position: "top-right"
-          });
-        }
-      });
+    refresh: function refresh(apporteurs) {
+      this.apporteurs = apporteurs.data;
     }
   },
   created: function created() {
     this.getTaux();
     this.fetchTask();
+    this.getApporteur();
   }
 });
 
@@ -23287,11 +23200,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['branchetoedit'],
   name: "editbranche",
-  data: function data() {
-    return {
-      branches: {}
-    };
-  },
   methods: {
     userUpdate: function userUpdate() {
       var _this = this;
@@ -23849,12 +23757,14 @@ var _hoisted_1 = {
   "class": "modal custom-modal fade",
   role: "dialog"
 };
-var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_2 = {
   "class": "modal-dialog modal-dialog-centered modal-lg",
   role: "document"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+};
+var _hoisted_3 = {
   "class": "modal-content"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+};
+var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "modal-header"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", {
   "class": "modal-title"
@@ -23865,32 +23775,49 @@ var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
   "aria-label": "Close"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
   "class": "fas fa-times"
-})])]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+})])], -1 /* HOISTED */);
+var _hoisted_5 = {
   "class": "modal-body"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+};
+var _hoisted_6 = {
   "class": "row"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "col-sm-6"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+};
+var _hoisted_7 = {
   "class": "form-group"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-  type: "number",
-  "class": "form-control",
-  placeholder: "Entrez le taux"
-})])])]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+};
+var _hoisted_8 = ["onUpdate:modelValue"];
+var _hoisted_9 = {
   "class": "submit-section"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+};
+var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   "class": "btn btn-primary cancel-btn",
   "data-bs-dismiss": "modal",
   "aria-label": "Close"
-}, "Annuler"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-  "class": "btn btn-primary submit-btn",
-  type: "button",
-  "data-bs-dismiss": "modal"
-}, "Ajouter")])])])])], -1 /* HOISTED */);
-var _hoisted_3 = [_hoisted_2];
+}, " Annuler ", -1 /* HOISTED */);
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, _hoisted_3);
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [_hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.branches, function (branche) {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
+      "class": "col-sm-6",
+      key: branche.id_branche
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(branche.nom_branche), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("input", {
+      type: "number",
+      "class": "form-control",
+      placeholder: "Entrez le taux",
+      required: "",
+      key: branche.id_branche,
+      "onUpdate:modelValue": function onUpdateModelValue($event) {
+        return branche.value = $event;
+      }
+    }, null, 8 /* PROPS */, _hoisted_8)), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, branche.value]])])]);
+  }), 128 /* KEYED_FRAGMENT */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [_hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    "class": "btn btn-primary submit-btn",
+    type: "button",
+    "data-bs-dismiss": "modal",
+    onClick: _cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
+      return $options.addTaux && $options.addTaux.apply($options, arguments);
+    }, ["prevent"]))
+  }, " Ajouter ")])])])])]);
 }
 
 /***/ }),
@@ -24375,17 +24302,14 @@ var _hoisted_6 = {
   "class": "form-group"
 };
 var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Taux", -1 /* HOISTED */);
-var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_8 = {
   "class": "submit-section"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+};
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   "class": "btn btn-primary cancel-btn",
   "data-bs-dismiss": "modal",
   "aria-label": "Close"
-}, "Annuler"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-  "class": "btn btn-primary submit-btn",
-  type: "button",
-  "data-bs-dismiss": "modal"
-}, "Modifier")], -1 /* HOISTED */);
+}, "Annuler", -1 /* HOISTED */);
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [_hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [_hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
@@ -24394,7 +24318,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
       return $props.tauxtoedit.taux = $event;
     })
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $props.tauxtoedit.taux]])]), _hoisted_8])])])])]);
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $props.tauxtoedit.taux]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [_hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    "class": "btn btn-primary submit-btn",
+    type: "button",
+    "data-bs-dismiss": "modal",
+    onClick: _cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
+      return $options.editTaux && $options.editTaux.apply($options, arguments);
+    }, ["prevent"]))
+  }, "Modifier")])])])])])]);
 }
 
 /***/ }),
@@ -24592,48 +24523,69 @@ var _hoisted_5 = {
 var _hoisted_6 = {
   "class": "page-head-box"
 };
-var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<nav aria-label=\"breadcrumb\"><ol class=\"breadcrumb\"><li class=\"breadcrumb-item\"><a href=\"/home\">Tableau de bord</a></li><li class=\"breadcrumb-item\"><a href=\"/apporteur\">Listes des apporteurs</a></li><li class=\"breadcrumb-item active\" aria-current=\"page\">Taux apporteurs</li></ol></nav>", 1);
+var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<nav aria-label=\"breadcrumb\"><ol class=\"breadcrumb\"><li class=\"breadcrumb-item\"><a href=\"/home\">Tableau de bord</a></li><li class=\"breadcrumb-item\"><a href=\"/apporteur\">Listes des apporteurs</a></li><li class=\"breadcrumb-item active\" aria-current=\"page\"> Taux apporteurs </li></ol></nav>", 1);
 var _hoisted_8 = {
   key: 0,
   "class": "row filter-row"
 };
-var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"col-md-8\"></div><div class=\"col-md-4\"><div class=\"add-emp-section\"><a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#add_taux\" class=\"btn btn-success btn-add-emp\" style=\"width:auto;\"><i class=\"fas fa-plus\"></i> Ajouter un taux </a></div></div>", 2);
-var _hoisted_11 = [_hoisted_9];
-var _hoisted_12 = {
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "col-md-8"
+}, null, -1 /* HOISTED */);
+var _hoisted_10 = {
+  "class": "col-md-4"
+};
+var _hoisted_11 = {
+  "class": "add-emp-section"
+};
+var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
+  "class": "fas fa-plus"
+}, null, -1 /* HOISTED */);
+var _hoisted_13 = {
   "class": "row"
 };
-var _hoisted_13 = {
+var _hoisted_14 = {
   "class": "col-md-12"
 };
-var _hoisted_14 = {
+var _hoisted_15 = {
   "class": "table table-striped custom-table mb-0"
 };
-var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Nom de la branche"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Taux"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
+var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Nom de la branche"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Taux"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
   "class": "text-end"
 }, "Action")])], -1 /* HOISTED */);
-var _hoisted_16 = ["textContent"];
 var _hoisted_17 = ["textContent"];
-var _hoisted_18 = {
+var _hoisted_18 = ["textContent"];
+var _hoisted_19 = {
   "class": "text-end ico-sec d-flex justify-content-end"
 };
-var _hoisted_19 = ["onClick"];
-var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
+var _hoisted_20 = ["onClick"];
+var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
   "class": "fas fa-pen"
 }, null, -1 /* HOISTED */);
-var _hoisted_21 = [_hoisted_20];
+var _hoisted_22 = [_hoisted_21];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Header = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Header");
   var _component_Sidebar = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Sidebar");
   var _component_addtauxapporteur = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("addtauxapporteur");
   var _component_edittauxapporteur = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("edittauxapporteur");
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Header), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Sidebar), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Listes des taux de l'apporteur "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("em", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.names.nom_apporteur), 1 /* TEXT */)]), _hoisted_7])])]), $data.branches.length > 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_8, _hoisted_11)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_14, [_hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.apporteurs, function (apporteur) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Header), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Sidebar), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Listes des taux de l'apporteur "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("em", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.names.nom_apporteur), 1 /* TEXT */)]), _hoisted_7])])]), $data.branches.length > 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_8, [_hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+    href: "#",
+    "data-bs-toggle": "modal",
+    "data-bs-target": "#add_taux",
+    "class": "btn btn-success btn-add-emp",
+    style: {
+      "width": "auto"
+    },
+    onClick: _cache[0] || (_cache[0] = function ($event) {
+      return $options.getApporteur($data.names.id_apporteur);
+    })
+  }, [_hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Ajouter un taux ")])])])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_15, [_hoisted_16, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.apporteurs, function (apporteur) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
       key: apporteur.id_tauxapp
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", {
       textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(apporteur.nom_branche)
-    }, null, 8 /* PROPS */, _hoisted_16), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", {
+    }, null, 8 /* PROPS */, _hoisted_17), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", {
       textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(apporteur.taux)
-    }, null, 8 /* PROPS */, _hoisted_17), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+    }, null, 8 /* PROPS */, _hoisted_18), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
       href: "#",
       "data-bs-toggle": "modal",
       "data-bs-target": "#edit_taux",
@@ -24641,10 +24593,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         return $options.getTaux(apporteur.id_tauxapp);
       },
       title: "Modifier"
-    }, _hoisted_21, 8 /* PROPS */, _hoisted_19)])]);
-  }), 128 /* KEYED_FRAGMENT */))])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_addtauxapporteur), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_edittauxapporteur, {
-    tauxtoedit: $data.tauxtoedit
-  }, null, 8 /* PROPS */, ["tauxtoedit"])])])])])]);
+    }, _hoisted_22, 8 /* PROPS */, _hoisted_20)])]);
+  }), 128 /* KEYED_FRAGMENT */))])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_addtauxapporteur, {
+    tauxapporteurtoedit: $data.tauxapporteurtoedit,
+    onTauxAdd: $options.refresh
+  }, null, 8 /* PROPS */, ["tauxapporteurtoedit", "onTauxAdd"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_edittauxapporteur, {
+    tauxtoedit: $data.tauxtoedit,
+    onTauxUpdate: $options.refresh
+  }, null, 8 /* PROPS */, ["tauxtoedit", "onTauxUpdate"])])])])])]);
 }
 
 /***/ }),

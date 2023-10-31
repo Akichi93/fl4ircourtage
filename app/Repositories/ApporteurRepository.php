@@ -53,9 +53,9 @@ class ApporteurRepository extends BaseRepository
             //     $a = "AP";
             //     $ref = $a . '-' . $id . '-' . $month . $day . $year;
             // }
-            $ref= "AB@#$";
+            $ref = "AB@#$";
 
-          
+
 
             $all = $data;
             $apporteurs = new Apporteur();
@@ -125,14 +125,14 @@ class ApporteurRepository extends BaseRepository
 
     public function editTauxApporteur($id_tauxapp)
     {
-        return TauxApporteur::where('id_tauxapp',$id_tauxapp)->first();
+        return TauxApporteur::where('id_tauxapp', $id_tauxapp)->first();
     }
 
     public function postTauxApporteur(array $data)
     {
 
-        $id_apporteur = Apporteur::where('id_entreprise', Auth::user()->id_entreprise)
-            ->where('nom_apporteur', $data['name'])->pluck('id_apporteur')->first();
+        // $id_apporteur = Apporteur::where('id_entreprise', Auth()->user()->id_entreprise)
+        //     ->where('id_apporteur', $data['id'])->pluck('id_apporteur')->first();
 
         $leads = $data['accidents'];  // valeur
         $firsts = $data['ids']; // id
@@ -143,11 +143,13 @@ class ApporteurRepository extends BaseRepository
             $taux = new TauxApporteur();
             $taux->taux = $value;
             $taux->id_branche = $key;
-            $taux->id_apporteur = $id_apporteur;
+            $taux->id_apporteur = $data['id'];
             $taux->save();
         }
 
-        return $id_apporteur;
+
+
+        return $leads;
     }
 
     public function updateTauxApporteur(array $data)
@@ -155,14 +157,18 @@ class ApporteurRepository extends BaseRepository
         $id_tauxapp = $data['id_tauxapp'];
         $taux = $data['taux'];
         $apporteurs = TauxApporteur::where('id_tauxapp', $id_tauxapp)->update(['taux' => $taux]);
+        if ($apporteurs) {
+            $apporteurs = TauxApporteur::join("branches", 'taux_apporteurs.id_branche', '=', 'branches.id_branche')
+                ->where('taux_apporteurs.id_apporteur', $data['id'])->get();
 
-        return $apporteurs;
+            return $apporteurs;
+        }
     }
 
     public function getApporteur()
     {
         $apporteurs = Apporteur::orderBy('id_apporteur', 'DESC')
-            ->where('id_entreprise', Auth::user()->id_entreprise)
+            ->where('id_entreprise', Auth()->user()->id_entreprise)
             ->where('supprimer_apporteur', 0)->get();
 
         return $apporteurs;

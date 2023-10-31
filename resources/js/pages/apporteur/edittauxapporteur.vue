@@ -19,7 +19,7 @@
                             <button class="btn btn-primary cancel-btn" data-bs-dismiss="modal"
                                 aria-label="Close">Annuler</button>
                             <button class="btn btn-primary submit-btn" type="button"
-                                data-bs-dismiss="modal">Modifier</button>
+                                data-bs-dismiss="modal" @click.prevent="editTaux">Modifier</button>
                         </div>
                     </form>
                 </div>
@@ -31,12 +31,23 @@
 export default {
   props: ['tauxtoedit'],
   name: "edittauxapporteur",
-  data() {
-    return {
-      branches: {},
-    };
-  },
   methods: {
+    editTaux() {
+      axios
+        .post("/api/auth/updateTauxApporteur", {
+          id_tauxapp: this.tauxtoedit.id_tauxapp,
+          taux: this.tauxtoedit.taux,
+          id: this.tauxtoedit.id_apporteur,
+        })
+        .then((response) => {
+            this.$emit('taux-update', response)
+          if (response.status === 200) {
+            toaster.success("Taux modifié", {
+              position: "top-right",
+            });
+          }
+        });
+    },
     // apporteurUpdate() {
     //   axios.patch("/api/auth/updateBranche/" + this.apporteurtoedit.id_branche, {
     //     nom_apporteur: this.apporteurstoedit.nom_apporteur,
