@@ -103,12 +103,21 @@ class ApporteurController extends Controller
 
     public function deleteApporteur($id_apporteur)
     {
-        $Data = $this->apporteur->deleteApporteur($id_apporteur);
 
-        return response()->json([
-            'success' => true,
-            'data' => $Data
-        ], Response::HTTP_OK);
+        $apporteurs = Apporteur::find($id_apporteur);
+        $apporteurs->supprimer_apporteur = 1;
+        $apporteurs->save();
+        if ($apporteurs) {
+            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->latest()->get();
+
+            return response()->json($apporteurs);
+        }
+        // $Data = $this->apporteur->deleteApporteur($id_apporteur);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'data' => $Data
+        // ], Response::HTTP_OK);
     }
 
     /*
@@ -139,15 +148,29 @@ class ApporteurController extends Controller
 
     public function updateApporteur(Request $request, $id_apporteur)
     {
-        $Data = $this->apporteur->updateApporteur($id_apporteur);
 
-        return response()->json([
-            'success' => true,
-            'data' => $Data
-        ], Response::HTTP_OK);
+        $apporteurs = Apporteur::find($id_apporteur);
+        $apporteurs->nom_apporteur = request('nom_apporteur');
+        $apporteurs->email_apporteur = request('email_apporteur');
+        $apporteurs->contact_apporteur = request('contact_apporteur');
+        $apporteurs->adresse_apporteur = request('adresse_apporteur');
+        $apporteurs->code_postal = request('code_postal');
+        $apporteurs->save();
+
+        if ($apporteurs) {
+            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->latest()->get();
+
+            return response()->json($apporteurs);
+        }
+
+        // $Data = $this->apporteur->updateApporteur($id_apporteur);
+        // return response()->json([
+        //     'success' => true,
+        //     'data' => $Data
+        // ], Response::HTTP_OK);
     }
 
-      /*
+    /*
       |----------------------------------------------------
       | Obtenir les taux  apporteur
       |----------------------------------------------------
@@ -165,11 +188,11 @@ class ApporteurController extends Controller
 
     public function getNameApporteur($id_apporteur)
     {
-        $names = Apporteur::select('nom_apporteur')->where('id_apporteur',$id_apporteur)->first();
+        $names = Apporteur::select('nom_apporteur')->where('id_apporteur', $id_apporteur)->first();
         return response()->json($names);
     }
 
-    public function getBrancheDiffApporteur(Request $request,$id_apporteur)
+    public function getBrancheDiffApporteur(Request $request, $id_apporteur)
     {
         // Branche de l'entreprise
         $getbranches = Branche::pluck('id_branche')->toArray();
@@ -188,29 +211,61 @@ class ApporteurController extends Controller
     {
         $data = $request->all();
 
-        $data = $request->all();
-        // Insertion dans la bdd
-        $Data = $this->apporteur->postTauxApporteur($data);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Taux apporteur ajouté avec succès',
-            'compagnie' => $Data
-        ], Response::HTTP_OK);
+        $leads = $data['accidents'];  // valeur
+        $firsts = $data['ids']; // id
+
+        $array = array_combine($firsts, $leads);
+
+        foreach ($array as $key => $value) {
+            $apporteurs = new TauxApporteur();
+            $apporteurs->taux = $value;
+            $apporteurs->id_branche = $key;
+            $apporteurs->id_apporteur = $data['id'];
+            $apporteurs->save();
+        }
+
+        if($apporteurs){
+            $apporteurs = TauxApporteur::join("branches", 'taux_apporteurs.id_branche', '=', 'branches.id_branche')
+            ->where('taux_apporteurs.id_apporteur', $data['id'])->get();
+
+            return response()->json($apporteurs);
+        }
+
+      
+
+        // Insertion dans la bdd
+        // $Data = $this->apporteur->postTauxApporteur($data);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'Taux apporteur ajouté avec succès',
+        //     'compagnie' => $Data
+        // ], Response::HTTP_OK);
     }
 
     public function updateTauxApporteur(Request $request)
     {
         $data = $request->all();
 
-        // Insertion dans la bdd
-        $Data = $this->apporteur->updateTauxApporteur($data);
+        $id_tauxapp = $data['id_tauxapp'];
+        $taux = $data['taux'];
+        $apporteurs = TauxApporteur::where('id_tauxapp', $id_tauxapp)->update(['taux' => $taux]);
+        if ($apporteurs) {
+            $apporteurs = TauxApporteur::join("branches", 'taux_apporteurs.id_branche', '=', 'branches.id_branche')
+                ->where('taux_apporteurs.id_apporteur', $data['id'])->get();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Taux compagnie modifié avec succès',
-            'compagnie' => $Data
-        ], Response::HTTP_OK);
+            return $apporteurs;
+        }
+
+        // Insertion dans la bdd
+        // $Data = $this->apporteur->updateTauxApporteur($data);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'Taux compagnie modifié avec succès',
+        //     'compagnie' => $Data
+        // ], Response::HTTP_OK);
     }
 
     public function getApporteur()
@@ -219,7 +274,4 @@ class ApporteurController extends Controller
 
         return response()->json($apporteurs);
     }
-
-    
 }
-

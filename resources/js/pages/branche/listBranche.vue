@@ -115,7 +115,7 @@ export default {
   methods: {
     getBranches: function () {
       getBranchesList().then((result) => {
-        console.log(result);
+        // console.log(result);
         this.branches = result;
       });
     },

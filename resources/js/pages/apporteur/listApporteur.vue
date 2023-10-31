@@ -79,8 +79,8 @@
                 </tbody>
               </table>
             </div>
-            <editApporteur v-bind:apporteurtoedit="apporteurtoedit"></editApporteur>
-            <deleteApporteur v-bind:apporteurtoedit="apporteurtoedit"></deleteApporteur>
+            <editApporteur v-bind:apporteurtoedit="apporteurtoedit" @apporteur-updated="refresh"></editApporteur>
+            <deleteApporteur v-bind:apporteurtoedit="apporteurtoedit" @apporteur-delete="refresh"></deleteApporteur>
           </div>
         </div>
       </div>
@@ -137,6 +137,10 @@ export default {
         .then((response) => (this.apporteurs = response.data))
         .catch((error) => console.log(error));
     },
+
+    refresh(apporteurs){
+      this.apporteurs = apporteurs.data;
+    }
   },
 };
 </script>

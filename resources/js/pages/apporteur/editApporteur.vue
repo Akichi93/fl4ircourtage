@@ -9,7 +9,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <form>
+          <input type="hidden" class="form-control" v-model="apporteurtoedit.id_apporteur" />
             <div class="row">
               <div class="col-sm-12">
                 <div class="form-group">
@@ -34,11 +34,7 @@
               <div class="col-sm-12">
                 <div class="form-group">
                   <label>Ville</label>
-                  <Multiselect :custom-label="({ id_localisation, nom_ville }) =>
-                    `${id_localisation} - [${nom_ville}]`
-                    " valueProp="nom_ville" placeholder="Selectionnez zone" label="nom_ville" track-by="nom_ville"
-                    :searchable="true">
-                  </Multiselect>
+                  <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="apporteurtoedit.adresse_apporteur"></adressecomponent>
                 </div>
               </div>
             </div>
@@ -59,16 +55,21 @@
                 Modifier
               </button>
             </div>
-          </form>
+        
         </div>
       </div>
     </div>
   </div>
 </template> 
 <script>
+
+import adressecomponent from "../../components/select/adressecomponent.vue";
 export default {
   props: ['apporteurtoedit'],
   name: "editapporteur",
+  components: {
+    adressecomponent,
+  },
   data() {
     return {
       branches: {},
@@ -76,12 +77,12 @@ export default {
   },
   methods: {
     apporteurUpdate() {
-      axios.patch("/api/auth/updateBranche/" + this.apporteurtoedit.id_branche, {
-        nom_apporteur: this.apporteurstoedit.nom_apporteur,
-        email_apporteur: this.apporteurstoedit.email_apporteur,
-        contact_apporteur: this.apporteurstoedit.contact_apporteur,
-        adresse_apporteur: this.apporteurstoedit.adresse_apporteur,
-        code_postal: this.apporteurstoedit.code_postal,
+      axios.patch("/api/auth/updateApporteur/" + this.apporteurtoedit.id_apporteur, {
+        nom_apporteur: this.apporteurtoedit.nom_apporteur,
+        email_apporteur: this.apporteurtoedit.email_apporteur,
+        contact_apporteur: this.apporteurtoedit.contact_apporteur,
+        adresse_apporteur: this.apporteurtoedit.adresse_apporteur,
+        code_postal: this.apporteurtoedit.code_postal,
       })
         .then((response) => {
           this.$emit('apporteur-updated', response)

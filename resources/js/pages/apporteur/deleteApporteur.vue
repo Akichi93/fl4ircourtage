@@ -14,7 +14,7 @@
                   href="javascript:void(0);"
                   class="btn btn-primary continue-btn"
                   data-bs-dismiss="modal"
-                  
+                  @click.prevent="apporteurDelete"
                   >supprimer</a
                 >
               </div>
@@ -37,22 +37,13 @@
 <script>
 export default {
   props: ["apporteurtoedit"],
-
-  name: "deletebranche",
-  data() {
-    return {
-      branches: {},
-    };
-  },
+  name: "deleteApporteur",
   methods: {
-    brancheDelete() {
+    apporteurDelete() {
       axios
-      .patch("/deleteApporteur/" + this.apporteurtoedit.id_apporteur)
-        .patch("/api/auth/deleteBranche/" + this.branchetoedit.id_branche, {
-          nom_branche: this.branchetoedit.nom_branche,
-        })
+      .patch("/api/auth/deleteApporteur/" + this.apporteurtoedit.id_apporteur)
         .then((response) => {
-          this.$emit("task-delete", response);
+          this.$emit("apporteur-delete", response);
         })
         .catch((error) => {
           console.log(error);
