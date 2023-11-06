@@ -114,7 +114,7 @@
                             <div class="card-header">
                                 <div class="text-center w-100 p-3">
                                     <h2>
-                                        <router-link to="/">Clients</router-link></h2>
+                                        <router-link to="/listclient">Clients</router-link></h2>
                                     <h2 class="bl-text mb-1">Ce module permet l'ajoût des clients</h2>
                                 </div>
                             </div>

@@ -16,6 +16,8 @@ import createcompagnie from "../js/pages/compagnie/createCompagnie";
 import tauxcompagnie from "../js/pages/compagnie/tauxcompagnie";
 import listprospect from "../js/pages/prospect/listProspect";
 import createprospect from "../js/pages/prospect/createProspect";
+import detailsprospect from "../js/pages/prospect/detailsProspect";
+import listclient from "../js/pages/clients/listclient";
 
 import User from '../js/utils/helpers/User';
 window.User = User
@@ -35,7 +37,9 @@ createApp({
         createcompagnie,
         tauxcompagnie,
         listprospect,
-        createprospect
+        createprospect,
+        detailsprospect,
+        listclient
       
     }
 }).use(router)

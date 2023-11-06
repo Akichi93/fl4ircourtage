@@ -7,6 +7,7 @@ use App\Http\Controllers\FormController;
 use App\Http\Controllers\BrancheController;
 use App\Http\Controllers\ProspectController;
 use App\Http\Controllers\ApporteurController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CompagnieController;
 use App\Http\Controllers\ProspectsController;
 
@@ -117,35 +118,100 @@ Route::group([
         Route::patch('deleteProspect/{id_prospect}',  'deleteProspect');
         Route::patch('etatProspect/{id_prospect}',  'etatProspect');
         Route::patch('updateProspect/{id_prospect}',  'updateProspect'); // Update d'une compagnie
-        Route::get('getBrancheDiffProspect',  'getBrancheDiffProspect'); // Obtenir branche
+        Route::get('getBrancheDiffProspect/{id_prospect}',  'getBrancheDiffProspect'); // Obtenir branche
         Route::post('postBrancheProspect',  'postBrancheProspect');
         Route::get('getNameProspect',  'getNameProspect'); // Obtenir le nom de l'apporteur choisi
         Route::get('getBrancheProspect',  'getBrancheProspect');
     });
 
 
-    // Route::get('prospectList/{q?}', [ProspectController::class, 'prospectList']);
-    // Route::post('postProspect', [ProspectController::class, 'postProspect']); // Ajouter un contrat
-    // Route::get('editProspect/{id_prospect}', [ProspectController::class, 'editProspect']);
-    // Route::post('validateProspect', [ProspectController::class, 'validateProspect']);
-    // Route::patch('deleteProspect/{id_prospect}', [ProspectController::class, 'deleteProspect']);
-    // Route::patch('etatProspect/{id_prospect}', [ProspectController::class, 'etatProspect']);
-    // Route::patch('updateProspect/{id_prospect}', [ProspectController::class, 'updateProspect']); // Update d'une compagnie
-    // Route::get('getBrancheDiffProspect', [ProspectController::class, 'getBrancheDiffProspect']); // Obtenir branche
-    // Route::post('postBrancheProspect', [ProspectController::class, 'postBrancheProspect']);
-    // Route::get('getNameProspect', [ProspectController::class, 'getNameProspect']); // Obtenir le nom de l'apporteur choisi
-    // Route::get('getBrancheProspect', [ProspectController::class, 'getBrancheProspect']);
-
     //  // Client
-    //  Route::get('/clientList/{q?}', [ClientController::class, 'clientList']);
-    //  Route::post('postClient', [ClientController::class, 'postClient']); // Ajouter un apporteur
-    //  Route::get('editClient/{id_client}', [ClientController::class, 'editClient']);
-    //  Route::patch('updateClient/{id_client}', [ClientController::class, 'updateClient']);
-    //  Route::get('getClient', [ClientController::class, 'getClient']);
-    //  Route::get('editRelance/{id_relance}', [ClientController::class, 'editRelance']);
-    //  Route::get('getRelance', [ClientController::class, 'getRelance']);
-    //  Route::get('getOneExpiration', [ClientController::class, 'getOneExpiration']);
-    //  Route::get('getTwoExpiration', [ClientController::class, 'getTwoExpiration']);
+    Route::controller(ClientController::class)->group(function () {
+        Route::get('/clientList/{q?}', 'clientList');
+        Route::post('postClient', 'postClient'); // Ajouter un apporteur
+        Route::get('editClient/{id_client}', 'editClient');
+        Route::patch('updateClient/{id_client}', 'updateClient');
+        Route::get('getClient', 'getClient');
+        Route::get('editRelance/{id_relance}', 'editRelance');
+        Route::get('getRelance', 'getRelance');
+        Route::get('getOneExpiration', 'getOneExpiration');
+        Route::get('getTwoExpiration', 'getTwoExpiration');
+    });
 
 
+     // Sinistres
+    //  Route::get('get-polices', [SinistreController::class, 'getPolices']);
+    //  Route::get('get/police/{id}', [SinistreController::class, 'getPolice']);
+    //  Route::post('add/sinistre', [SinistreController::class, 'addSinistre']);
+    //  Route::put('update/sinistre/{id}', [SinistreController::class, 'updateSinistre']);
+    //  Route::get('get/sinistres/{q?}', [SinistreController::class, 'getSinistres']);
+    //  Route::get('get/sinistre', [SinistreController::class, 'getSinistre']);
+    //  Route::get('get/apporteur', [SinistreController::class, 'getApporteur']);
+    //  Route::get('get/reglements', [SinistreController::class, 'getReglements']);
+    //  Route::get('get/reglement', [SinistreController::class, 'getReglement']);
+    //  Route::post('add/piece', [SinistreController::class, 'addPiece']);
+    //  Route::put('update-sinistre-status/{id}', [SinistreController::class, 'updateSinistreStatus']);
+    //  Route::post('add/reglement', [SinistreController::class, 'addReglement']);
+    //  Route::put('change/reglement/{id}', [SinistreController::class, 'changeReglement']);
+    //  Route::get('get/expires', [HomeController::class, 'getexpires'])->name('contrats/getexpires');
+    //  Route::get('get/nonsoldes', [HomeController::class, 'getnonsoldes']);
+    //  Route::get('get/soldes', [HomeController::class, 'getsoldes']);
+    //  Route::get('get/nonreverses', [HomeController::class, 'getnonreverses']);
+    //  Route::post('searchexpires', [HomeController::class, 'searchexpires']);
+    //  Route::post('searchnonsolde', [HomeController::class, 'searchnonsolde']);
+    //  Route::post('searchsolde', [HomeController::class, 'searchsolde']);
+    //  Route::post('searchnonreverses', [HomeController::class, 'searchnonreverses']);
+    //  Route::patch('sinistres/supprime/{id_sinistre}', [SinistreController::class, 'supprime']);
+    //  Route::get('sinistres/edit/{id_sinistre}', [SinistreController::class, 'edit']);
+
+        // Entreprise
+        // Route::resource('entreprises', EntrepriseController::class);
+        // Route::get('entreprises/edit/{id_entreprise}', [EntrepriseController::class, 'edit']);
+    
+        // //  Roles
+        // Route::resource('roles', RoleController::class);
+    
+        // // Contrats
+        // // Route::get('file/avenants/{id_avenant}', [ContratController::class, 'fileAvenant']);
+        // // Route::post('contrats/auto', [ContratController::class, 'auto']);
+        // // Route::get('get/automobiles', [ContratController::class, 'infoAutos']);
+        // // Route::post('edit/automobile', [ContratController::class, 'editAutomobile']);
+        // // Route::get('get/autos', [ContratController::class, 'getAutos']);
+    
+        // Route::get('/contratList/{q?}', [ContratController::class, 'contratList']);
+        // Route::get('editContrat/{id_contrat}', [ContratController::class, 'editContrat']);
+        // Route::post('postContrat', [ContratController::class, 'postContrat']); // Ajouter un contrat
+        // Route::patch('deleteContrat/{id_contrat}', [ContratController::class, 'deleteContrat']);
+        // Route::post('soldeContrat', [ContratController::class, 'soldeContrat']);
+        // Route::post('soldeAvenant', [ContratController::class, 'soldeAvenant']);
+        // Route::post('reverseContrat', [ContratController::class, 'reverseContrat']);
+        // Route::post('reverseAvenant', [ContratController::class, 'reverseAvenant']);
+        // Route::get('getAvenantContrat', [ContratController::class, 'getAvenantContrat']); // Obtenir les avenants d'un contrat
+        // Route::get('getInfoAvenant', [ContratController::class, 'getInfoAvenant']); // 
+        // Route::get('editAvenant/{id_avenant}', [ContratController::class, 'editAvenant']);
+        // Route::patch('deleteAvenant/{id_avenant}', [ContratController::class, 'deleteAvenant']);
+        // Route::post('postAvenant', [ContratController::class, 'postAvenant']); // Ajouter un avenant
+        // Route::post('postFileAvenant', [ContratController::class, 'postFileAvenant']);
+        // Route::get('getFileAvenant/{id_avenant}', [ContratController::class, 'getFileAvenant']);
+        // Route::get('getInfoAvenantContrat', [ContratController::class, 'getInfoAvenantContrat']);
+        // Route::get('getInfoContrat', [ContratController::class, 'getInfoContrat']);
+        // Route::get('getCountsinistre', [ContratController::class, 'getCountsinistre']);
+        // Route::get('getInfosinistres', [ContratController::class, 'getInfosinistres']);
+        // Route::get('getInfoFileContrat', [ContratController::class, 'getInfoFileContrat']);
+        // Route::get('getInfoFileSinistre', [ContratController::class, 'getInfoFileSinistre']);
+        // Route::get('getInfoVehicules', [ContratController::class, 'getInfoVehicules']);
+        // Route::post('postAutomobile', [ContratController::class, 'postAutomobile']);
+        // Route::post('postGarantie', [ContratController::class, 'postGarantie']);
+        // Route::get('getFileViewAvenant/{id_avenant}', [ContratController::class, 'getFileViewAvenant']);
+        // Route::get('getTauxBrancheCompagnie', [ContratController::class, 'getTauxBrancheCompagnie']);
+        // Route::get('getTauxBrancheApporteur', [ContratController::class, 'getTauxBrancheApporteur']);
+        // Route::get('getViewContrat', [ContratController::class, 'getViewContrat']);
+        // Route::patch('updateContrat/{id_contrat}', [ContratController::class, 'updateContrat']); // Update d'une compagnie
+        // Route::get('getFactures/{id_avenant}', [ContratController::class, 'getFactures']);
+    
+        // // Users
+        // Route::resource('utilisateurs', UtilisateurController::class);
+        // Route::get('utilisateurs/edit/{id}', [UtilisateurController::class, 'edit']);
+        // Route::get('get/logs', [UtilisateurController::class, 'getLogs']);
+        // Route::get('getrole', [UtilisateurController::class, 'getRole']);
 });

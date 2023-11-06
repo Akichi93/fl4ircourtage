@@ -13,6 +13,8 @@ import createcompagnie from "../pages/compagnie/createCompagnie";
 import tauxcompagnie from "../pages/compagnie/tauxcompagnie";
 import listprospect from "../pages/prospect/listProspect";
 import createprospect from "../pages/prospect/createProspect";
+import detailsprospect from "../pages/prospect/detailsProspect";
+import listclient from "../pages/clients/listclient";
 const routes = [
   {
     path: '/',
@@ -85,6 +87,17 @@ const routes = [
     path: '/createprospect',
     name: 'createprospect',
     component: createprospect
+  },
+  {
+    path: '/detailsprospect/:id_prospect',
+    name: 'detailsprospect',
+    component: detailsprospect,
+    props: true
+  },
+  {
+    path: '/listclient',
+    name: 'listclient',
+    component: listclient
   },
 ];
 

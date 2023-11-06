@@ -86,8 +86,8 @@ class ClientController extends Controller
             $client->profession_client = $request->profession_client;
             $client->fax_client = $request->fax_client;
             $client->email_client = $request->email_client;
-            $client->id_entreprise = Auth::user()->id_entreprise;
-            $client->user_id = Auth::user()->id;
+            $client->id_entreprise = $request->id_entreprise;
+            $client->user_id = $request->id;
             $client->save();
 
             return ['message' => 'Insertion avec succes'];
