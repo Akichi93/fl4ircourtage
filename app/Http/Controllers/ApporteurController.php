@@ -192,7 +192,7 @@ class ApporteurController extends Controller
         return response()->json($names);
     }
 
-    public function getBrancheDiffApporteur(Request $request, $id_apporteur)
+    public function getBrancheDiffApporteur($id_apporteur)
     {
         // Branche de l'entreprise
         $getbranches = Branche::pluck('id_branche')->toArray();

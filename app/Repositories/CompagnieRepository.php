@@ -32,7 +32,7 @@ class CompagnieRepository extends BaseRepository
     {
         // try {
         $compagnie = $data['nom_compagnie'];
-        if (Compagnie::where('nom_compagnie', '=', $compagnie)->where('id_entreprise', Auth::user()->id_entreprise)->count() > 0) {
+        if (Compagnie::where('nom_compagnie', '=', $compagnie)->count() > 0) {
             return response()->json(['message' => 'Apporteur existant'], 422);
         } else {
             $length = 12;
@@ -45,8 +45,9 @@ class CompagnieRepository extends BaseRepository
             $compagnies->email_compagnie = $data['email_compagnie'];
             $compagnies->adresse_compagnie = $data['adresse_compagnie'];
             $compagnies->code_compagnie = $token;
-            $compagnies->id_entreprise =  Auth::user()->id_entreprise;
-            $compagnies->user_id =  Auth::user()->id;
+            $compagnies->id_entreprise =   $data['id_entreprise'];
+            $compagnies->id_entreprise =  1;
+            $compagnies->user_id =  $data['id'];
             $compagnies->save();
 
             $id = $compagnies['id_compagnie'];
@@ -79,6 +80,11 @@ class CompagnieRepository extends BaseRepository
         $compagnies->save();
 
         return $compagnies;
+    }
+
+    public function editTauxCompagnie($id_tauxcomp)
+    {
+        return TauxCompagnie::where('id_tauxcomp', $id_tauxcomp)->first();
     }
 
 

@@ -28,20 +28,10 @@
             <div class="col-lg-12 col-md-12 col-sm-12 line-tabs">
               <ul class="nav nav-tabs nav-tabs-bottom pt-3 pb-2">
                 <li class="nav-item">
-                  <a
-                    href="#emp_profile"
-                    data-bs-toggle="tab"
-                    class="nav-link active"
-                    >Général</a
-                  >
+                  <a href="#emp_profile" data-bs-toggle="tab" class="nav-link active">Général</a>
                 </li>
                 <li class="nav-item">
-                  <a
-                    href="#bank_statutory"
-                    data-bs-toggle="tab"
-                    class="nav-link"
-                    >Taux</a
-                  >
+                  <a href="#bank_statutory" data-bs-toggle="tab" class="nav-link">Taux</a>
                 </li>
               </ul>
             </div>
@@ -61,24 +51,15 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Nom de la compagnie</label>
-                            <inputText
-                              :placeholder="'Entrez le nom de la compagnie'"
-                              v-model="nom_compagnie"
-                            ></inputText>
+                            <inputText :placeholder="'Entrez le nom de la compagnie'" v-model="nom_compagnie"></inputText>
 
-                            <p
-                              style="color: red"
-                              class="text-red"
-                              v-if="errors.nom_compagnie"
-                              v-text="errors.nom_compagnie[0]"
-                            ></p>
+                            <p style="color: red" class="text-red" v-if="errors.nom_compagnie"
+                              v-text="errors.nom_compagnie[0]"></p>
                           </div>
                           <div class="form-group">
                             <label>Contact</label>
-                            <inputText
-                              :placeholder="'Entrez le contact de la compagnie'"
-                              v-model="contact_compagnie"
-                            ></inputText>
+                            <inputText :placeholder="'Entrez le contact de la compagnie'" v-model="contact_compagnie">
+                            </inputText>
                           </div>
                         </div>
                         <div class="col-md-6">
@@ -86,10 +67,8 @@
                             <div class="col-md-12">
                               <div class="form-group">
                                 <label>Email</label>
-                                <inputText
-                                  :placeholder="'Entrez l\'email de la compagnie'"
-                                  v-model="email_compagnie"
-                                ></inputText>
+                                <inputText :placeholder="'Entrez l\'email de la compagnie'" v-model="email_compagnie">
+                                </inputText>
                               </div>
                             </div>
                           </div>
@@ -98,25 +77,15 @@
                             <div class="col-md-9 adresse">
                               <div class="form-group">
                                 <label>Adresse</label>
-                                <adressecomponent
-                                  :placeholder="'selectionnez l\'adresse'"
-                                  v-model="adresse_apporteur"
-                                ></adressecomponent>
-                                <p
-                                  style="color: red"
-                                  class="text-red"
-                                  v-if="errors.adresse_compagnie"
-                                  v-text="errors.adresse_compagnie[0]"
-                                ></p>
+                                <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="adresse_compagnie">
+</adressecomponent>
+                                <p style="color: red" class="text-red" v-if="errors.adresse_compagnie"
+                                  v-text="errors.adresse_compagnie[0]"></p>
                               </div>
                             </div>
                             <div class="col-md-3 ajout">
                               <div class="form-group">
-                                <button
-                                  type="button"
-                                  style="margin-top: 25px"
-                                  class="btn btn-primary"
-                                >
+                                <button type="button" style="margin-top: 25px" class="btn btn-primary">
                                   Ajouter
                                 </button>
                               </div>
@@ -124,22 +93,14 @@
                             <div class="col-md-4 form1" style="display: none">
                               <div>
                                 <label>Adresse</label>
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  placeholder="Entrez une nouvelle adresse"
-                                  v-model="ajout_adresse"
-                                />
+                                <input type="text" class="form-control" placeholder="Entrez une nouvelle adresse"
+                                  v-model="ajout_adresse" />
                               </div>
                             </div>
                             <div class="col-md-2 form2" style="display: none">
                               <div>
-                                <button
-                                  type="button"
-                                  class="btn btn-primary"
-                                  style="margin-top: 25px"
-                                  @click="storeAdresse"
-                                >
+                                <button type="button" class="btn btn-primary" style="margin-top: 25px"
+                                  @click="storeAdresse">
                                   Ajouter
                                 </button>
                               </div>
@@ -160,29 +121,16 @@
                 <h3 class="card-title">Taux</h3>
                 <form>
                   <div class="row">
-                    <div
-                      class="col-md-6"
-                      v-for="branche in branches"
-                      :key="branche.id_branche"
-                    >
+                    <div class="col-md-6" v-for="branche in branches" :key="branche.id_branche">
                       <div class="form-group">
                         <label>{{ branche.nom_branche }}</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          placeholder="Entrez le taux"
-                          :key="branche.id_branche"
-                          v-model="branche.value"
-                        />
+                        <input type="text" class="form-control" placeholder="Entrez le taux" :key="branche.id_branche"
+                          v-model="branche.value" />
                       </div>
                     </div>
                   </div>
                   <div class="submit-section">
-                    <button
-                      class="btn btn-primary submit-btn"
-                      type="button"
-                      @click="storeCompagnie"
-                    >
+                    <button class="btn btn-primary submit-btn" type="button" @click="storeCompagnie">
                       Enregistrer
                     </button>
                   </div>
@@ -235,6 +183,11 @@ export default {
   },
   methods: {
     storeCompagnie() {
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("id");
+      const entrepriseId = localStorage.getItem("entreprise");
+
+
       let test = JSON.parse(JSON.stringify(this.branches));
       let donnees = [];
 
@@ -249,13 +202,15 @@ export default {
         datas.push(testing[i]["id_branche"]);
       }
       axios
-        .post("/postCompagnie", {
+        .post("/api/auth/postCompagnie", {
           nom_compagnie: this.nom_compagnie,
           contact_compagnie: this.contact_compagnie,
           email_compagnie: this.email_compagnie,
           adresse_compagnie: this.adresse_compagnie,
           accidents: donnees,
           ids: datas,
+          id_entreprise: entrepriseId,
+          id: userId,
         })
         .then((response) => {
           // if (response.status === 200) {
@@ -264,7 +219,7 @@ export default {
           });
           this.contrats = response.data;
           // }
-          window.location.href = "/compagnie";
+          this.$router.push("/listcompagnie");
         })
         .catch((error) => {
           // console.log(error.response.headers);

@@ -126,14 +126,14 @@ export default {
 
     editApporteur(id_apporteur) {
       axios
-        .get("api/auth/editApporteur/" + id_apporteur)
+        .get("/api/auth/editApporteur/" + id_apporteur)
         .then((response) => (this.apporteurtoedit = response.data))
         .catch((error) => console.log(error));
     },
 
     searchtask() {
       axios
-        .get("/apporteurList/" + this.q)
+        .get("/api/auth/apporteurList/" + this.q)
         .then((response) => (this.apporteurs = response.data))
         .catch((error) => console.log(error));
     },

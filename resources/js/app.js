@@ -13,6 +13,9 @@ import createapporteur from "../js/pages/apporteur/createApporteur";
 import tauxapporteur from "../js/pages/apporteur/tauxapporteur";
 import listcompagnie from "../js/pages/compagnie/listCompagnie";
 import createcompagnie from "../js/pages/compagnie/createCompagnie";
+import tauxcompagnie from "../js/pages/compagnie/tauxcompagnie";
+import listprospect from "../js/pages/prospect/listProspect";
+import createprospect from "../js/pages/prospect/createProspect";
 
 import User from '../js/utils/helpers/User';
 window.User = User
@@ -29,7 +32,10 @@ createApp({
         createapporteur,
         tauxapporteur,
         listcompagnie,
-        createcompagnie
+        createcompagnie,
+        tauxcompagnie,
+        listprospect,
+        createprospect
       
     }
 }).use(router)

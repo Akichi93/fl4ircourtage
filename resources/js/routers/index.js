@@ -10,6 +10,9 @@ import createapporteur from "../pages/apporteur/createApporteur";
 import tauxapporteur from "../pages/apporteur/tauxapporteur";
 import listcompagnie from "../pages/compagnie/listCompagnie";
 import createcompagnie from "../pages/compagnie/createCompagnie";
+import tauxcompagnie from "../pages/compagnie/tauxcompagnie";
+import listprospect from "../pages/prospect/listProspect";
+import createprospect from "../pages/prospect/createProspect";
 const routes = [
   {
     path: '/',
@@ -56,17 +59,33 @@ const routes = [
     name: 'tauxapporteur',
     component: tauxapporteur,
     props: true
-},
-{
-  path: '/listcompagnie',
-  name: 'listcompagnie',
-  component: listcompagnie
-},
-{
-  path: '/createcompagnie',
-  name: 'createcompagnie',
-  component: createcompagnie
-},
+  },
+  {
+    path: '/listcompagnie',
+    name: 'listcompagnie',
+    component: listcompagnie
+  },
+  {
+    path: '/createcompagnie',
+    name: 'createcompagnie',
+    component: createcompagnie
+  },
+  {
+    path: '/tauxcompagnie/:id_compagnie',
+    name: 'tauxcompagnie',
+    component: tauxcompagnie,
+    props: true
+  },
+  {
+    path: '/listprospect',
+    name: 'listprospect',
+    component: listprospect
+  },
+  {
+    path: '/createprospect',
+    name: 'createprospect',
+    component: createprospect
+  },
 ];
 
 

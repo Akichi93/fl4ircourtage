@@ -1,5 +1,5 @@
 <template>
-    <div id="edit_department" class="modal custom-modal fade" role="dialog">
+    <div id="edit_compagnie" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -22,7 +22,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    v-model="compagniestoedit.nom_compagnie"
+                    v-model="compagnietoedit.nom_compagnie"
                   />
                 </div>
               </div>
@@ -32,7 +32,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    v-model="compagniestoedit.email_compagnie"
+                    v-model="compagnietoedit.email_compagnie"
                   />
                 </div>
               </div>
@@ -44,27 +44,14 @@
                   <input
                     type="text"
                     class="form-control"
-                    v-model="compagniestoedit.contact_compagnie"
+                    v-model="compagnietoedit.contact_compagnie"
                   />
                 </div>
               </div>
               <div class="col-sm-12">
                 <div class="form-group">
                   <label>Ville</label>
-                  <Multiselect
-                    v-model="compagniestoedit.adresse_compagnie"
-                    :options="localisations"
-                    :custom-label="
-                      ({ id_localisation, nom_ville }) =>
-                        `${id_localisation} - [${nom_ville}]`
-                    "
-                    valueProp="nom_ville"
-                    placeholder="Selectionnez zone"
-                    label="nom_ville"
-                    track-by="nom_ville"
-                    :searchable="true"
-                  >
-                  </Multiselect>
+                  <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="compagnietoedit.adresse_apporteur"></adressecomponent>
                 </div>
               </div>
             </div>
@@ -81,7 +68,7 @@
                 class="btn btn-primary submit-btn"
                 type="button"
                 data-bs-dismiss="modal"
-            
+                @click.prevent="compagnieUpdate"
               >
                 Modifier
               </button>
@@ -93,7 +80,31 @@
   </div>
 </template>
 <script>
-export default{
-    props: [compagniestoedit]
+
+import adressecomponent from "../../components/select/adressecomponent.vue";
+export default {
+  props: ['compagnietoedit'],
+  name: "editcompagnie",
+  components: {
+    adressecomponent,
+  },
+  methods: {
+    compagnieUpdate() {
+      axios.patch("/api/auth/updateCompagnie/" + this.compagnietoedit.id_compagnie, {
+        nom_compagnie: this.compagnietoedit.nom_compagnie,
+        email_compagnie: this.compagnietoedit.email_compagnie,
+        contact_compagnie: this.compagnietoedit.contact_compagnie,
+        adresse_compagnie: this.compagnietoedit.adresse_compagnie,
+      })
+        .then((response) => {
+          this.$emit('compagnie-updated', response)
+        })
+        .catch((error) => {
+          console.log(error)
+        });
+    }
+  },
 }
 </script>
+
+

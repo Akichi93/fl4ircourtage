@@ -19,7 +19,7 @@ class CompagnieController extends Controller
     {
         $this->compagnie = $compagnie;
     }
-    
+
 
     /*
       |----------------------------------------------------
@@ -33,18 +33,19 @@ class CompagnieController extends Controller
      */
     public function compagnieList(Request $request)
     {
+
         $data = strlen($request->q);
         if ($data > 0) {
             $compagnies['data'] = Compagnie::where('nom_compagnie', 'like', '%' . request('q') . '%')
-                ->where('id_entreprise', Auth::user()->id_entreprise)
+                ->where('id_entreprise', auth()->user()->id_entreprise)
                 ->where('supprimer_compagnie', '=', '0')
                 ->orWhere('adresse_compagnie', 'like', '%' . request('q') . '%')
                 ->orWhere('code_compagnie', 'like', '%' . request('q') . '%')
                 ->get();
             return response()->json($compagnies);
         } else {
-            $compagnies = Compagnie::where('id_entreprise', Auth::user()->id_entreprise)
-                ->where('supprimer_compagnie', '=', '0')->latest()->paginate(10);
+            $compagnies = Compagnie::where('id_entreprise', auth()->user()->id_entreprise)
+                ->where('supprimer_compagnie', '=', '0')->latest()->get();
             return response()->json($compagnies);
         }
     }
@@ -86,50 +87,73 @@ class CompagnieController extends Controller
 
     public function deleteCompagnie(int $id_compagnie)
     {
-        $Data = $this->compagnie->deleteCompagnie($id_compagnie);
+        $compagnies = Compagnie::find($id_compagnie);
+        $compagnies->supprimer_compagnie = 1;
+        $compagnies->save();
 
-        return response()->json([
-            'success' => true,
-            'data' => $Data
-        ], Response::HTTP_OK);
+        if ($compagnies) {
+            $compagnies = Compagnie::where('supprimer_compagnie', '=', '0')->latest()->get();
+
+            return response()->json($compagnies);
+        }
+        // $Data = $this->compagnie->deleteCompagnie($id_compagnie);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'data' => $Data
+        // ], Response::HTTP_OK);
     }
 
     public function updateCompagnie(int $id_compagnie)
     {
-        $Data = $this->compagnie->updateCompagnie($id_compagnie);
+        $compagnies = Compagnie::find($id_compagnie);
+        $compagnies->nom_compagnie = request('nom_compagnie');
+        $compagnies->email_compagnie = request('email_compagnie');
+        $compagnies->contact_compagnie = request('contact_compagnie');
+        $compagnies->adresse_compagnie = request('adresse_compagnie');
+        $compagnies->save();
 
-        return response()->json([
-            'success' => true,
-            'data' => $Data
-        ], Response::HTTP_OK);
+        if ($compagnies) {
+            $compagnies = Compagnie::where('supprimer_compagnie', '=', '0')->latest()->get();
+
+            return response()->json($compagnies);
+        }
+
+        // $Data = $this->compagnie->updateCompagnie($id_compagnie);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'data' => $Data
+        // ], Response::HTTP_OK);
     }
 
-    public function getTauxCompagnie(Request $request)
+    public function getTauxCompagnie($id_compagnie)
     {
         $compagnies = TauxCompagnie::join("branches", 'taux_compagnies.id_branche', '=', 'branches.id_branche')
-            ->where('taux_compagnies.id_compagnie', $request->compagnie)->get();
+            ->where('taux_compagnies.id_compagnie', $id_compagnie)->get();
         return response()->json($compagnies);
     }
 
-    public function getNameCompagnie(Request $request)
+    public function getNameCompagnie($id_compagnie)
     {
-        $names = Compagnie::select('nom_compagnie')->where('id_compagnie', $request->compagnie)->first();
+        $names = Compagnie::select('nom_compagnie')->where('id_compagnie', $id_compagnie)->first();
         return response()->json($names);
     }
 
-    public function editTauxCompagnie(Request $request, $id_tauxcomp)
+    public function editTauxCompagnie($id_tauxcomp)
     {
-        $compagnies = TauxCompagnie::findOrFail($id_tauxcomp);
+        $compagnies = $this->compagnie->editTauxCompagnie($id_tauxcomp);
+
         return response()->json($compagnies);
     }
 
-    public function getBrancheDiffCompagnie(Request $request)
+    public function getBrancheDiffCompagnie($id_compagnie)
     {
         // Branche de l'entreprise
-        $getbranches = Branche::where('id_entreprise', Auth::user()->id_entreprise)->pluck('id_branche')->toArray();
+        $getbranches = Branche::pluck('id_branche')->toArray();
 
         $result = TauxCompagnie::join("branches", 'taux_compagnies.id_branche', '=', 'branches.id_branche')
-            ->where('taux_compagnies.id_compagnie', $request->compagnie)->pluck('branches.id_branche')->toArray();
+            ->where('taux_compagnies.id_compagnie', $id_compagnie)->pluck('branches.id_branche')->toArray();
 
         $array = array_diff($getbranches, $result);
 
@@ -141,14 +165,38 @@ class CompagnieController extends Controller
     public function postTauxCompagnie(Request $request)
     {
         $data = $request->all();
-        // Insertion dans la bdd
-        $Data = $this->compagnie->postTauxCompagnie($data);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Taux compagnie ajouté avec succès',
-            'compagnie' => $Data
-        ], Response::HTTP_OK);
+        $id_compagnie = Compagnie::where('id_entreprise', Auth::user()->id_entreprise)
+            ->where('nom_compagnie', $data['name'])->pluck('id_compagnie')->first();
+
+        $leads = $data['accidents'];  // valeur
+        $firsts = $data['ids']; // id
+
+        $array = array_combine($firsts, $leads);
+
+        foreach ($array as $key => $value) {
+            $compagnies = new TauxCompagnie();
+            $compagnies->tauxcomp = $value;
+            $compagnies->id_branche = $key;
+            $compagnies->id_compagnie = $id_compagnie;
+            $compagnies->save();
+        }
+
+        if ($compagnies) {
+            $compagnies = TauxCompagnie::join("branches", 'taux_compagnies.id_branche', '=', 'branches.id_branche')
+                ->where('taux_compagnies.id_compagnie', $data['id'])->get();
+
+            return response()->json($compagnies);
+        }
+        // $data = $request->all();
+        // // Insertion dans la bdd
+        // $Data = $this->compagnie->postTauxCompagnie($data);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'Taux compagnie ajouté avec succès',
+        //     'compagnie' => $Data
+        // ], Response::HTTP_OK);
     }
 
     public function updateTauxCompagnie(Request $request)

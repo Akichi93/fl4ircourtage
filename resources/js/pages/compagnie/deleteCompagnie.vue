@@ -14,7 +14,7 @@
                   href="javascript:void(0);"
                   class="btn btn-primary continue-btn"
                   data-bs-dismiss="modal"
-                
+                  @click.prevent="compagnieDelete"
                   >supprimer</a
                 >
               </div>
@@ -33,3 +33,21 @@
     </div>
   </div>
 </template>
+<script>
+export default {
+  props: ["compagnietoedit"],
+  name: "deleteCompagnie",
+  methods: {
+    deleteCompagnie() {
+      axios
+      .patch("/api/auth/deleteCompagnie/" + this.compagnietoedit.id_compagnie)
+        .then((response) => {
+          this.$emit("compagnie-delete", response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+  },
+};
+</script>

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-export async function getCompagniesList(page = 1) {
+export async function getProspectsList(page = 1) {
 
     const token = localStorage.getItem("token");
 
@@ -11,7 +11,7 @@ export async function getCompagniesList(page = 1) {
         "x-access-token": token,
     };
 
-    const response = await axios.get("/api/auth/compagnieList?page=" + page, { headers })
+    const response = await axios.get("/api/auth/prospectList?page=" + page, { headers })
     return response.data;
 
 }

@@ -85,10 +85,12 @@
               v-bind:tauxapporteurtoedit="tauxapporteurtoedit"
               @taux-add="refresh"
             ></addtauxapporteur>
+
             <edittauxapporteur
               v-bind:tauxtoedit="tauxtoedit"
               @taux-update="refresh"
             ></edittauxapporteur>
+            
           </div>
         </div>
       </div>

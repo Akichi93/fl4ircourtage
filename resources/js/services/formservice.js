@@ -32,3 +32,18 @@ export async function getBrancheList() {
 
 }
 
+export async function getProfessionList() {
+
+    const token = localStorage.getItem("token");
+
+    // Configurez les en-têtes de la requête
+    const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+    };
+
+    const response = await axios.get("/api/auth/getProfessions", { headers })
+    return response.data;
+
+}
+

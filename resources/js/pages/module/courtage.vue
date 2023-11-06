@@ -65,7 +65,7 @@
                         <div class="card flex-fill tickets-card">
                             <div class="card-header">
                                 <div class="text-center w-100 p-3">
-                                    <h2> <router-link to="/listcompagnie">Compagnie</router-link></h2>
+                                    <h2><router-link to="/listcompagnie">Compagnie</router-link></h2>
                                     <h2 class="bl-text mb-1">Ce module permet l'ajoût des compagnies avec leurs taux</h2>
 
                                 </div>
@@ -102,7 +102,7 @@
                         <div class="card flex-fill tickets-card">
                             <div class="card-header">
                                 <div class="text-center w-100 p-3">
-                                    <h2><a href="/prospect">Prospects</a></h2>
+                                    <h2><router-link to="/listprospect">Prospects</router-link></h2>
                                     <h2 class="bl-text mb-1">Ce module permet l'ajoût des prospects</h2>
                                 </div>
                             </div>
@@ -113,7 +113,8 @@
                         <div class="card flex-fill tickets-card">
                             <div class="card-header">
                                 <div class="text-center w-100 p-3">
-                                    <h2><a href="/client">Clients</a></h2>
+                                    <h2>
+                                        <router-link to="/">Clients</router-link></h2>
                                     <h2 class="bl-text mb-1">Ce module permet l'ajoût des clients</h2>
                                 </div>
                             </div>
