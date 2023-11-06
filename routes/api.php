@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\ApporteurController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\BrancheController;
+use App\Http\Controllers\ApporteurController;
+use App\Http\Controllers\CompagnieController;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,4 +85,24 @@ Route::group([
         Route::post('updateTauxApporteur', 'updateTauxApporteur');
         Route::get('getApporteur', 'getApporteur'); // Obtenir les compagnies
     });
+
+    // Compagnies
+
+     // Apporteur
+     Route::controller(CompagnieController::class)->group(function () {
+        Route::get('/compagnieList/{q?}',  'compagnieList'); // la liste des compagnies
+        Route::post('postCompagnie',  'postCompagnie'); // Ajouter une compagnie
+        Route::get('editCompagnie/{id_apporteur}',  'editCompagnie'); // Recuperer les infos de la compagnie
+        Route::patch('deleteCompagnie/{id_apporteur}',  'deleteCompagnie'); // Supprimer une compagnie
+        Route::patch('updateCompagnie/{id_compagnie}',  'updateCompagnie'); // Update d'une compagnie
+        Route::get('getTauxCompagnie',  'getTauxCompagnie'); // Obtenir les taux d'une compagnie
+        Route::get('getNameCompagnie',  'getNameCompagnie'); // Obtenir le nom de la compagnie choisi
+        Route::get('editTauxCompagnie/{id_tauxapp}',  'editTauxCompagnie'); //Recuperer les infos d'un taux
+        Route::get('getBrancheDiffCompagnie',  'getBrancheDiffCompagnie'); // Obtenir branche
+        Route::post('postTauxCompagnie',  'postTauxCompagnie');
+        Route::post('updateTauxCompagnie',  'updateTauxCompagnie');
+        Route::get('getCompagnie',  'getCompagnie'); // Obtenir les compagnies
+
+     });
+    
 });

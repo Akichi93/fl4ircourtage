@@ -8,14 +8,14 @@
         <div class="row">
           <div class="col-md-12">
             <div class="page-head-box">
-              <h3>Création d'apporteur</h3>
+              <h3>Création de compagnie</h3>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
                     <a href="admin-dashboard.html">Tableau de bord</a>
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
-                    Apporteur
+                    Compagnies
                   </li>
                 </ol>
               </nav>
@@ -60,43 +60,25 @@
                       <div class="row">
                         <div class="col-md-6">
                           <div class="form-group">
-                            <label>Nom de l'apporteur</label>
+                            <label>Nom de la compagnie</label>
                             <inputText
-                              :placeholder="'Entrez le nom de l apporteur'"
-                              v-model="nom_apporteur"
+                              :placeholder="'Entrez le nom de la compagnie'"
+                              v-model="nom_compagnie"
                             ></inputText>
+
                             <p
                               style="color: red"
                               class="text-red"
-                              v-if="errors.nom_apporteur"
-                              v-text="errors.nom_apporteur[0]"
+                              v-if="errors.nom_compagnie"
+                              v-text="errors.nom_compagnie[0]"
                             ></p>
                           </div>
                           <div class="form-group">
                             <label>Contact</label>
                             <inputText
-                              :placeholder="'Entrez le contact de l\'apporteur'"
-                              v-model="contact_apporteur"
+                              :placeholder="'Entrez le contact de la compagnie'"
+                              v-model="contact_compagnie"
                             ></inputText>
-                            <p
-                              style="color: red"
-                              class="text-red"
-                              v-if="errors.contact_apporteur"
-                              v-text="errors.contact_apporteur[0]"
-                            ></p>
-                          </div>
-                          <div class="form-group">
-                            <label>Code postal</label>
-                            <inputText
-                              :placeholder="'Entrez le code postal de l\'apporteur'"
-                              v-model="code_postal"
-                            ></inputText>
-                            <p
-                              style="color: red"
-                              class="text-red"
-                              v-if="errors.code_postal"
-                              v-text="errors.code_postal[0]"
-                            ></p>
                           </div>
                         </div>
                         <div class="col-md-6">
@@ -105,15 +87,9 @@
                               <div class="form-group">
                                 <label>Email</label>
                                 <inputText
-                                  :placeholder="'Entrez l\'email de de l\'apporteur'"
-                                  v-model="email_apporteur"
+                                  :placeholder="'Entrez l\'email de la compagnie'"
+                                  v-model="email_compagnie"
                                 ></inputText>
-                                <p
-                                  style="color: red"
-                                  class="text-red"
-                                  v-if="errors.email_apporteur"
-                                  v-text="errors.email_apporteur[0]"
-                                ></p>
                               </div>
                             </div>
                           </div>
@@ -129,8 +105,8 @@
                                 <p
                                   style="color: red"
                                   class="text-red"
-                                  v-if="errors.adresse_apporteur"
-                                  v-text="errors.adresse_apporteur[0]"
+                                  v-if="errors.adresse_compagnie"
+                                  v-text="errors.adresse_compagnie[0]"
                                 ></p>
                               </div>
                             </div>
@@ -182,36 +158,35 @@
             <div class="card">
               <div class="card-body">
                 <h3 class="card-title">Taux</h3>
-
-                <div class="row">
-                  <div
-                    class="col-md-6"
-                    v-for="branche in branches"
-                    :key="branche.id_branche"
-                  >
-                    <div class="form-group">
-                      <label>{{ branche.nom_branche }}</label>
-                      <input
-                        type="number"
-                        class="form-control"
-                        placeholder="Entrez le taux"
-                        :key="branche.id_branche"
-                        v-model="branche.value"
-                        min="0"
-                        max="100"
-                      />
+                <form>
+                  <div class="row">
+                    <div
+                      class="col-md-6"
+                      v-for="branche in branches"
+                      :key="branche.id_branche"
+                    >
+                      <div class="form-group">
+                        <label>{{ branche.nom_branche }}</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Entrez le taux"
+                          :key="branche.id_branche"
+                          v-model="branche.value"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="submit-section">
-                  <button
-                    class="btn btn-primary submit-btn"
-                    type="button"
-                    @click="storeApporteur"
-                  >
-                    Enregistrer
-                  </button>
-                </div>
+                  <div class="submit-section">
+                    <button
+                      class="btn btn-primary submit-btn"
+                      type="button"
+                      @click="storeCompagnie"
+                    >
+                      Enregistrer
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
@@ -220,25 +195,35 @@
     </div>
   </div>
 </template>
-  <script>
+<script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import inputText from "../../components/input/inputText.vue";
 import adressecomponent from "../../components/select/adressecomponent.vue";
 import { getBrancheList } from "../../services/formservice";
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 
 export default {
-  name: "createapporteur",
+  name: "createcompagnie",
+  components: {
+    Header,
+    Sidebar,
+    inputText,
+    adressecomponent,
+  },
   data() {
     return {
       value: null,
-      localisations: [],
-      branches: [],
-      nom_apporteur: "",
-      contact_apporteur: "",
-      email_apporteur: "",
-      adresse_apporteur: "",
-      code_postal: "",
+      localisations: {},
+      branches: {},
+      nom_compagnie: "",
+      contact_compagnie: "",
+      email_compagnie: "",
+      adresse_compagnie: "",
       ajout_adresse: "",
       accidents: [],
       ids: [],
@@ -248,18 +233,8 @@ export default {
   created() {
     this.getBranche();
   },
-
   methods: {
-    storeApporteur() {
-      const token = localStorage.getItem("token");
-      const userId = localStorage.getItem("id");
-      const entrepriseId = localStorage.getItem("entreprise");
-
-      // Configurez les en-têtes de la requête
-      const headers = {
-        Authorization: "Bearer " + token,
-        "x-access-token": token,
-      };
+    storeCompagnie() {
       let test = JSON.parse(JSON.stringify(this.branches));
       let donnees = [];
 
@@ -274,64 +249,33 @@ export default {
         datas.push(testing[i]["id_branche"]);
       }
       axios
-        .post("/api/auth/postApporteur", {
-          nom_apporteur: this.nom_apporteur,
-          contact_apporteur: this.contact_apporteur,
-          email_apporteur: this.email_apporteur,
-          adresse_apporteur: this.adresse_apporteur,
-          code_postal: this.code_postal,
+        .post("/postCompagnie", {
+          nom_compagnie: this.nom_compagnie,
+          contact_compagnie: this.contact_compagnie,
+          email_compagnie: this.email_compagnie,
+          adresse_compagnie: this.adresse_compagnie,
           accidents: donnees,
           ids: datas,
-          id_entreprise: entrepriseId,
-          id: userId,
         })
         .then((response) => {
-          this.$router.push("/listapporteur");
-          if (response.status === 200) {
-            toaster.success(`Apporteur ajouté avec succès`, {
-              position: "top-right",
-            });
-          }
-        })
-        .catch((error) => {
-          // console.log(error.response.headers);
-          // if (error.response.status === 422) {
-          //   this.errors = error.response.data.errors;
-          //   toaster.error(`Veuillez remplir tous les champs`, {
-          //     position: "top-right",
-          //   });
-          // } else if (error.request) {
-          //   // The request was made but no response was received
-          //   console.log(error.request);
-          //   toaster.error(`Veuillez remplir les champs`, {
-          //     position: "top-right",
-          //   });
-          // } else {
-          //   // Something happened in setting up the request that triggered an Error
-          //   console.log("Error", error.message);
+          // if (response.status === 200) {
+          toaster.success(`Compagnie ajouté avec succès`, {
+            position: "top-right",
+          });
+          this.contrats = response.data;
           // }
-        });
-    },
-    storeAdresse() {
-      axios
-        .post("/postLocalisations", {
-          ajout_adresse: this.ajout_adresse,
-        })
-        .then((response) => {
-          this.fetchTask();
-          if (response.status === 200) {
-            toaster.success(`Adresse ajouté avec succès`, {
-              position: "top-right",
-            });
-            // this.adresses = response.data;
-            this.ajout_adresse = "";
-          }
+          window.location.href = "/compagnie";
         })
         .catch((error) => {
           // console.log(error.response.headers);
 
           if (error.response.status === 422) {
             this.errors = error.response.data.errors;
+            // console.log(error.response.data.errors);
+            toaster.error(`Veuillez remplir tous les champs`, {
+              position: "top-right",
+            });
+
             // console.log("Message non enregisté")
           } else if (error.request) {
             // The request was made but no response was received
@@ -342,6 +286,43 @@ export default {
           }
         });
     },
+
+    storeAdresse() {
+      axios
+        .post("/postLocalisations", {
+          ajout_adresse: this.ajout_adresse,
+        })
+        .then((response) => {
+          this.fetchTask();
+          this.ajout_adresse = "";
+          if (response.status === 200) {
+            toaster.success(`Adresse ajouté avec succès`, {
+              position: "top-right",
+            });
+            this.contrats = response.data;
+          }
+        })
+        .catch((error) => {
+          // console.log(error.response.headers);
+
+          if (error.response.status === 422) {
+            this.errors = error.response.data.errors;
+            if (response.status === 422) {
+              toaster.error(`Cet compagnie existe déja`, {
+                position: "top-right",
+              });
+            }
+            // console.log("Message non enregisté")
+          } else if (error.request) {
+            // The request was made but no response was received
+            console.log(error.request);
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            console.log("Error", error.message);
+          }
+        });
+    },
+
     getBranche: function () {
       getBrancheList().then((result) => {
         this.branches = result;
@@ -349,7 +330,5 @@ export default {
       });
     },
   },
-  components: { Header, Sidebar, inputText, adressecomponent },
 };
 </script>
-  

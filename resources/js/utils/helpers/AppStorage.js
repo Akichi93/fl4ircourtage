@@ -8,35 +8,27 @@ class AppStorage  {
         localStorage.setItem('user', user);
     }
 
-    storeUser(id){
+    storeId(id){
         localStorage.setItem('id', id);
     }
 
-    storeUser(email){
-        localStorage.setItem('email', email);
+    storeEntreprise(entreprise){
+        localStorage.setItem('entreprise', entreprise);
     }
 
-    storeUser(email){
-        localStorage.setItem('email', email);
-    }
-
-    storeUser(id_entreprise){
-        localStorage.setItem('id_entreprise', id_entreprise);
-    }
-
-    store(token,user,id,email,id_entreprise){
+    store(token,user,id,entreprise){
         this.storeToken(token)
         this.storeUser(user)
-        this.storeUser(id)
-        this.storeUser(email)
-        this.storeUser(id_entreprise)
+        this.storeId(id)
+        // this.storeEmail(email)
+        this.storeEntreprise(entreprise)
     }
 
     clear(){
         localStorage.removeItem('token')
         localStorage.removeItem('user')
         localStorage.removeItem('id')
-        localStorage.removeItem('email')
+        // localStorage.removeItem('email')
     }
 
     getToken () {
@@ -49,6 +41,10 @@ class AppStorage  {
 
     getId () {
         localStorage.getItem(id)
+    }
+
+    getEntreprise () {
+        localStorage.getItem(entreprise)
     }
 
 }

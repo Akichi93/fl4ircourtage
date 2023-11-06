@@ -48,21 +48,6 @@ export default {
           }
         });
     },
-    // apporteurUpdate() {
-    //   axios.patch("/api/auth/updateBranche/" + this.apporteurtoedit.id_branche, {
-    //     nom_apporteur: this.apporteurstoedit.nom_apporteur,
-    //     email_apporteur: this.apporteurstoedit.email_apporteur,
-    //     contact_apporteur: this.apporteurstoedit.contact_apporteur,
-    //     adresse_apporteur: this.apporteurstoedit.adresse_apporteur,
-    //     code_postal: this.apporteurstoedit.code_postal,
-    //   })
-    //     .then((response) => {
-    //       this.$emit('apporteur-updated', response)
-    //     })
-    //     .catch((error) => {
-    //       console.log(error)
-    //     });
-    // }
     
   },
 }

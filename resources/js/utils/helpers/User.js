@@ -5,11 +5,10 @@ class User {
     responseAfterLogin(res) {
         const access_token = res.data.access_token
         const username = res.data.name
-        const userId = res.data.user_id
-        const email = res.data.email
-        const entrepriseId = res.data.id_entreprise
+        const id = res.data.user_id
+        const entreprise = res.data.id_entreprise
         if (Token.isValid(access_token)) {
-            AppStorage.store(access_token,username,userId,email,entrepriseId)
+            AppStorage.store(access_token,username,id,entreprise)
         }
     }
 
