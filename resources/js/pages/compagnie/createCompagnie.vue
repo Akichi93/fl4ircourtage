@@ -78,7 +78,7 @@
                               <div class="form-group">
                                 <label>Adresse</label>
                                 <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="adresse_compagnie">
-</adressecomponent>
+                                </adressecomponent>
                                 <p style="color: red" class="text-red" v-if="errors.adresse_compagnie"
                                   v-text="errors.adresse_compagnie[0]"></p>
                               </div>
@@ -183,6 +183,7 @@ export default {
   },
   methods: {
     storeCompagnie() {
+      alert(this.adresse_compagnie);
       const token = localStorage.getItem("token");
       const userId = localStorage.getItem("id");
       const entrepriseId = localStorage.getItem("entreprise");

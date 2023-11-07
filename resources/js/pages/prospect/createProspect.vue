@@ -294,7 +294,6 @@ export default {
                     ajout_adresse: this.ajout_adresse,
                 })
                 .then((response) => {
-                    this.fetchTask();
                     this.ajout_adresse = '';
                     if (response.status === 200) {
                         toaster.success(`Adresse ajouté avec succès`, {

@@ -6,7 +6,7 @@ import Multiselect from "@vueform/multiselect";
 
 export default {
     name: "adressecomponent",
-    rops: ["modelValue", "placeholder"],
+    props: ["modelValue", "placeholder"],
     data() {
         return {
             valeurs: [

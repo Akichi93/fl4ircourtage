@@ -21,7 +21,7 @@ import { getCompagnieList } from "../../services/formservice";
 
 export default {
   name: "compagniecomponent",
-  rops: ["modelValue", "placeholder"],
+  props: ["modelValue", "placeholder"],
   data() {
     return {
       compagnies: [],

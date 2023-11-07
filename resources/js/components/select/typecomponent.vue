@@ -1,20 +1,16 @@
 <template>
-    <Multiselect :value="modelValue" :options="etats" placeholder="Choisir un etat" :searchable="true"
+    <Multiselect :value="modelValue" :options="types" placeholder="Choisir un type" :searchable="true"
         class="form-control" />
 </template>
 <script>
 import Multiselect from "@vueform/multiselect";
 
 export default {
-    name: "adressecomponent",
+    name: "typecomponent",
     props: ["modelValue", "placeholder"],
     data() {
         return {
-            etats: [
-                "Recherche Saturation",
-                "Etude en cours",
-                "Client entier",
-            ],
+            types: ["Technique", "Commercial"],
         };
     },
     components: { Multiselect },

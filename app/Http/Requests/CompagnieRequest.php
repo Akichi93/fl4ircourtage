@@ -25,7 +25,7 @@ class CompagnieRequest extends FormRequest
     {
         return [
             'nom_compagnie' => 'required',
-            'adresse_compagnie' => 'required',
+            // 'adresse_compagnie' => 'required',
         ];
     }
 
@@ -33,7 +33,7 @@ class CompagnieRequest extends FormRequest
     {
         return [
             'nom_compagnie.required' => 'Veuillez entrer le nom de la compagnie',
-            'adresse_compagnie.required' => 'Veuillez selectionner l\' adresse de la compagnie',
+            // 'adresse_compagnie.required' => 'Veuillez selectionner l\' adresse de la compagnie',
         ];
     }
 }

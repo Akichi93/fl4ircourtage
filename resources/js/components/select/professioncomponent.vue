@@ -9,7 +9,7 @@ import { getProfessionList } from "../../services/formservice";
 
 export default {
     name: "professioncomponent",
-    rops: ["modelValue", "placeholder"],
+    props: ["modelValue", "placeholder"],
     data() {
         return {
             professions: [],

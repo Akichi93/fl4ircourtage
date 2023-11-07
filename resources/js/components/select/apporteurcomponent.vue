@@ -20,7 +20,7 @@ import { getApporteurList } from "../../services/formservice";
 
 export default {
   name: "clientcomponent",
-  rops: ["modelValue", "placeholder"],
+  props: ["modelValue", "placeholder"],
   data() {
     return {
       apporteurs: [],

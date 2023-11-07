@@ -19,7 +19,7 @@ import { getAdresseList } from "../../services/formservice";
 
 export default {
   name: "adressecomponent",
-  rops: ["modelValue", "placeholder"],
+  props: ["modelValue", "placeholder"],
   data() {
     return {
       localisations: [],

@@ -30,7 +30,7 @@
               <a
                 href="#"
                 data-bs-toggle="modal"
-                data-bs-target="#create_project"
+                data-bs-target="#add_client"
                 class="btn btn-success btn-add-emp"
                 style="width: auto"
                 ><i class="fas fa-plus"></i> Ajouter client
