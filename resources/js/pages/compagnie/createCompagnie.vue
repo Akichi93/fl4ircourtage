@@ -46,7 +46,7 @@
                     <h4 class="card-title mb-0">Général</h4>
                   </div>
                   <div class="card-body">
-                    <form action="#">
+                
                       <div class="row">
                         <div class="col-md-6">
                           <div class="form-group">
@@ -108,7 +108,6 @@
                           </div>
                         </div>
                       </div>
-                    </form>
                   </div>
                 </div>
               </div>

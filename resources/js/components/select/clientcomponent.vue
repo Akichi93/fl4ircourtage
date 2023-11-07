@@ -1,6 +1,6 @@
 <template>
   <Multiselect
-    :value="modelValue"
+    :value="client"
     :options="clients"
     :custom-label="
       ({ id_client, nom_client }) => `${id_client} - [${nom_client}]`
@@ -19,10 +19,10 @@ import { getClientList } from "../../services/formservice";
 
 export default {
     name: "clientcomponent",
-    props: ["modelValue", "placeholder"],
+    props: ["client", "placeholder"],
     data() {
         return {
-            professions: [],
+            clients: [],
         };
     },
     created() {

@@ -1,6 +1,6 @@
 <template>
   <Multiselect
-    :value="modelValue"
+    :value="company"
     :options="compagnies"
     :custom-label="
       ({ id_compagnie, nom_compagnie }) =>
@@ -21,7 +21,7 @@ import { getCompagnieList } from "../../services/formservice";
 
 export default {
   name: "compagniecomponent",
-  props: ["modelValue", "placeholder"],
+  props: ["company", "placeholder"],
   data() {
     return {
       compagnies: [],

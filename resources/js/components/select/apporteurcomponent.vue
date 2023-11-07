@@ -1,6 +1,6 @@
 <template>
   <Multiselect
-    :value="modelValue"
+    :value="apporteur"
     :options="apporteurs"
     :custom-label="
       ({ id_apporteur, nom_apporteur }) =>
@@ -20,7 +20,7 @@ import { getApporteurList } from "../../services/formservice";
 
 export default {
   name: "clientcomponent",
-  props: ["modelValue", "placeholder"],
+  props: ["apporteur", "placeholder"],
   data() {
     return {
       apporteurs: [],
@@ -33,7 +33,7 @@ export default {
   methods: {
     getApporteur: function () {
       getApporteurList().then((result) => {
-        this.clients = result;
+        this.apporteurs = result;
       });
     },
   },

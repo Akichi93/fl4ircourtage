@@ -1,6 +1,6 @@
 <template>
   <Multiselect
-    :value="modelValue"
+    :value="modelValues"
     :options="localisations"
     :custom-label="
       ({ id_localisation, nom_ville }) => `${id_localisation} - [${nom_ville}]`
@@ -10,6 +10,7 @@
     label="nom_ville"
     track-by="nom_ville"
     :searchable="true"
+  
   >
   </Multiselect>
 </template>
@@ -19,7 +20,7 @@ import { getAdresseList } from "../../services/formservice";
 
 export default {
   name: "adressecomponent",
-  props: ["modelValue", "placeholder"],
+  props: ["modelValues", "placeholder"],
   data() {
     return {
       localisations: [],

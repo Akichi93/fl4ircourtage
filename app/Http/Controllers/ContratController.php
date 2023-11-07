@@ -89,8 +89,8 @@ class ContratController extends Controller
         $contrats->gestion = $request->gestion;
         $contrats->commission_apporteur = $request->commission_apporteur;
         $contrats->commission_courtier = $request->commission_courtier;
-        $contrats->id_entreprise = Auth::user()->id_entreprise;
-        $contrats->user_id = Auth::user()->id;
+        $contrats->id_entreprise = $request->id_entreprise;
+        $contrats->user_id = $request->id;
         $contrats->save();
 
         $id = $contrats->id_contrat;
@@ -126,8 +126,8 @@ class ContratController extends Controller
         $avenants->frais_courtier = $request->frais_courtier;
         $avenants->cfga = $request->cfga;
         $avenants->taxes_totales = $request->taxes_totales;
-        $avenants->id_entreprise = Auth::user()->id_entreprise;
-        $avenants->user_id = Auth::user()->id;
+        $avenants->id_entreprise = $request->id_entreprise;
+        $avenants->user_id = $request->id;
         $avenants->code_avenant = $orderNumber;
         $avenants->save();
 
@@ -263,7 +263,7 @@ class ContratController extends Controller
     }
 
 
-    public function getAvenantContrat(Request $request)
+    public function getAvenantContrat($id_contrat)
     {
         $avenants = Avenant::select(
             'id_avenant',
@@ -285,26 +285,35 @@ class ContratController extends Controller
             ->join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
             ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
             ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-            ->where('contrats.id_contrat', $request->contrat)
+            ->where('contrats.id_contrat', $id_contrat)
             ->where('supprimer_avenant', 0)
             ->get();
 
         return response()->json($avenants);
     }
 
-    public function getInfoAvenant(Request $request)
+    public function getInfoAvenant()
     {
-        $contrats = Contrat::join("clients", 'contrats.id_client', '=', 'clients.id_client')
-            ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-            ->where('id_contrat', $request->contrat)
-            ->first();
+        $contrats = Contrat::all();
+
+        // Contrat::join("clients", 'contrats.id_client', '=', 'clients.id_client')
+        //     ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
+        //     // ->where('id_contrat', $id_contrat)
+        //     ->get();
+
+        return response()->json($contrats);
+    }
+
+    public function getInfo($id_contrat)
+    {
+        $contrats = $id_contrat;
 
         return response()->json($contrats);
     }
 
     public function editAvenant($id_avenant)
     {
-        $avenants = Avenant::findOrFail($id_avenant);
+        $avenants = Avenant::where('id_avenant', $id_avenant)->first();
         return response()->json($avenants);
     }
 
@@ -635,6 +644,8 @@ class ContratController extends Controller
         $tauxcompagnie = TauxCompagnie::select('tauxcomp')->where('id_compagnie', $request->compagnie)
             ->where('id_branche', $request->branche)
             ->get()->first();
+
+
 
         return response()->json($tauxcompagnie);
     }

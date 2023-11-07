@@ -102,16 +102,16 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Client:</label>
-                            <clientcomponent :placeholder="'selectionnez un client'" @select="optionSelect"
-                              v-model="client_id"></clientcomponent>
+                            <clientcomponent :placeholder="'selectionnez un client'" v-model="client_id">
+                            </clientcomponent>
                             <p style="color: red" class="text-red" v-if="errors.id_compagnie"
                               v-text="errors.id_client[0]"></p>
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add_client"
-                              style="margin-top: 25px">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                              data-bs-target="#add_client" style="margin-top: 25px">
                               Ajouter client
                             </button>
                           </div>
@@ -173,6 +173,7 @@
             </div>
           </div>
         </div>
+
         <div class="tab-content">
           <div id="emp_profile" class="pro-overview tab-pane fade show active" v-if="branche_id.nom_branche == 'AUTOMOBILE' ||
             branche_id.nom_branche == 'MOTO' ||
@@ -833,7 +834,8 @@ export default {
       value: null,
       errors: [],
       typegarantie: [],
-  
+      branches: [],
+
       // Contrat form
       compagnie_id: "",
       apporteur_id: "",
@@ -892,7 +894,6 @@ export default {
   methods: {
     getBranche: function () {
       getBrancheList().then((result) => {
-        console.log(result)
         this.branches = result;
       });
     },
@@ -906,7 +907,7 @@ export default {
     optionSelected(option) {
       axios
         .get(
-          "/getTauxBrancheCompagnie?branche=" +
+          "api/auth/getTauxBrancheCompagnie?branche=" +
           this.branche_id.id_branche +
           "&compagnie=" +
           option
@@ -919,10 +920,9 @@ export default {
     },
 
     optionSelect(optional) {
-      // alert(optional);
       axios
         .get(
-          "/getTauxBrancheApporteur?branche=" +
+          "/api/auth/getTauxBrancheApporteur?branche=" +
           this.branche_id.id_branche +
           "&apport=" +
           optional
@@ -935,9 +935,14 @@ export default {
     },
 
     storeContrat() {
+      const userId = localStorage.getItem("id");
+      const entrepriseId = localStorage.getItem("entreprise");
+
       axios
-        .post("/postContrat", {
+        .post("/api/auth/postContrat", {
           //Contrat
+          id: userId,
+          id_entreprise: entrepriseId,
           id_branche: this.branche_id.id_branche,
           branche: this.branche_id.nom_branche,
           id_client: this.client_id,
@@ -1020,7 +1025,7 @@ export default {
         });
     },
 
- 
+
 
     calculttc: function (event) {
       alert(this.event.target.value);

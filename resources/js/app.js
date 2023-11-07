@@ -23,6 +23,8 @@ import createrelance from "../js/pages/relance/createrelance";
 import listcontrat from "../js/pages/contrat/listcontrat";
 import createcontrat from "../js/pages/contrat/createcontrat";
 import detailscontrat from "../js/pages/contrat/detailscontrat";
+import avenants from "../js/pages/contrat/avenants";
+import editcontrat from "../js/pages/contrat/editcontrat";
 
 import User from '../js/utils/helpers/User';
 window.User = User
@@ -49,7 +51,9 @@ createApp({
         createrelance,
         listcontrat,
         createcontrat,
-        detailscontrat
+        detailscontrat,
+        avenants,
+        editcontrat
       
     }
 }).use(router)

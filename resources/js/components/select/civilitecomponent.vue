@@ -1,12 +1,12 @@
 <template>
-    <Multiselect :value="modelValue" :options="valeurs" placeholder="Choisir une civilité" :searchable="true" class="form-control" />
+    <Multiselect :value="value" :options="valeurs" placeholder="Choisir une civilité" :searchable="true" class="form-control" />
 </template>
 <script>
 import Multiselect from "@vueform/multiselect";
 
 export default {
     name: "adressecomponent",
-    props: ["modelValue", "placeholder"],
+    props: ["value", "placeholder"],
     data() {
         return {
             valeurs: [

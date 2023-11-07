@@ -1,5 +1,5 @@
 <template>
-    <Multiselect :value="modelValue"  :options="professions" :custom-label="({ id_profession, profession }) => `${id_profession} - [${profession}]`
+    <Multiselect :value="civilite"  :options="professions" :custom-label="({ id_profession, profession }) => `${id_profession} - [${profession}]`
         " valueProp="profession" :placeholder="placeholder" label="profession" track-by="profession" :searchable="true">
     </Multiselect>
 </template>
@@ -9,7 +9,7 @@ import { getProfessionList } from "../../services/formservice";
 
 export default {
     name: "professioncomponent",
-    props: ["modelValue", "placeholder"],
+    props: ["civilite", "placeholder"],
     data() {
         return {
             professions: [],

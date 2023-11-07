@@ -20,6 +20,9 @@ import createrelance from "../pages/relance/createrelance";
 import listcontrat from "../pages/contrat/listcontrat";
 import createcontrat from "../pages/contrat/createcontrat";
 import detailscontrat from "../pages/contrat/detailscontrat";
+import avenants from "../pages/contrat/avenants";
+import editcontrat from "../pages/contrat/editcontrat";
+
 const routes = [
   {
     path: '/',
@@ -128,6 +131,18 @@ const routes = [
     path: '/detailscontrat/:id_contrat',
     name: 'detailscontrat',
     component: detailscontrat,
+    props: true
+  },
+  {
+    path: '/avenants/:id_contrat',
+    name: 'avenants',
+    component: avenants,
+    props: true
+  },
+  {
+    path: '/editcontrat/:id_contrat',
+    name: 'editcontrat',
+    component: editcontrat,
     props: true
   },
 ];
