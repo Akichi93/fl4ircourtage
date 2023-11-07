@@ -15,6 +15,11 @@ import listprospect from "../pages/prospect/listProspect";
 import createprospect from "../pages/prospect/createProspect";
 import detailsprospect from "../pages/prospect/detailsProspect";
 import listclient from "../pages/clients/listclient";
+import listrelance from "../pages/relance/listrelance";
+import createrelance from "../pages/relance/createrelance";
+import listcontrat from "../pages/contrat/listcontrat";
+import createcontrat from "../pages/contrat/createcontrat";
+import detailscontrat from "../pages/contrat/detailscontrat";
 const routes = [
   {
     path: '/',
@@ -98,6 +103,32 @@ const routes = [
     path: '/listclient',
     name: 'listclient',
     component: listclient
+  },
+  {
+    path: '/listrelance',
+    name: 'listrelance',
+    component: listrelance
+  },
+  {
+    path: '/createrelance',
+    name: 'createrelance',
+    component: createrelance
+  },
+  {
+    path: '/listcontrat',
+    name: 'listcontrat',
+    component: listcontrat
+  },
+  {
+    path: '/createcontrat',
+    name: 'createcontrat',
+    component: createcontrat
+  },
+  {
+    path: '/detailscontrat/:id_contrat',
+    name: 'detailscontrat',
+    component: detailscontrat,
+    props: true
   },
 ];
 

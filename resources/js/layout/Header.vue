@@ -242,8 +242,7 @@ export default {
             axios
                 .get("/api/auth/me" , { headers })
                 .then((response) => (
-                    this.user = response.data,
-                    console.log(response.data)))
+                    this.user = response.data))
                 .catch((error) => console.log(error));
         },
 

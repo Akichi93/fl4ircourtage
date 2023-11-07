@@ -18,6 +18,11 @@ import listprospect from "../js/pages/prospect/listProspect";
 import createprospect from "../js/pages/prospect/createProspect";
 import detailsprospect from "../js/pages/prospect/detailsProspect";
 import listclient from "../js/pages/clients/listclient";
+import listrelance from "../js/pages/relance/listrelance";
+import createrelance from "../js/pages/relance/createrelance";
+import listcontrat from "../js/pages/contrat/listcontrat";
+import createcontrat from "../js/pages/contrat/createcontrat";
+import detailscontrat from "../js/pages/contrat/detailscontrat";
 
 import User from '../js/utils/helpers/User';
 window.User = User
@@ -39,7 +44,12 @@ createApp({
         listprospect,
         createprospect,
         detailsprospect,
-        listclient
+        listclient,
+        listrelance,
+        createrelance,
+        listcontrat,
+        createcontrat,
+        detailscontrat
       
     }
 }).use(router)

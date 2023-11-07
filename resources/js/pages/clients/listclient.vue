@@ -63,7 +63,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="(client, i) in clients" :key="i">
+                  <template v-for="(client, i) in clients.data" :key="i">
                     <tr>
                       <td v-text="client.nom_client"></td>
                       <td v-text="client.adresse_client"></td>
@@ -85,10 +85,11 @@
               </table>
             </div>
             <addclient></addclient>
-            <deleteCompagnie
-              v-bind:compagnietoedit="compagnietoedit"
-              @compagnie-deleted="refresh"
-            ></deleteCompagnie>
+            <editclient
+              v-bind:clientoedit="clientoedit"
+              @client-updated="refresh"
+            ></editclient>
+            
             <!-- <pagination
               align="center"
               :data="clients"
@@ -110,12 +111,14 @@ import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import addclient from "./addclient.vue";
 import { getClientsList } from "../../services/clientservice";
+import editclient from "./editclient.vue";
 export default {
   name: "prospect",
   components: {
     Header,
     Sidebar,
     addclient,
+    editclient,
   },
   props: ["current_page", "last_page"],
   data() {
@@ -125,6 +128,7 @@ export default {
       localisations: {},
       professions: {},
       q: "",
+      clientoedit:''
     };
   },
   created() {
