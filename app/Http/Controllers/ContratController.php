@@ -292,14 +292,21 @@ class ContratController extends Controller
         return response()->json($avenants);
     }
 
-    public function getInfoAvenant()
+    public function getInfoAvenant($id_contrat)
     {
+        dd($id_contrat);
         $contrats = Contrat::all();
 
         // Contrat::join("clients", 'contrats.id_client', '=', 'clients.id_client')
         //     ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
         //     // ->where('id_contrat', $id_contrat)
         //     ->get();
+
+        return response()->json($contrats);
+    }
+
+    public function getDetailsAvenant(){
+        $contrats = Contrat::all();
 
         return response()->json($contrats);
     }

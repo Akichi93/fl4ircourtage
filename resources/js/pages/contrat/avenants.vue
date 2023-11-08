@@ -225,6 +225,7 @@ export default {
 
     fetchTask() {
       var that = this;
+      alert(this.$route.params.id_contrat)
       axios
         .all([
           axios.get(`/api/auth/getAvenantContrat/${this.$route.params.id_contrat}`),

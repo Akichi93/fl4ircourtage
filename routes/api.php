@@ -40,6 +40,8 @@ Route::group([
 
     Route::get('/user/profile', [AuthController::class, 'userProfile']);
 
+    Route::get('getdetailsavenant{id_contrat}', [ContratController::class, 'getDetailsAvenant']); // 
+
     // Branche
     Route::controller(BrancheController::class)->group(function () {
         Route::get('/branchesList/{q?}', 'branchesList'); // Listes des branches avec pagignation et recherche
@@ -144,6 +146,10 @@ Route::group([
     // // Route::post('edit/automobile', [ContratController::class, 'editAutomobile']);
     // // Route::get('get/autos', [ContratController::class, 'getAutos']);
 
+
+    Route::get('getInfoAvenant{id_contrat}', [ContratController::class, 'getInfoAvenant']); // 
+    
+
     Route::controller(ContratController::class)->group(function () {
         Route::get('/contratList/{q?}', 'contratList');
         Route::get('editContrat/{id_contrat}', 'editContrat');
@@ -154,8 +160,7 @@ Route::group([
         Route::post('reverseContrat', 'reverseContrat');
         Route::post('reverseAvenant', 'reverseAvenant');
         Route::get('getAvenantContrat/{id_contrat}', 'getAvenantContrat'); // Obtenir les avenants d'un contrat
-        Route::get('getInfoAvenant{id_contrat}', 'getInfoAvenant');
-        Route::get('getInfo{id_contrat}', 'getInfo');
+        // Route::get('getInfoAvenant{id_contrat}', 'getInfoAvenant');
         Route::get('editAvenant/{id_avenant}', 'editAvenant');
         Route::patch('deleteAvenant/{id_avenant}', 'deleteAvenant');
         Route::post('postAvenant', 'postAvenant'); // Ajouter un avenant
