@@ -182,7 +182,6 @@ export default {
   },
   methods: {
     storeCompagnie() {
-      alert(this.adresse_compagnie);
       const token = localStorage.getItem("token");
       const userId = localStorage.getItem("id");
       const entrepriseId = localStorage.getItem("entreprise");

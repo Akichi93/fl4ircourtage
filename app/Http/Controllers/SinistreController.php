@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Branche;
@@ -8,10 +8,12 @@ use App\Models\Contrat;
 use App\Models\Sinistre;
 use App\Models\Apporteur;
 use App\Models\Reglement;
+use Illuminate\Support\Str;
 use App\Models\FileSinistre;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
+// use Tymon\JWTAuth\JWTAuth;
 
 class SinistreController extends Controller
 {
@@ -92,16 +94,20 @@ class SinistreController extends Controller
         //
     }
 
-    public function getPolices()
+    public function getPolices(Request $request)
     {
-        try {
-            $polices = Contrat::where('contrats.id_entreprise', Auth::user()->id_entreprise)->get();
-            // dd($polices);
-            return response()->json($polices);
-        } catch (\Exception $e) {
-            $message = $e->getMessage();
-            return view('errors.404', ['error' => $message]);
-        }
+        // try {
+        // Get the token from the "Authorization" header
+
+        $user =  JWTAuth::parseToken()->authenticate();
+
+        $polices = Contrat::where('contrats.id_entreprise', $user->id_entreprise)->get();
+        // dd($polices);
+        return response()->json($polices);
+        // } catch (\Exception $e) {
+        //     $message = $e->getMessage();
+        //     return view('errors.404', ['error' => $message]);
+        // }
     }
 
     public function getPolice($id)
@@ -113,6 +119,9 @@ class SinistreController extends Controller
 
     public function addSinistre(Request $request)
     {
+
+        $user =  JWTAuth::parseToken()->authenticate();
+
         $sinitre = new Sinistre();
         $sinitre->id_contrat = $request->id_contrat;
         $sinitre->reference_compagnie = $request->reference_compagnie;
@@ -129,8 +138,8 @@ class SinistreController extends Controller
         $sinitre->date_decla_compagnie = $request->date_declaration_compagnie;
         $sinitre->date_mission = $request->date_mission;
         $sinitre->recours_sinistre = $request->recours;
-        $sinitre->id_entreprise = Auth::user()->id_entreprise;
-        $sinitre->user_id = Auth::user()->id;
+        $sinitre->id_entreprise = $user->id_entreprise;
+        $sinitre->user_id = $user->id;
         $sinitre->accident_sinistre = $request->accident_adversaire;
         $sinitre->commentaire_sinistre = $request->commentaire;
         $sinitre->save();
@@ -140,9 +149,11 @@ class SinistreController extends Controller
 
     public function getSinistres(Request $request)
     {
+        $user =  JWTAuth::parseToken()->authenticate();
+
         $data = strlen($request->q);
         if ($data > 0) {
-            $sinistres = Sinistre::where('id_entreprise', Auth::user()->id_entreprise)
+            $sinistres = Sinistre::where('id_entreprise', $user->id_entreprise)
                 ->where('numero_sinistre', 'like', '%' . request('q') . '%')
                 ->where('supprimer_sinistre', '=', '0')
                 ->orderBy('sinistres.id_sinistre', 'DESC')
@@ -152,7 +163,7 @@ class SinistreController extends Controller
             $sinistres = Sinistre::join("contrats", 'sinistres.id_contrat', '=', 'contrats.id_contrat')
                 ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
                 ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-                ->where('sinistres.id_entreprise', Auth::user()->id_entreprise)
+                ->where('sinistres.id_entreprise', $user->id_entreprise)
                 ->where('supprimer_sinistre', '=', '0')
                 ->latest('sinistres.created_at')
                 ->paginate(10);

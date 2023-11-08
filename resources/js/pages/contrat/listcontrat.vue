@@ -108,12 +108,12 @@
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import { getContratsList } from "../../services/contratservice";
-import delecontrat from "../contrat/deletecontrat.vue"
+import deletecontrat from "../contrat/deletecontrat.vue"
 export default {
   components: {
     Header,
     Sidebar,
-    delecontrat
+    deletecontrat
   },
   data() {
     return {

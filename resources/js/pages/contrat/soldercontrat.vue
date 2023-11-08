@@ -1,5 +1,5 @@
 <template>
-    <div class="modal custom-modal fade" id="solder_contrat" role="dialog">
+  <div class="modal custom-modal fade" id="solder_contrat" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body">
@@ -9,7 +9,6 @@
           </div>
           <div class="modal-btn delete-action">
             <div class="row">
-              <input type="hidden" class="form-control" v-model="contrattoedit.id_contrat" />
               <div class="col-6">
                 <a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-primary continue-btn"
                   @click="ChangeSolde">Solder</a>
@@ -25,4 +24,23 @@
   </div>
 </template>
 <script>
+export default {
+  props: ["avenantoedit"],
+  methods: {
+    ChangeSolde() {
+      axios
+        .post("/api/auth/soldeAvenant", {
+          id_avenant: this.avenantoedit.id_avenant,
+        })
+        .then((response) => {
+          if (response.status === 200) {
+            toaster.success(`Avenant solde`, {
+              position: "top-right",
+            });
+          }
+        });
+    },
+
+  }
+}
 </script>

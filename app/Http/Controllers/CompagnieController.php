@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CompagnieRequest;
 use App\Repositories\CompagnieRepository;
 use Symfony\Component\HttpFoundation\Response;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class CompagnieController extends Controller
 {
@@ -33,18 +34,17 @@ class CompagnieController extends Controller
      */
     public function compagnieList(Request $request)
     {
-
+        $user =  JWTAuth::parseToken()->authenticate();
         $data = strlen($request->q);
         if ($data > 0) {
-            $compagnies['data'] = Compagnie::where('nom_compagnie', 'like', '%' . request('q') . '%')
-                ->where('id_entreprise', auth()->user()->id_entreprise)
+            $compagnies['data'] = Compagnie::where('id_entreprise', $user->id_entreprise)->where('nom_compagnie', 'like', '%' . request('q') . '%')
                 ->where('supprimer_compagnie', '=', '0')
                 ->orWhere('adresse_compagnie', 'like', '%' . request('q') . '%')
                 ->orWhere('code_compagnie', 'like', '%' . request('q') . '%')
                 ->get();
             return response()->json($compagnies);
         } else {
-            $compagnies = Compagnie::where('id_entreprise', auth()->user()->id_entreprise)
+            $compagnies = Compagnie::where('id_entreprise', $user->id_entreprise)
                 ->where('supprimer_compagnie', '=', '0')->latest()->get();
             return response()->json($compagnies);
         }

@@ -40,7 +40,8 @@
                         <div class="card flex-fill tickets-card">
                             <div class="card-header">
                                 <div class="text-center w-100 p-3">
-                                    <h2><a href="/sinistre">Sinistres</a></h2>
+                                    <h2>
+                                        <router-link to="/listsinistre">Sinistres</router-link></h2>
                                     <h2 class="bl-text mb-1"> Ce module permet de déclarer les sinistres</h2>
                                 </div>
                             </div>

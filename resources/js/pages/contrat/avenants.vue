@@ -90,54 +90,9 @@
                       </td>
                       <td class="text-end ico-sec d-flex justify-content-end">
 
-                        <a href="#" @click="fetchAvenant(avenant.id_avenant)" data-bs-toggle="modal"
+                        <a href="#" @click="editAvenant(avenant.id_avenant)" data-bs-toggle="modal"
                           data-bs-target="#add_file" title="Ajouter fichier"><i class="fas fa-plus"></i>
                         </a>
-
-                        <!-- <div id="add_file" class="modal custom-modal fade" role="dialog">
-                          <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h5 class="modal-title">Ajouter pièce</h5>
-                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                  <i class="fas fa-times"></i>
-                                </button>
-                              </div>
-                              <div class="modal-body">
-                                <b-form @submit="submit" @keydown="form.onKeydown($event)">
-                                  <div class="row">
-                                    <div class="col-md-12">
-                                      <input v-model="form.id_avenant" type="hidden" name="name"
-                                        :modelValue="avenant.id_avenant" />
-                                      <HasError :form="form" field="name" class="form-control" />
-
-                                      <b-form-group id="titre" label="Titre de la pièce" label-for="titre" description="">
-                                        <b-form-input id="titre" v-model="form.titre" type="text"
-                                          placeholder="Titre de la pièce" required>
-                                        </b-form-input>
-                                      </b-form-group>
-
-                                      <b-form-group id="piece" label="Pièce" label-for="piece" description="">
-                                        <input type="file" name="file" @change="handleFile" class="form-control"
-                                          accept="image/*,.pdf" />
-                                        <HasError :form="form" field="file" />
-                                      </b-form-group>
-                                    </div>
-                                  </div>
-
-                                  <b-form-group class="mt-3">
-                                    <b-button type="submit" variant="primary" class="m-3">Ajouter</b-button>
-                                    <b-button type="reset" variant="danger" class="ml-3">Annuler</b-button>
-                                  </b-form-group>
-                                </b-form>
-                              </div>
-                            </div>
-                          </div>
-                        </div> -->
-
-                        <!-- <a href="#" @click="fetchAvenant(avenant.id_avenant)" data-bs-toggle="modal"
-                        data-bs-target="#add_file" title="Ajouter fichier"><i class="fas fa-pen"></i>
-                      </a> -->
 
                         <a href="#" @click="fetchFile(avenant.id_avenant)" data-bs-toggle="modal"
                           data-bs-target="#assign_leader" title="Voir fichier"><i class="fas fa-file"></i>
@@ -157,7 +112,7 @@
                         </a>
 
                         <a v-if="avenant.solder == 1 && avenant.reverser == 0" href="#" data-bs-toggle="modal"
-                          data-bs-target="#reverser_contrat" @click="editAvenant(avenanr.id_avenant)" title="Reverser"><i
+                          data-bs-target="#reverser_contrat" @click="editAvenant(avenant.id_avenant)" title="Reverser"><i
                             class="fa fa-times"></i>
                         </a>
 
@@ -167,21 +122,44 @@
                 </tbody>
               </table>
             </div>
+
+            <addavenant></addavenant>
+            <!-- <editavenant v-bind:avenantoedit="avenantoedit"></editavenant> -->
+            <soldercontrat v-bind:avenantoedit="avenantoedit"></soldercontrat>
+            <reversercontrat v-bind:avenantoedit="avenantoedit"></reversercontrat>
+            <deleteavenant v-bind:avenantoedit="avenantoedit"></deleteavenant>
+            <viewfacture v-bind:facturetoedit="facturetoedit"></viewfacture>
+            <addfile v-bind:avenantoedit="avenantoedit"></addfile>
+            <viewfile v-bind:filetoedit="filetoedit"></viewfile>
+
           </div>
         </div>
       </div>
     </div>
   </div>
-
 </template>
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-export default {
+import addavenant from "../contrat/addavenant.vue"
+import soldercontrat from '../contrat/soldercontrat.vue';
+import reversercontrat from '../contrat/reversercontrat.vue';
+import deleteavenant from '../contrat/deleteavenant.vue';
+import viewfacture from '../contrat/viewfacture.vue';
+import addfile from '../contrat/addfile.vue';
+import viewfile from '../contrat/viewfile.vue';
 
+export default {
   components: {
     Header,
     Sidebar,
+    addavenant,
+    soldercontrat,
+    reversercontrat,
+    deleteavenant,
+    viewfacture,
+    addfile,
+    viewfile
   },
 
   data() {
@@ -189,12 +167,14 @@ export default {
       aveantoedit: "",
       avenants: {},
       id_contrat: "",
-      contrats:{}
+      contrats: {},
+      avenantoedit: "",
+      facturetoedit: "",
+      filetoedit: []
     };
   },
   created() {
     this.fetchTask();
-    this.editAvenant();
   },
 
   methods: {
@@ -202,91 +182,49 @@ export default {
       axios
         .get("/api/auth/editAvenant/" + id_avenant)
         .then((response) => {
-          this.result = response.data;
-          
+          this.avenantoedit = response.data;
+
           // this.form.id_avenant = response.data.id_avenant;
         })
         .catch((error) => console.log(error));
     },
 
-    // viewFacture(id_avenant) {
-    //   axios
-    //     .get("/api/auth/getFactures/" + id_avenant)
-    //     .then((response) => {
-    //       this.factures = response.data;
-    //     })
-    //     .catch((error) => console.log(error));
-    // },
+    viewFacture(id_avenant) {
+      axios
+        .get("/api/auth/getFactures/" + id_avenant)
+        .then((response) => {
+          this.facturetoedit = response.data;
+        })
+        .catch((error) => console.log(error));
+    },
 
-    // print() {
-    //   // Pass the element id here
-    //   this.$htmlToPaper('printMe');
-    // },
+    fetchFile(id_avenant) {
+      axios
+        .get("/api/auth/getFileAvenant/" + id_avenant)
+        .then((response) => {
+          this.filetoedit = response.data;
+        })
+        // .then((response) => console.log(response.data))
+        .catch((error) => console.log(error));
+    },
 
     fetchTask() {
       var that = this;
-      alert(this.$route.params.id_contrat)
       axios
         .all([
           axios.get(`/api/auth/getAvenantContrat/${this.$route.params.id_contrat}`),
-          axios.get(`/api/auth/getInfoContrat/${this.$route.params.id_contrat}`),
+          axios.get("/api/auth/getInfoAvenant/?contrat=" + this.$route.params.id_contrat),
         ])
         .then(
           axios.spread(function (avenants, contrats) {
             that.avenants = avenants.data;
             that.contrats = contrats.data;
 
-            console.log(contrats)
-
           })
         );
     },
 
-    addAvenant() {
-      axios
-        .post("/api/post/postAvenant", {
-          type: this.type,
-          prime_ttc: this.prime_ttc,
-          retrocession: this.retrocession,
-          prime_nette: this.prime_nette,
-          commission: this.commission,
-          ristourne: this.ristourne,
-          accessoires: this.accessoires,
-          frais_courtier: this.frais_courtier,
-          prise_charge: this.prise_charge,
-          date_emission: this.date_emission,
-          taxes_totales: this.taxes_totales,
-          date_debut: this.date_debut,
-          date_fin: this.date_fin,
-          id_contrat: this.id_contrat,
-        })
-        .then((response) => {
-          this.getavenant();
-          this.type =
-            this.prime_ttc =
-            this.accessoires =
-            this.prime_nette =
-            this.commission =
-            this.ristourne =
-            this.prise_charge =
-            this.date_emission =
-            this.date_debut =
-            this.date_fin =
-            "";
-          toaster.success(`Avenant ajouté avec succès`, {
-            position: "top-right",
-          });
-        })
-        .catch(() => {
-          this.$toast.error(
-            "Aveant Impossible, Veuillez renseigner tous les champs",
-            {
-              // override the global option
-              position: "top-right",
-            }
-          );
-        });
-    },
+
 
 
 

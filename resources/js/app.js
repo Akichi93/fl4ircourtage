@@ -2,6 +2,11 @@ require('./bootstrap');
 
 import { createApp } from "vue";
 import router from "./routers";
+import VueHtmlToPaper from 'vue-html-to-paper';
+
+import BootstrapVue3 from 'bootstrap-vue-3'
+// import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
 // import login
 import login from "../js/pages/auth/login";
 import dashboard from "../js/pages/dashboard";
@@ -25,6 +30,28 @@ import createcontrat from "../js/pages/contrat/createcontrat";
 import detailscontrat from "../js/pages/contrat/detailscontrat";
 import avenants from "../js/pages/contrat/avenants";
 import editcontrat from "../js/pages/contrat/editcontrat";
+import listsinistre from "../js/pages/sinistres/listsinistre";
+import createsinistre from "../js/pages/sinistres/createsinistre";
+import editsinistre from '../js/pages/sinistres/editsinistre';
+import voirsinistre from '../js/pages/sinistres/voirsinistre';
+import reglement from '../js/pages/sinistres/reglement';
+
+const options = {
+    name: '_blank',
+    specs: [
+        'fullscreen=yes',
+        'titlebar=yes',
+        'scrollbars=yes'
+    ],
+    "styles": [
+        "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css",
+        "https://unpkg.com/kidlat-css/css/kidlat.css",
+        "public/landscape.css"
+    ],
+    timeout: 1000, // default timeout before the print window appears
+    autoClose: true, // if false, the window will not close after printing
+    windowTitle: window.document.title, // override the window title
+}
 
 import User from '../js/utils/helpers/User';
 window.User = User
@@ -53,8 +80,14 @@ createApp({
         createcontrat,
         detailscontrat,
         avenants,
-        editcontrat
-      
+        editcontrat,
+        listsinistre,
+        createsinistre,
+        editsinistre,
+        voirsinistre,
+        reglement
     }
 }).use(router)
+    .use(BootstrapVue3)
+    .use(VueHtmlToPaper, options)
     .mount('#app');

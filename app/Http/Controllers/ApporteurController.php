@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ApporteurRequest;
 use App\Repositories\ApporteurRepository;
 use Symfony\Component\HttpFoundation\Response;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ApporteurController extends Controller
 {
@@ -33,17 +34,17 @@ class ApporteurController extends Controller
 
     public function apporteursList(Request $request)
     {
-        // dd(Auth()->user()->id_entreprise);
+        $user =  JWTAuth::parseToken()->authenticate();
         $data = strlen($request->q);
         if ($data > 0) {
             $apporteurs['data'] = Apporteur::orderBy('id_apporteur', 'DESC')
-                ->where('id_entreprise', Auth()->user()->id_entreprise)
+                ->where('id_entreprise', $user->id_entreprise)
                 ->where('supprimer_apporteur', '=', '0')
                 ->where('nom_apporteur', 'like', '%' . request('q') . '%')
                 ->get();
             return response()->json($apporteurs);
         } else {
-            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->where('id_entreprise', Auth()->user()->id_entreprise)->latest()->get();
+            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->where('id_entreprise', $user->id_entreprise)->latest()->get();
             return response()->json($apporteurs);
         }
     }
@@ -146,7 +147,7 @@ class ApporteurController extends Controller
       |
      */
 
-    public function updateApporteur(Request $request, $id_apporteur)
+    public function updateApporteur($id_apporteur)
     {
 
         $apporteurs = Apporteur::find($id_apporteur);
@@ -225,14 +226,14 @@ class ApporteurController extends Controller
             $apporteurs->save();
         }
 
-        if($apporteurs){
+        if ($apporteurs) {
             $apporteurs = TauxApporteur::join("branches", 'taux_apporteurs.id_branche', '=', 'branches.id_branche')
-            ->where('taux_apporteurs.id_apporteur', $data['id'])->get();
+                ->where('taux_apporteurs.id_apporteur', $data['id'])->get();
 
             return response()->json($apporteurs);
         }
 
-      
+
 
         // Insertion dans la bdd
         // $Data = $this->apporteur->postTauxApporteur($data);

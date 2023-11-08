@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Repositories\ContratRepository;
 use App\Http\Requests\StoreContratRequest;
 use Symfony\Component\HttpFoundation\Response;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ContratController extends Controller
 {
@@ -31,12 +32,13 @@ class ContratController extends Controller
 
     public function contratList(Request $request)
     {
+        $user =  JWTAuth::parseToken()->authenticate();
         $data = strlen($request->q);
         if ($data > 0) {
             $contrats['data'] =  Contrat::join("clients", 'contrats.id_client', '=', 'clients.id_client')
                 ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
                 ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-                ->where('contrats.id_entreprise', Auth::user()->id_entreprise)
+                ->where('contratsid_entreprise', $user->id_entreprise)
                 ->where('supprimer_contrat', '=', '0')
                 ->where('numero_police', 'like', '%' . request('q') . '%')
                 ->orWhere('nom_client', 'like', '%' . request('q') . '%')
@@ -50,7 +52,7 @@ class ContratController extends Controller
             $contrats = Contrat::join("clients", 'contrats.id_client', '=', 'clients.id_client')
                 ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
                 ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-                ->where('contrats.id_entreprise', Auth::user()->id_entreprise)
+                ->where('contrats.id_entreprise', $user->id_entreprise)
                 ->where('supprimer_contrat', '=', '0')
                 ->latest('contrats.created_at')
                 ->paginate(10);
@@ -292,24 +294,17 @@ class ContratController extends Controller
         return response()->json($avenants);
     }
 
-    public function getInfoAvenant($id_contrat)
+    public function getInfoAvenant(Request $request)
     {
-        dd($id_contrat);
-        $contrats = Contrat::all();
-
-        // Contrat::join("clients", 'contrats.id_client', '=', 'clients.id_client')
-        //     ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-        //     // ->where('id_contrat', $id_contrat)
-        //     ->get();
+        $id_contrat = $request->all();
+        $contrats = Contrat::join("clients", 'contrats.id_client', '=', 'clients.id_client')
+            ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
+            ->where('id_contrat', $id_contrat)
+            ->first();
 
         return response()->json($contrats);
     }
 
-    public function getDetailsAvenant(){
-        $contrats = Contrat::all();
-
-        return response()->json($contrats);
-    }
 
     public function getInfo($id_contrat)
     {
@@ -324,8 +319,9 @@ class ContratController extends Controller
         return response()->json($avenants);
     }
 
-    public function deleteAvenant($id_avenant)
+    public function deleteAvenant(Request $request)
     {
+        $id_avenant = $request->id_avenant;
         $Data = $this->contrat->deleteAvenant($id_avenant);
 
         return response()->json([
@@ -397,8 +393,8 @@ class ContratController extends Controller
         $avenants->frais_courtier = $request->frais_courtier;
         $avenants->cfga = $request->cfga;
         $avenants->taxes_totales = $request->taxes_totales;
-        $avenants->id_entreprise = Auth::user()->id_entreprise;
-        $avenants->user_id = Auth::user()->id;
+        $avenants->id_entreprise = $request->id_entreprise;
+        $avenants->user_id = $request->id;
         $avenants->code_avenant = $orderNumber;
         $avenants->save();
         return response()->json(['success' => "Avenant ajouté avec succès"]);
@@ -453,7 +449,7 @@ class ContratController extends Controller
         )
             ->join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
             ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
-
+            ->groupBy('contrats.id_contrat')
             ->where('contrats.id_contrat', $request->contrat)
             ->first();
 
@@ -749,7 +745,9 @@ class ContratController extends Controller
             ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
             ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
             ->where('id_avenant', $id_avenant)
+            ->groupBy('id_avenant')
             ->first();
+
 
         return response()->json($factures);
     }

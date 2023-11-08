@@ -1,5 +1,5 @@
 <template>
-   <div id="view_facture" class="modal custom-modal fade" role="dialog">
+  <div id="view_facture" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -35,9 +35,9 @@
                 <div class="col-5">
                   <br /><br /><br /><br /><br /><br /><br /><br />
                   <p class="addressDriver">
-                    <strong> {{ factures.nom_client }}</strong><br />
-                    <strong>{{ factures.postal_client }}</strong> <br />
-                    <strong> {{ factures.adresse_client }}</strong><br />
+                    <strong> {{ facturetoedit.nom_client }}</strong><br />
+                    <strong>{{ facturetoedit.postal_client }}</strong> <br />
+                    <strong> {{ facturetoedit.adresse_client }}</strong><br />
 
                   </p>
                 </div>
@@ -46,10 +46,10 @@
                 <div class="col-7">
                   <br /><br /><br />
                   <p class="addressDriver">
-                    N client &emsp;&emsp;: <strong>{{ factures.numero_client }}</strong><br />
-                    Contrat &emsp;&emsp;: <strong>{{ factures.numero_police }}</strong><br />
-                    Compagnie &ensp;: <strong>{{ factures.nom_compagnie }}</strong><br />
-                    Categorie &ensp;&ensp;: <strong>{{ factures.nom_branche }}</strong>
+                    N client &emsp;&emsp;: <strong>{{ facturetoedit.numero_client }}</strong><br />
+                    Contrat &emsp;&emsp;: <strong>{{ facturetoedit.numero_police }}</strong><br />
+                    Compagnie &ensp;: <strong>{{ facturetoedit.nom_compagnie }}</strong><br />
+                    Categorie &ensp;&ensp;: <strong>{{ facturetoedit.nom_branche }}</strong>
                   </p>
                 </div>
                 <div class="col-5">
@@ -64,33 +64,33 @@
               <br />
               <center>
                 <strong>
-                  <h2> PRIME N°{{ factures.code_avenant }} </h2>
+                  <h2> PRIME N°{{ facturetoedit.code_avenant }} </h2>
 
                 </strong><br />
               </center>
               <br />
 
 
-              <p v-if="factures.type === 'Terme' || factures.type === 'Complememtaire'"
+              <p v-if="facturetoedit.type === 'Terme' || facturetoedit.type === 'Complememtaire'"
                 style="text-align: justify; font-size:20px">
 
-                la somme de {{ factures.payer }} F CFA au titre de la prime
-                émise pour la période du {{ factures.date_debut }} au
-                {{ factures.date_fin }} selon de décompte ci après :
+                la somme de {{ facturetoedit.payer }} F CFA au titre de la prime
+                émise pour la période du {{ facturetoedit.date_debut }} au
+                {{ facturetoedit.date_fin }} selon de décompte ci après :
 
               </p>
 
 
 
-              <p v-if="factures.type === 'Ristourne'" style="text-align: justify; font-size:20px">
+              <p v-if="facturetoedit.type === 'Ristourne'" style="text-align: justify; font-size:20px">
 
                 Nous avons le plaisir de vous remettre deux exemplaires de l avenant à la police citée en objet portant
                 sur la
-                période du {{ factures.date_debut }} au {{ factures.date_fin }} .
+                période du {{ facturetoedit.date_debut }} au {{ facturetoedit.date_fin }} .
                 Si comme nous le pensons ce document retient votre agrément, nous vous serions reconnaissants de bien
                 vouloir nous en retourner un exemplaire dûment signé.
                 Dès réception de ces pièces, nous vous règlerons ou porterons au crédit de votre compte la somme de
-                {{ factures.payer }} FCFA.
+                {{ facturetoedit.payer }} FCFA.
               </p>
 
 
@@ -113,10 +113,10 @@
                 <tbody>
 
                   <tr>
-                    <td v-text="factures.prime_nette"></td>
-                    <td v-text="factures.accessoires"></td>
-                    <td v-text="factures.taxes_totales"></td>
-                    <td v-text="factures.payer"></td>
+                    <td v-text="facturetoedit.prime_nette"></td>
+                    <td v-text="facturetoedit.accessoires"></td>
+                    <td v-text="facturetoedit.taxes_totales"></td>
+                    <td v-text="facturetoedit.payer"></td>
                   </tr>
                 </tbody>
               </table>
@@ -125,7 +125,7 @@
               <br />
 
               <p style="text-align: justify; font-size:20px" class="conditions"
-                v-if="factures.type === 'Terme' || factures.type === 'Complememtaire'">
+                v-if="facturetoedit.type === 'Terme' || facturetoedit.type === 'Complememtaire'">
                 Par application de l'article 13 du code CIMA, la prise d'effet des garanties est subordonnée au paiement
                 intégral de la
 
@@ -158,4 +158,15 @@
     </div>
   </div>
 </template>
-<script></script>
+<script>
+
+export default {
+  props: ["facturetoedit"],
+  methods: {
+    print() {
+      // Pass the element id here
+      this.$htmlToPaper('printMe');
+    },
+  }
+}
+</script>

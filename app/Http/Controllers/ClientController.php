@@ -10,21 +10,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ClientController extends Controller
 {
     public function clientList(Request $request)
     {
+        $user =  JWTAuth::parseToken()->authenticate();
         $data = strlen($request->q);
         if ($data > 0) {
-            $clients['data'] = Client::where('nom_client', 'like', '%' . request('q') . '%')
+            $clients['data'] = Client::where('id_entreprise', $user->id_entreprise)
+                ->where('nom_client', 'like', '%' . request('q') . '%')
                 ->orWhere('adresse_client', 'like', '%' . request('q') . '%')
                 ->orWhere('numero_client', 'like', '%' . request('q') . '%')
                 ->orWhere('profession_client', 'like', '%' . request('q') . '%')
                 ->get();
             return response()->json($clients);
         } else {
-            $clients = Client::where('id_entreprise', Auth::user()->id_entreprise)->latest()->paginate(10);
+            $clients = Client::where('id_entreprise', $user->id_entreprise)->latest()->paginate(10);
             return response()->json($clients);
         }
     }
@@ -121,7 +124,8 @@ class ClientController extends Controller
 
     public function getClient()
     {
-        $clients = Client::where('id_entreprise', Auth::user()->id_entreprise)->get();
+        $user =  JWTAuth::parseToken()->authenticate();
+        $clients = Client::where('id_entreprise', $user->id_entreprise)->get();
 
         return response()->json($clients);
     }
@@ -329,25 +333,27 @@ class ClientController extends Controller
 
     public function getOneExpiration()
     {
+        $user =  JWTAuth::parseToken()->authenticate();
         $firsts = Contrat::select('expire_le')->join("branches", 'branches.id_branche', '=', 'contrats.id_branche')
             ->join("compagnies", 'compagnies.id_compagnie', '=', 'contrats.id_compagnie')
             ->join("clients", 'clients.id_client', '=', 'contrats.id_client')
-            ->where('contrats.id_entreprise', Auth::user()->id_entreprise)
+            ->where('contrats.id_entreprise', $user->id_entreprise)
             // ->whereBetween('expire_le', [$startDate, $endDate])
             ->where('expire_le', '<=', Carbon::now()->addDays(30)->toDateString())
             ->get();
 
-            // dd($firsts);
+        // dd($firsts);
 
         return response()->json($firsts);
     }
 
     public function getTwoExpiration()
     {
+        $user =  JWTAuth::parseToken()->authenticate();
         $seconds = Contrat::join("clients", 'clients.id_client', '=', 'contrats.id_client')
             ->join("branches", 'branches.id_branche', '=', 'contrats.id_branche')
             ->join("compagnies", 'compagnies.id_compagnie', '=', 'contrats.id_compagnie')
-            ->where('contrats.id_entreprise', Auth::user()->id_entreprise)
+            ->where('contrats.id_entreprise', $user->id_entreprise)
             ->where('effet_police', '<=', Carbon::now()->addDays(60)->toDateTimeString())
             ->get();
 

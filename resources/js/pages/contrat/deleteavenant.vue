@@ -23,4 +23,24 @@
     </div>
   </div>
 </template>
-<script></script>
+<script>
+export default {
+  props: ["avenantoedit"],
+  methods: {
+    deleteAvenant() {
+      axios
+        .post("/api/auth/deleteAvenant", {
+          id_avenant: this.avenantoedit.id_avenant,
+        })
+        .then((response) => {
+          if (response.status === 200) {
+            toaster.success(`Avenant supprimé`, {
+              position: "top-right",
+            });
+          }
+        });
+    },
+
+  }
+}
+</script>

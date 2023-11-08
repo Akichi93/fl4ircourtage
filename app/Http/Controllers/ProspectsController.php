@@ -22,7 +22,7 @@ class ProspectsController extends Controller
         if (Str::startsWith($token, 'Bearer ')) {
             $token = Str::substr($token, 7);
         }
-
+      
         $data = strlen($request->q);
         if ($data > 0) {
             $prospects['data'] = Prospect::where('nom_prospect', 'like', '%' . request('q') . '%')

@@ -22,6 +22,11 @@ import createcontrat from "../pages/contrat/createcontrat";
 import detailscontrat from "../pages/contrat/detailscontrat";
 import avenants from "../pages/contrat/avenants";
 import editcontrat from "../pages/contrat/editcontrat";
+import listsinistre from "../pages/sinistres/listsinistre";
+import createsinistre from "../pages/sinistres/createsinistre";
+import editsinistre from "../pages/sinistres/editsinistre";
+import voirsinistre from "../pages/sinistres/voirsinistre";
+import reglement from "../pages/sinistres/reglement";
 
 const routes = [
   {
@@ -143,6 +148,34 @@ const routes = [
     path: '/editcontrat/:id_contrat',
     name: 'editcontrat',
     component: editcontrat,
+    props: true
+  },
+  {
+    path: '/listsinistre',
+    name: 'listsinistre',
+    component: listsinistre
+  },
+  {
+    path: '/createsinistre',
+    name: 'createsinistre',
+    component: createsinistre
+  },
+  {
+    path: '/editsinistre/:id_sinistre',
+    name: 'editsinistre',
+    component: editsinistre,
+    props: true
+  },
+  {
+    path: '/voirsinistre/:id_sinistre',
+    name: 'voirsinistre',
+    component: voirsinistre,
+    props: true
+  },
+  {
+    path: '/reglement/:id_sinistre',
+    name: 'reglement',
+    component: reglement,
     props: true
   },
 ];

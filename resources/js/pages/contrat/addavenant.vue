@@ -9,72 +9,154 @@
           </button>
         </div>
         <div class="modal-body">
-          <form>
-            <input type="hidden" v-model="id_contrat" :modelValue="id_contrat" />
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Type</label>
-                  <Multiselect v-model="type" :options="modes" placeholder="Choisir le mode" :searchable="true" />
-                </div>
-              </div>
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Prime nette</label>
-                  <input type="number" class="form-control" placeholder="Entrez la prime nette" v-model="prime_nette" />
-                </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Type</label>
+                <typeavenantcomponent v-model="type" :placeholder="'selectionnez un type'" ></typeavenantcomponent>
+                <!-- <Multiselect v-model="type" :options="modes" placeholder="Choisir le mode" :searchable="true" /> -->
               </div>
             </div>
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Accessoires</label>
-                  <input type="number" class="form-control" placeholder="Entrez ..." v-model="accessoires" />
-                </div>
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Prime nette</label>
+                <input type="number" class="form-control" placeholder="Entrez la prime nette" v-model="prime_nette" />
               </div>
             </div>
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Frais courtier</label>
-                  <input type="number" class="form-control" placeholder="Frais courtier" v-model="frais_courtier" />
-                </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Accessoires</label>
+                <input type="number" class="form-control" placeholder="Entrez ..." v-model="accessoires" />
               </div>
-
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Taxes totales</label>
-                  <input type="number" class="form-control" placeholder="Taxes totales" v-model="taxes_totales" />
-                </div>
-              </div>
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Prime ttc</label>
-                  <input type="number" class="form-control" placeholder="Entrez la prime ttc" v-model="prime_ttc" />
-                </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Frais courtier</label>
+                <input type="number" class="form-control" placeholder="Frais courtier" v-model="frais_courtier" />
               </div>
             </div>
 
-            <div class="form-group">
-              <label>Date de debut</label>
-              <input class="form-control" placeholder="Date de debut" type="date" v-model="date_debut" />
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Taxes totales</label>
+                <input type="number" class="form-control" placeholder="Taxes totales" v-model="taxes_totales" />
+              </div>
             </div>
-            <div class="form-group">
-              <label>Date de fin</label>
-              <input class="form-control" placeholder="Date de fin" type="date" v-model="date_fin" />
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Prime ttc</label>
+                <input type="number" class="form-control" placeholder="Entrez la prime ttc" v-model="prime_ttc" />
+              </div>
             </div>
-            <div class="submit-section">
-              <button type="button" class="btn btn-primary cancel-btn" data-bs-dismiss="modal" aria-label="Close">
-                Annuler
-              </button>
-              <button type="button" data-bs-dismiss="modal" class="btn btn-primary submit-btn" @click="addAvenant">
-                Ajouter
-              </button>
-            </div>
-          </form>
+          </div>
+
+          <div class="form-group">
+            <label>Date de debut</label>
+            <input class="form-control" placeholder="Date de debut" type="date" v-model="date_debut" />
+          </div>
+          <div class="form-group">
+            <label>Date de fin</label>
+            <input class="form-control" placeholder="Date de fin" type="date" v-model="date_fin" />
+          </div>
+          <div class="submit-section">
+            <button type="button" class="btn btn-primary cancel-btn" data-bs-dismiss="modal" aria-label="Close">
+              Annuler
+            </button>
+            <button type="button" data-bs-dismiss="modal" class="btn btn-primary submit-btn" @click="addAvenant">
+              Ajouter
+            </button>
+          </div>
+
         </div>
       </div>
     </div>
   </div>
 </template>
-<script></script>
+
+<script>
+import Multiselect from "@vueform/multiselect";
+import typeavenantcomponent from '../../components/select/typeavenantcomponent.vue';
+export default {
+  components: { typeavenantcomponent },
+  methods: {
+    components: {
+      Multiselect,
+    },
+    data() {
+      return {
+
+        type: "",
+        prime_ttc: "",
+        prime_nette: "",
+        ristourne: "",
+        retrocession: "",
+        commission: "",
+        prise_charge: "",
+        date_emission: "",
+        taxes_totales: "",
+        frais_courtier: "",
+        accessoires: "",
+        date_debut: "",
+        date_fin: "",
+       
+      };
+    },
+    addAvenant() {
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("id");
+      const entrepriseId = localStorage.getItem("entreprise");
+
+      axios
+        .post("/api/auth/postAvenant", {
+          type: this.type,
+          prime_ttc: this.prime_ttc,
+          retrocession: this.retrocession,
+          prime_nette: this.prime_nette,
+          commission: this.commission,
+          ristourne: this.ristourne,
+          accessoires: this.accessoires,
+          frais_courtier: this.frais_courtier,
+          prise_charge: this.prise_charge,
+          date_emission: this.date_emission,
+          taxes_totales: this.taxes_totales,
+          date_debut: this.date_debut,
+          date_fin: this.date_fin,
+          id_contrat: this.$route.params.id_contrat,
+          id_entreprise: entrepriseId,
+          id: userId,
+        })
+        .then((response) => {
+          this.getavenant();
+          this.type =
+            this.prime_ttc =
+            this.accessoires =
+            this.prime_nette =
+            this.commission =
+            this.ristourne =
+            this.prise_charge =
+            this.date_emission =
+            this.date_debut =
+            this.date_fin =
+            "";
+          toaster.success(`Avenant ajouté avec succès`, {
+            position: "top-right",
+          });
+        })
+        .catch(() => {
+          this.$toast.error(
+            "Aveant Impossible, Veuillez renseigner tous les champs",
+            {
+              // override the global option
+              position: "top-right",
+            }
+          );
+        });
+    },
+  }
+}
+</script>
+<style src="@vueform/multiselect/themes/default.css"></style>

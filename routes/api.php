@@ -11,6 +11,7 @@ use App\Http\Controllers\ProspectController;
 use App\Http\Controllers\ApporteurController;
 use App\Http\Controllers\CompagnieController;
 use App\Http\Controllers\ProspectsController;
+use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\SinistreController;
 
 /*
@@ -39,8 +40,6 @@ Route::group([
     Route::get('/me', [AuthController::class, 'me']);
 
     Route::get('/user/profile', [AuthController::class, 'userProfile']);
-
-    Route::get('getdetailsavenant{id_contrat}', [ContratController::class, 'getDetailsAvenant']); // 
 
     // Branche
     Route::controller(BrancheController::class)->group(function () {
@@ -147,7 +146,6 @@ Route::group([
     // // Route::get('get/autos', [ContratController::class, 'getAutos']);
 
 
-    Route::get('getInfoAvenant{id_contrat}', [ContratController::class, 'getInfoAvenant']); // 
     
 
     Route::controller(ContratController::class)->group(function () {
@@ -160,9 +158,9 @@ Route::group([
         Route::post('reverseContrat', 'reverseContrat');
         Route::post('reverseAvenant', 'reverseAvenant');
         Route::get('getAvenantContrat/{id_contrat}', 'getAvenantContrat'); // Obtenir les avenants d'un contrat
-        // Route::get('getInfoAvenant{id_contrat}', 'getInfoAvenant');
+        Route::get('getInfoAvenant', 'getInfoAvenant');
         Route::get('editAvenant/{id_avenant}', 'editAvenant');
-        Route::patch('deleteAvenant/{id_avenant}', 'deleteAvenant');
+        Route::post('deleteAvenant', 'deleteAvenant');
         Route::post('postAvenant', 'postAvenant'); // Ajouter un avenant
         Route::post('postFileAvenant', 'postFileAvenant');
         Route::get('getFileAvenant/{id_avenant}', 'getFileAvenant');
@@ -184,29 +182,29 @@ Route::group([
     });
 
     // Sinistres
-    // Route::controller(SinistreController::class)->group(function () {
-    //     Route::get('get-polices', 'getPolices');
-    //     Route::get('get/police/{id}', 'getPolice');
-    //     Route::post('add/sinistre', 'addSinistre');
-    //     Route::put('update/sinistre/{id}', 'updateSinistre');
-    //     Route::get('get/sinistres/{q?}', 'getSinistres');
-    //     Route::get('get/sinistre', 'getSinistre');
-    //     Route::get('get/apporteur', 'getApporteur');
-    //     Route::get('get/reglements', 'getReglements');
-    //     Route::get('get/reglement', 'getReglement');
-    //     Route::post('add/piece', 'addPiece');
-    //     Route::put('update-sinistre-status/{id}', 'updateSinistreStatus');
-    //     Route::post('add/reglement', 'addReglement');
-    //     Route::put('change/reglement/{id}', 'changeReglement');
-    //     Route::patch('sinistres/supprime/{id_sinistre}', 'supprime');
-    //     Route::get('sinistres/edit/{id_sinistre}', 'edit');
-    // });
+    Route::controller(SinistreController::class)->group(function () {
+        Route::get('get-polices', 'getPolices');
+        Route::get('get/police/{id}', 'getPolice');
+        Route::post('add/sinistre', 'addSinistre');
+        Route::put('update/sinistre/{id}', 'updateSinistre');
+        Route::get('get/sinistres/{q?}', 'getSinistres');
+        Route::get('get/sinistre', 'getSinistre');
+        Route::get('get/apporteur', 'getApporteur');
+        Route::get('get/reglements', 'getReglements');
+        Route::get('get/reglement', 'getReglement');
+        Route::post('add/piece', 'addPiece');
+        Route::put('update-sinistre-status/{id}', 'updateSinistreStatus');
+        Route::post('add/reglement', 'addReglement');
+        Route::put('change/reglement/{id}', 'changeReglement');
+        Route::patch('sinistres/supprime/{id_sinistre}', 'supprime');
+        Route::get('sinistres/edit/{id_sinistre}', 'edit');
+    });
 
 
 
     // Entreprise
-    // Route::resource('entreprises', EntrepriseController::class);
-    // Route::get('entreprises/edit/{id_entreprise}', [EntrepriseController::class, 'edit']);
+    Route::resource('entreprises', EntrepriseController::class);
+    Route::get('entreprises/edit/{id_entreprise}', [EntrepriseController::class, 'edit']);
 
     // //  Roles
     // Route::resource('roles', RoleController::class);
