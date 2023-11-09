@@ -24,6 +24,11 @@
   </div>
 </template>
 <script>
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   props: ["avenantoedit"],
   methods: {
@@ -33,6 +38,7 @@ export default {
           id_avenant: this.avenantoedit.id_avenant,
         })
         .then((response) => {
+          this.$emit('avenant-solder', response)
           if (response.status === 200) {
             toaster.success(`Avenant solde`, {
               position: "top-right",

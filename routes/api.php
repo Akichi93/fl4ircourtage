@@ -203,7 +203,7 @@ Route::group([
     });
 
     // Dashboard
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/graph', [HomeController::class, 'graph'])->name('graph');
     Route::get('/stat', [HomeController::class, 'stat'])->name('stat');
     Route::get('/year', [HomeController::class, 'year'])->name('year');
     Route::get('/retrievebranche', [HomeController::class, 'retrievebranche']);

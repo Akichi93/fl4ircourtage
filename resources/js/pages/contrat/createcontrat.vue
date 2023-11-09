@@ -1006,7 +1006,7 @@ export default {
             });
             this.contrats = response.data;
           }
-          window.location.href = "/contrat";
+          this.$router.push("/listcontrat");
         })
         .catch((error) => {
           if (error.response.status === 422) {

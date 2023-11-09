@@ -15,6 +15,75 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class HomeController extends Controller
 {
+
+    public function graph()
+    {
+        $user =  JWTAuth::parseToken()->authenticate();
+        // Chiffres d'affaires par mois
+        $primes = Avenant::select('mois as name', DB::raw('SUM(prime_nette + accessoires) as y'))
+            // ->where('annee', $Year)
+            ->where('id_entreprise', $user->id_entreprise)
+            ->where('supprimer_avenant', 0)
+            ->groupBy('mois')
+            ->get();
+
+        // $json = json_encode($primes, true);
+
+
+        // Chiffres d'affaires par branche
+        $accesoires = Avenant::select('nom_branche as name', DB::raw('SUM(avenants.prime_nette + avenants.accessoires) as y'))
+            ->join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
+            ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
+            // ->where('annee', $Year)
+            ->where('avenants.id_entreprise', $user->id_entreprise)
+            ->where('supprimer_avenant', 0)
+            ->groupBy('nom_branche')
+            ->get();
+
+        $tbjson = json_encode($accesoires, true);
+
+        $contrats = DB::table('contrats')
+            ->select(
+                DB::raw('EXTRACT(YEAR FROM effet_police) AS year'),
+                DB::raw('EXTRACT(MONTH FROM effet_police) AS month'),
+                DB::raw('COUNT(*) AS y')
+            )
+            ->groupBy(DB::raw('EXTRACT(YEAR FROM effet_police)'), DB::raw('EXTRACT(MONTH FROM effet_police)'))
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get();
+
+        $infos = json_encode($contrats, true);
+
+        $Year = date("Y");
+
+        $nbres = DB::table('contrats')
+            ->select(DB::raw('EXTRACT(MONTH FROM expire_le) AS name'), DB::raw('COUNT(*) AS y'))
+            ->where('contrats.id_entreprise', $user->entreprise)
+            ->whereYear('expire_le', '=', $Year)
+            ->groupBy(DB::raw('EXTRACT(MONTH FROM expire_le)'))
+            ->get();
+
+        $nbre = json_encode($nbres, true);
+
+        // Chiffres d'affaires par compagnie
+        $compagnies = Avenant::select('nom_compagnie as name', DB::raw('SUM(avenants.prime_nette + avenants.accessoires) as y'))
+            ->join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
+            ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
+            ->where('avenants.id_entreprise', $user->entreprise)
+            ->where('supprimer_avenant', 0)
+            ->groupBy('nom_compagnie')
+            ->get();
+
+        $compagnie = json_encode($compagnies, true);
+
+
+
+        // return view('home', compact('json', 'tbjson', 'infos', 'nbre', 'compagnie'));
+
+
+        return response()->json(["primes" => $primes, "tbjson" => $tbjson]);
+    }
     public function stat(Request $request)
     {
         $year = Avenant::where('id_avenant', $request->year)->pluck('annee')->first();
@@ -235,7 +304,7 @@ class HomeController extends Controller
     public function year()
     {
         $user =  JWTAuth::parseToken()->authenticate();
-       
+
         $entreprise = $user->id_entreprise;
         $getYear = Avenant::select('annee')->where('id_entreprise', $entreprise)->groupBy('annee')->get();
         return response()->json($getYear);

@@ -13,7 +13,7 @@
             <div class="col-sm-12">
               <div class="form-group">
                 <label>Type</label>
-                <typeavenantcomponent v-model="type" :placeholder="'selectionnez un type'" ></typeavenantcomponent>
+                <typeavenantcomponent v-model="type" :placeholder="'selectionnez un type'"></typeavenantcomponent>
                 <!-- <Multiselect v-model="type" :options="modes" placeholder="Choisir le mode" :searchable="true" /> -->
               </div>
             </div>
@@ -80,6 +80,11 @@
 <script>
 import Multiselect from "@vueform/multiselect";
 import typeavenantcomponent from '../../components/select/typeavenantcomponent.vue';
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   components: { typeavenantcomponent },
   methods: {
@@ -102,7 +107,7 @@ export default {
         accessoires: "",
         date_debut: "",
         date_fin: "",
-       
+
       };
     },
     addAvenant() {
@@ -130,21 +135,22 @@ export default {
           id: userId,
         })
         .then((response) => {
-          this.getavenant();
+          this.$emit('avenant-add', response)
+          toaster.success(`Avenant ajouté avec succès`, {
+            position: "top-right",
+          });
           this.type =
-            this.prime_ttc =
-            this.accessoires =
-            this.prime_nette =
-            this.commission =
+            this.prime_ttc = '',
+            this.accessoires = '',
+            this.prime_nette = '',
+            this.commission = '',
             this.ristourne =
             this.prise_charge =
             this.date_emission =
             this.date_debut =
             this.date_fin =
             "";
-          toaster.success(`Avenant ajouté avec succès`, {
-            position: "top-right",
-          });
+
         })
         .catch(() => {
           this.$toast.error(

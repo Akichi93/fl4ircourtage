@@ -232,36 +232,136 @@ class ContratController extends Controller
     {
         $id = $request->id_avenant;
 
-        $Data = $this->contrat->soldeAvenant($id);
+        $id_contrat = Avenant::where('id_avenant', $request->id_avenant)->value('id_contrat');
 
-        return response()->json([
-            'success' => true,
-            'data' => $Data
-        ], Response::HTTP_OK);
+        $avenants = Avenant::where('id_avenant', $id)->update([
+            'solder' => 1,
+        ]);
+
+
+        // $Data = $this->contrat->soldeAvenant($id);
+
+        if ($avenants) {
+            $avenants = Avenant::select(
+                'id_avenant',
+                'type',
+                'nom_compagnie',
+                'numero_police',
+                'nom_branche',
+                'annee',
+                'mois',
+                'prime_ttc',
+                'avenants.commission_courtier',
+                'avenants.commission',
+                'avenants.date_emission',
+                'avenants.date_debut',
+                'avenants.date_fin',
+                'avenants.solder',
+                'avenants.reverser',
+            )
+                ->join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
+                ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
+                ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
+                ->where('contrats.id_contrat', $id_contrat)
+                ->where('supprimer_avenant', 0)
+                ->get();
+
+            return response()->json($avenants);
+        }
     }
 
     public function reverseContrat(Request $request)
     {
         $id = $request->id_contrat;
 
-        $Data = $this->contrat->reverseContrat($id);
+        $id_contrat = Avenant::where('id_avenant', $request->id_avenant)->value('id_contrat');
 
-        return response()->json([
-            'success' => true,
-            'data' => $Data
-        ], Response::HTTP_OK);
+        $avenants = Contrat::where('id_contrat', $id)->update([
+            'reverse' => 1,
+        ]);
+
+
+        if ($avenants) {
+            $avenants = Avenant::select(
+                'id_avenant',
+                'type',
+                'nom_compagnie',
+                'numero_police',
+                'nom_branche',
+                'annee',
+                'mois',
+                'prime_ttc',
+                'avenants.commission_courtier',
+                'avenants.commission',
+                'avenants.date_emission',
+                'avenants.date_debut',
+                'avenants.date_fin',
+                'avenants.solder',
+                'avenants.reverser',
+            )
+                ->join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
+                ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
+                ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
+                ->where('contrats.id_contrat', $id_contrat)
+                ->where('supprimer_avenant', 0)
+                ->get();
+
+            return response()->json($avenants);
+        }
+
+        // $Data = $this->contrat->reverseContrat($id);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'data' => $Data
+        // ], Response::HTTP_OK);
     }
 
     public function reverseAvenant(Request $request)
     {
         $id = $request->id_avenant;
 
-        $Data = $this->contrat->reverseAvenant($id);
+        $id_contrat = Avenant::where('id_avenant', $request->id_avenant)->value('id_contrat');
 
-        return response()->json([
-            'success' => true,
-            'data' => $Data
-        ], Response::HTTP_OK);
+        $avenants = Avenant::where('id_avenant', $id)->update([
+            'reverser' => 1,
+        ]);
+
+        if ($avenants) {
+            $avenants = Avenant::select(
+                'id_avenant',
+                'type',
+                'nom_compagnie',
+                'numero_police',
+                'nom_branche',
+                'annee',
+                'mois',
+                'prime_ttc',
+                'avenants.commission_courtier',
+                'avenants.commission',
+                'avenants.date_emission',
+                'avenants.date_debut',
+                'avenants.date_fin',
+                'avenants.solder',
+                'avenants.reverser',
+            )
+                ->join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
+                ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
+                ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
+                ->where('contrats.id_contrat', $id_contrat)
+                ->where('supprimer_avenant', 0)
+                ->get();
+
+            return response()->json($avenants);
+        }
+
+
+        // $Data = $this->contrat->reverseAvenant($id);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'data' => $Data
+        // ], Response::HTTP_OK);
     }
 
 
@@ -322,12 +422,50 @@ class ContratController extends Controller
     public function deleteAvenant(Request $request)
     {
         $id_avenant = $request->id_avenant;
-        $Data = $this->contrat->deleteAvenant($id_avenant);
 
-        return response()->json([
-            'success' => true,
-            'data' => $Data
-        ], Response::HTTP_OK);
+        $avenants = Avenant::find($id_avenant);
+        $avenants->supprimer_avenant = 1;
+        $avenants->save();
+
+
+        $id_contrat = Avenant::where('id_avenant', $request->id_avenant)->value('id_contrat');
+
+
+        if ($avenants) {
+
+            $avenants = Avenant::select(
+                'id_avenant',
+                'type',
+                'nom_compagnie',
+                'numero_police',
+                'nom_branche',
+                'annee',
+                'mois',
+                'prime_ttc',
+                'avenants.commission_courtier',
+                'avenants.commission',
+                'avenants.date_emission',
+                'avenants.date_debut',
+                'avenants.date_fin',
+                'avenants.solder',
+                'avenants.reverser',
+            )
+                ->join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
+                ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
+                ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
+                ->where('contrats.id_contrat', $id_contrat)
+                ->where('supprimer_avenant', 0)
+                ->get();
+
+            return response()->json($avenants);
+        }
+
+        // $Data = $this->contrat->deleteAvenant($id_avenant);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'data' => $Data
+        // ], Response::HTTP_OK);
     }
 
     public function postAvenant(Request $request)
@@ -397,7 +535,35 @@ class ContratController extends Controller
         $avenants->user_id = $request->id;
         $avenants->code_avenant = $orderNumber;
         $avenants->save();
-        return response()->json(['success' => "Avenant ajouté avec succès"]);
+
+        if ($avenants) {
+
+            $avenants = Avenant::select(
+                'id_avenant',
+                'type',
+                'nom_compagnie',
+                'numero_police',
+                'nom_branche',
+                'annee',
+                'mois',
+                'prime_ttc',
+                'avenants.commission_courtier',
+                'avenants.commission',
+                'avenants.date_emission',
+                'avenants.date_debut',
+                'avenants.date_fin',
+                'avenants.solder',
+                'avenants.reverser',
+            )
+                ->join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
+                ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
+                ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
+                ->where('contrats.id_contrat', $request->id_contrat)
+                ->where('supprimer_avenant', 0)
+                ->get();
+
+            return response()->json($avenants);
+        }
     }
 
     public function postFileAvenant(Request $request)

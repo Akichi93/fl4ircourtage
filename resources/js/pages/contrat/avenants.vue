@@ -123,11 +123,11 @@
               </table>
             </div>
 
-            <addavenant></addavenant>
+            <addavenant @avenant-add="refresh"></addavenant>
             <!-- <editavenant v-bind:avenantoedit="avenantoedit"></editavenant> -->
-            <soldercontrat v-bind:avenantoedit="avenantoedit"></soldercontrat>
-            <reversercontrat v-bind:avenantoedit="avenantoedit"></reversercontrat>
-            <deleteavenant v-bind:avenantoedit="avenantoedit"></deleteavenant>
+            <soldercontrat v-bind:avenantoedit="avenantoedit" @avenant-solder="refresh"></soldercontrat>
+            <reversercontrat v-bind:avenantoedit="avenantoedit" @avenant-reverser="refresh"></reversercontrat>
+            <deleteavenant v-bind:avenantoedit="avenantoedit"  @avenant-delete="refresh"></deleteavenant>
             <viewfacture v-bind:facturetoedit="facturetoedit"></viewfacture>
             <addfile v-bind:avenantoedit="avenantoedit"></addfile>
             <viewfile v-bind:filetoedit="filetoedit"></viewfile>
@@ -224,7 +224,9 @@ export default {
         );
     },
 
-
+    refresh(avenants) {
+      this.avenants = avenants.data;
+    }
 
 
 

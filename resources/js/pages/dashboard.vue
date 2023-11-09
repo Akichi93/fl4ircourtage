@@ -102,15 +102,19 @@
           </div>
         </div>
       </div>
+
+      <barchart></barchart>
     </div>
   </div>
 </template>
 <script>
 import Header from "../layout/Header";
 import Sidebar from "../layout/Sidebar";
+import barchart from "../components/graph/barchart.vue"
 export default {
   data() {
     return {
+
       year: "",
       branch: "",
       contrat: "",
@@ -123,6 +127,7 @@ export default {
       getYear: {},
       branches: {},
     };
+
   },
   created() {
     if (!User.loggedIn()) {
@@ -134,7 +139,7 @@ export default {
     this.getData();
   },
   name: "dashboard",
-  components: { Header, Sidebar },
+  components: { Header, Sidebar, barchart },
   methods: {
     fetchData() {
       const token = localStorage.getItem("token");
@@ -195,7 +200,6 @@ export default {
     },
 
     getData() {
-      alert("Bonjour")
       const token = localStorage.getItem("token");
 
       // Configurez les en-têtes de la requête
@@ -204,16 +208,16 @@ export default {
         "x-access-token": token,
       };
 
-      let config = {
-        headers: { headers },
-        params: {
-          year: this.year,
-              branch: this.branch,
-        },
-      }
+      const params = {
+        year: this.year,
+        branch: this.branch,
+      };
+
       axios
-        .get(
-          "/api/auth/stat/", { config }
+        .get("/api/auth/stat/", {
+          params: params,
+          headers: headers,
+        }
         )
         .then((response) => {
           this.contrat = response.data.contrat;
@@ -226,6 +230,27 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+
+    // getgraph() {
+    //   const token = localStorage.getItem("token");
+
+    //   // Configurez les en-têtes de la requête
+    //   const headers = {
+    //     Authorization: "Bearer " + token,
+    //     "x-access-token": token,
+    //   };
+
+    //   axios
+    //     .get("/api/auth/graph", { headers })
+    //     .then((response) => {
+    //       this.graph = response.data;
+    //       console.log(response.data)
+    //     })
+    //     .catch((error) => {
+    //       this.loading = false;
+    //       this.error = error.response.data.message || error.message;
+    //     });
+    // }
   },
 };
 </script>

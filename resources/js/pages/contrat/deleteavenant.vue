@@ -1,5 +1,5 @@
 <template>
-     <div class="modal custom-modal fade" id="delete_avenant" role="dialog">
+  <div class="modal custom-modal fade" id="delete_avenant" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body">
@@ -24,6 +24,11 @@
   </div>
 </template>
 <script>
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   props: ["avenantoedit"],
   methods: {
@@ -33,6 +38,7 @@ export default {
           id_avenant: this.avenantoedit.id_avenant,
         })
         .then((response) => {
+          this.$emit('avenant-delete', response)
           if (response.status === 200) {
             toaster.success(`Avenant supprimé`, {
               position: "top-right",
