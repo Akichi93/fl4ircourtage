@@ -1,18 +1,20 @@
 <?php
 
+use App\Models\Entreprise;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FormController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\BrancheController;
 use App\Http\Controllers\ContratController;
 use App\Http\Controllers\ProspectController;
+use App\Http\Controllers\SinistreController;
 use App\Http\Controllers\ApporteurController;
 use App\Http\Controllers\CompagnieController;
 use App\Http\Controllers\ProspectsController;
 use App\Http\Controllers\EntrepriseController;
-use App\Http\Controllers\SinistreController;
 
 /*
 |--------------------------------------------------------------------------
@@ -201,10 +203,10 @@ Route::group([
     });
 
     // Dashboard
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    Route::get('/stat', [App\Http\Controllers\HomeController::class, 'stat'])->name('stat');
-    Route::get('/year', [App\Http\Controllers\HomeController::class, 'year'])->name('year');
-    Route::get('/retrievebranche', [App\Http\Controllers\HomeController::class, 'retrievebranche']);
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/stat', [HomeController::class, 'stat'])->name('stat');
+    Route::get('/year', [HomeController::class, 'year'])->name('year');
+    Route::get('/retrievebranche', [HomeController::class, 'retrievebranche']);
 
 
 

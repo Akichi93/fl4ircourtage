@@ -235,8 +235,9 @@ class HomeController extends Controller
     public function year()
     {
         $user =  JWTAuth::parseToken()->authenticate();
+       
         $entreprise = $user->id_entreprise;
-        $getYear = Avenant::where('id_entreprise', $entreprise)->groupBy('annee')->get();
+        $getYear = Avenant::select('annee')->where('id_entreprise', $entreprise)->groupBy('annee')->get();
         return response()->json($getYear);
     }
 
