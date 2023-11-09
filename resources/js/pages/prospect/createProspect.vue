@@ -273,7 +273,8 @@ export default {
                             position: "top-right",
                         });
                     }
-                    window.location.href = "/prospect";
+                    this.$router.push("/listprospect");
+                    
                 })
                 .catch((error) => {
                     if (error.response.status === 422) {

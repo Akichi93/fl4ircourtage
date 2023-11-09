@@ -146,7 +146,7 @@ Route::group([
     // // Route::get('get/autos', [ContratController::class, 'getAutos']);
 
 
-    
+
 
     Route::controller(ContratController::class)->group(function () {
         Route::get('/contratList/{q?}', 'contratList');
@@ -199,6 +199,12 @@ Route::group([
         Route::patch('sinistres/supprime/{id_sinistre}', 'supprime');
         Route::get('sinistres/edit/{id_sinistre}', 'edit');
     });
+
+    // Dashboard
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/stat', [App\Http\Controllers\HomeController::class, 'stat'])->name('stat');
+    Route::get('/year', [App\Http\Controllers\HomeController::class, 'year'])->name('year');
+    Route::get('/retrievebranche', [App\Http\Controllers\HomeController::class, 'retrievebranche']);
 
 
 

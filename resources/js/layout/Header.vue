@@ -22,15 +22,15 @@
             <li>
                 <a href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Courtages</a>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="">Contrats</a>
-                    <a class="dropdown-item" href="">Sinistres</a>
-                    <a class="dropdown-item" href="">Relances</a>
-                    <a class="dropdown-item" href="">Compagnies</a>
-                    <a class="dropdown-item" href="">Branches</a>
-                    <a class="dropdown-item" href="">Apporteurs</a>
-                    <a class="dropdown-item" href="">Prospects</a>
-                    <a class="dropdown-item" href="">Clients</a>
-                    <a class="dropdown-item" href="">Upload des bases</a>
+                    <router-link class="dropdown-item" to="/listcontrat">Contrats</router-link>
+                    <router-link class="dropdown-item" to="/listsinistre">Sinistres</router-link>
+                    <router-link class="dropdown-item" to="/listrelance">Relances</router-link>
+                    <router-link class="dropdown-item" to="/listcompagnie">Compagnie</router-link>
+                    <router-link class="dropdown-item" to="/listbranche">Branches</router-link>
+                    <router-link class="dropdown-item" to="/listapporteur">Apporteurs</router-link>
+                    <router-link class="dropdown-item" to="/listprospect">Prospects</router-link>
+                    <router-link class="dropdown-item" to="/listclient">Clients</router-link>
+                    <router-link class="dropdown-item" to="/upload">Upload des bases</router-link>
                 </div>
             </li>
             <li>
@@ -196,7 +196,7 @@
 
             <li class="nav-item dropdown has-arrow main-drop">
                 <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
-                    <span class="user-img"><img src="assets/img/profiles/avatar-21.jpg" alt></span>
+                    <span class="user-img"><i class="fa fa-user" aria-hidden="true"></i></span>
                     <span>{{ user.name }}</span>
                 </a>
                 <div class="dropdown-menu">

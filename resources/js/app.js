@@ -35,6 +35,7 @@ import createsinistre from "../js/pages/sinistres/createsinistre";
 import editsinistre from '../js/pages/sinistres/editsinistre';
 import voirsinistre from '../js/pages/sinistres/voirsinistre';
 import reglement from '../js/pages/sinistres/reglement';
+import upload from "../js/pages/uploads/upload"
 
 const options = {
     name: '_blank',
@@ -85,7 +86,8 @@ createApp({
         createsinistre,
         editsinistre,
         voirsinistre,
-        reglement
+        reglement,
+        upload
     }
 }).use(router)
     .use(BootstrapVue3)

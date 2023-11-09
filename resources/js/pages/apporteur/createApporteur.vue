@@ -292,6 +292,7 @@ export default {
               position: "top-right",
             });
           }
+          this.$router.push("/listapporteur");
         })
         .catch((error) => {
           // console.log(error.response.headers);

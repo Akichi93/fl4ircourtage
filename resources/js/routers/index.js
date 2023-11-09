@@ -27,6 +27,7 @@ import createsinistre from "../pages/sinistres/createsinistre";
 import editsinistre from "../pages/sinistres/editsinistre";
 import voirsinistre from "../pages/sinistres/voirsinistre";
 import reglement from "../pages/sinistres/reglement";
+import upload from "../pages/uploads/upload";
 
 const routes = [
   {
@@ -177,6 +178,11 @@ const routes = [
     name: 'reglement',
     component: reglement,
     props: true
+  },
+  {
+    path: '/upload',
+    name: 'upload',
+    component: upload
   },
 ];
 
