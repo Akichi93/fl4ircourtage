@@ -79,13 +79,20 @@
   </div>
 </template>
 <script>
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
-  props: ['prospectoedit'],
+  props: ["prospectoedit"],
   name: "admettreProspect",
   methods: {
     ChangeProspect() {
+      const entrepriseId = localStorage.getItem("entreprise");
+
       axios
-        .post("/validateProspect", {
+        .post("/api/auth/validateProspect", {
           id_prospect: this.prospectoedit.id_prospect,
           civilite: this.prospectoedit.id_prospect,
           nom_prospect: this.prospectoedit.nom_prospect,
@@ -95,15 +102,15 @@ export default {
           adresse_prospect: this.prospectoedit.adresse_prospect,
           fax_prospect: this.prospectoedit.fax_prospect,
           profession_prospect: this.prospectoedit.profession_prospect,
+          id_entreprise : entrepriseId
         })
         .then((response) => {
-          this.listprospect();
+          this.$emit('prospect-admettre', response)
           if (response.status === 200) {
             toaster.success(`Nouveau client enregistré`, {
               position: "top-right",
             });
-            // this.prospects = response.data;
-            // this.fetchTask();
+            
           }
         });
     },

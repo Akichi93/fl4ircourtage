@@ -16,13 +16,10 @@
             <div class="row">
               <div class="col-md-12">
                 <div class="form-group">
-                  <Multiselect
+                  <etatcomponent
+                    :placeholder="'selectionnez un état'"
                     v-model="etat"
-                    :options="etats"
-                    placeholder="Choisir un etat"
-                    :searchable="true"
-                    class="form-control"
-                  />
+                  ></etatcomponent>
                 </div>
               </div>
             </div>
@@ -53,23 +50,33 @@
   </div>
 </template>
 <script>
+import etatcomponent from "../../components/select/etatcomponent.vue";
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   props: ["prospectoedit"],
   name: "changeProspect",
+  components: {
+    etatcomponent,
+  },
   methods: {
     ChangeEtat() {
+      const entrepriseId = localStorage.getItem("entreprise");
+
       axios
         .patch("/api/auth/etatProspect/" + this.prospectoedit.id_prospect, {
           etat: this.etat,
+          id_entreprise : entrepriseId
         })
         .then((response) => {
-          this.listprospect();
+          this.$emit('prospect-change', response)
           if (response.status === 200) {
             toaster.success(`Etat changé`, {
               position: "top-right",
             });
-            // this.prospects = response.data;
-            // this.fetchTask();
           }
         });
     },

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use JWTAuth;
 use App\Models\Client;
 use App\Models\Branche;
 use App\Models\Prospect;
@@ -10,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\BrancheProspect;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ProspectsController extends Controller
 {
@@ -17,21 +17,23 @@ class ProspectsController extends Controller
     {
 
         // Get the token from the "Authorization" header
-        $token = $request->header('Authorization');
+        // $token = $request->header('Authorization');
 
-        if (Str::startsWith($token, 'Bearer ')) {
-            $token = Str::substr($token, 7);
-        }
-      
+        // if (Str::startsWith($token, 'Bearer ')) {
+        //     $token = Str::substr($token, 7);
+        // }
+        $user =  JWTAuth::parseToken()->authenticate();
+
+
         $data = strlen($request->q);
         if ($data > 0) {
             $prospects['data'] = Prospect::where('nom_prospect', 'like', '%' . request('q') . '%')
                 ->where('supprimer_prospect', '=', '0')
-                ->where('id_entreprise', auth()->user()->id_entreprise)
+                ->where('id_entreprise', $user->id_entreprise)
                 ->get();
             return response()->json($prospects);
         } else {
-            $prospects = Prospect::where('id_entreprise', auth()->user()->id_entreprise)
+            $prospects = Prospect::where('id_entreprise', $user->id_entreprise)
                 ->where('supprimer_prospect', '=', '0')
                 ->latest()
                 ->paginate(10);
@@ -100,7 +102,14 @@ class ProspectsController extends Controller
         $prospects->email_prospect = request('email_prospect');
         $prospects->save();
 
-        return response()->json($prospects);
+        if ($prospects) {
+            // $prospects = Prospect::where('id_entreprise', $user->id_entreprise)
+            // ->where('supprimer_prospect', '=', '0')
+            // ->latest()
+            // ->paginate(10);
+
+            return response()->json($prospects);
+        }
     }
 
     public function validateProspect(Request $request)
@@ -139,19 +148,33 @@ class ProspectsController extends Controller
         $client->profession_client = $request->profession_prospect;
         $client->fax_client = $request->fax_prospect;
         $client->email_client = $request->email_prospect;
-        $client->id_entreprise = auth()->user()->id_entreprise;
+        $client->id_entreprise = $request->id_entreprise;
         $client->save();
 
-        return response()->json($prospects);
+        if ($prospects) {
+            $prospects = Prospect::where('id_entreprise', $request->id_entreprise)
+                ->where('supprimer_prospect', '=', '0')
+                ->latest()
+                ->paginate(10);
+
+            return response()->json($prospects);
+        }
     }
 
-    public function deleteProspect($id_prospect)
+    public function deleteProspect(Request $request, $id_prospect)
     {
         $prospects = Prospect::find($id_prospect);
         $prospects->supprimer_prospect = 1;
         $prospects->save();
 
-        return response()->json($prospects);
+        if ($prospects) {
+            $prospects = Prospect::where('id_entreprise', $request->id_entreprise)
+                ->where('supprimer_prospect', '=', '0')
+                ->latest()
+                ->paginate(10);
+
+            return response()->json($prospects);
+        }
     }
 
     public function etatProspect(Request $request, $id_prospect)
@@ -160,7 +183,14 @@ class ProspectsController extends Controller
         $prospects->statut = $request->etat;
         $prospects->save();
 
-        return response()->json($prospects);
+        if ($prospects) {
+            $prospects = Prospect::where('id_entreprise', $request->id_entreprise)
+                ->where('supprimer_prospect', '=', '0')
+                ->latest()
+                ->paginate(10);
+
+            return response()->json($prospects);
+        }
     }
 
     public function getBrancheDiffProspect(Request $request)

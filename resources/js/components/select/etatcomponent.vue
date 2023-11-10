@@ -1,5 +1,5 @@
 <template>
-    <Multiselect :value="modelValue" :options="etats" placeholder="Choisir un etat" :searchable="true"
+    <Multiselect :value="etatValue" :options="etats" placeholder="Choisir un etat" :searchable="true"
         class="form-control" />
 </template>
 <script>
@@ -7,7 +7,7 @@ import Multiselect from "@vueform/multiselect";
 
 export default {
     name: "adressecomponent",
-    props: ["modelValue", "placeholder"],
+    props: ["etatValue", "placeholder"],
     data() {
         return {
             etats: [

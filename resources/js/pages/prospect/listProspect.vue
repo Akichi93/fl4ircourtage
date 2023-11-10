@@ -130,7 +130,7 @@
             </div>
             <admettreProspect
               v-bind:prospectoedit="prospectoedit"
-              @compagnie-updated="refresh"
+              @prospect-admettre="refresh"
             ></admettreProspect>
             <editProspect
               v-bind:prospectoedit="prospectoedit"
@@ -138,11 +138,11 @@
             ></editProspect>
             <changeProspect
               v-bind:prospectoedit="prospectoedit"
-              @compagnie-updated="refresh"
+              @prospect-change="refresh"
             ></changeProspect>
             <deleteProspect
               v-bind:prospectoedit="prospectoedit"
-              @compagnie-deleted="refresh"
+              @prospect-deleted="refresh"
             ></deleteProspect>
           </div>
         </div>
@@ -203,6 +203,10 @@ export default {
         .then((response) => (this.prospects = response.data))
         .catch((error) => console.log(error));
     },
+
+    refresh(prospects) {
+      this.prospects = prospects.data;
+    }
   },
 };
 </script>

@@ -63,7 +63,7 @@
                                                     <div class="form-group">
                                                         <label>Etat:</label>
                                                         <etatcomponent :placeholder="'selectionnez un état'"
-                                                            v-model="etats"></etatcomponent>
+                                                            v-model="etat"></etatcomponent>
                                                         <p style="color: red" class="text-red" v-if="errors.etat"
                                                             v-text="errors.etat[0]">
                                                         </p>
