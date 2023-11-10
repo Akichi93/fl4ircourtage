@@ -137,6 +137,7 @@ export default {
     this.getCategory();
     this.getTypes();
     this.getData();
+    this.getgraph()
   },
   name: "dashboard",
   components: { Header, Sidebar, barchart },
@@ -231,26 +232,26 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    // getgraph() {
-    //   const token = localStorage.getItem("token");
+    getgraph() {
+      const token = localStorage.getItem("token");
 
-    //   // Configurez les en-têtes de la requête
-    //   const headers = {
-    //     Authorization: "Bearer " + token,
-    //     "x-access-token": token,
-    //   };
+      // Configurez les en-têtes de la requête
+      const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+      };
 
-    //   axios
-    //     .get("/api/auth/graph", { headers })
-    //     .then((response) => {
-    //       this.graph = response.data;
-    //       console.log(response.data)
-    //     })
-    //     .catch((error) => {
-    //       this.loading = false;
-    //       this.error = error.response.data.message || error.message;
-    //     });
-    // }
+      axios
+        .get("/api/auth/graph", { headers })
+        .then((response) => {
+          this.graph = response.data.primes.map(prime => prime.name);
+          console.log(response.data.primes.map(prime => prime.y))
+        })
+        .catch((error) => {
+          this.loading = false;
+          this.error = error.response.data.message || error.message;
+        });
+    }
   },
 };
 </script>

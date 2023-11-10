@@ -108,12 +108,12 @@
                           ><i class="fas fa-edit"></i>
                         </a>
 
-                        <a
-                          href="#"
-                          @click="viewprospect(prospect.id_prospect)"
-                          title="Voir details"
-                          ><i class="fas fa-eye"></i>
-                        </a>
+                        <router-link :to="{
+                          name: 'detailsprospect',
+                          params: { id_prospect: prospect.id_prospect },
+
+                        }"><i class="fas fa-eye"></i></router-link>
+                    
                         <a
                           href="#"
                           data-bs-toggle="modal"
