@@ -14,6 +14,7 @@ use App\Http\Controllers\SinistreController;
 use App\Http\Controllers\ApporteurController;
 use App\Http\Controllers\CompagnieController;
 use App\Http\Controllers\ProspectsController;
+use App\Http\Controllers\StatController;
 use App\Http\Controllers\EntrepriseController;
 
 /*
@@ -149,7 +150,7 @@ Route::group([
 
 
 
-
+    // Contrat
     Route::controller(ContratController::class)->group(function () {
         Route::get('/contratList/{q?}', 'contratList');
         Route::get('editContrat/{id_contrat}', 'editContrat');
@@ -214,16 +215,32 @@ Route::group([
     Route::resource('entreprises', EntrepriseController::class);
     Route::get('entreprises/edit/{id_entreprise}', [EntrepriseController::class, 'edit']);
 
+
+    // Statistiques
+    
+    Route::get('/modulestat', [StatController::class, 'modulestat'])->name('modulestat');
+    Route::get('/synthese', [StatController::class, 'synthese'])->name('synthese');
+    Route::get('detailsclient/{id_client}', [StatController::class, 'detailsclient'])->name('detailsclient');
+    Route::get('detailscontrats/{id_contrat}', [StatController::class, 'detailscontrats'])->name('detailscontrats');
+    Route::get('infosinistre/{id_contrat}', [StatController::class, 'infosinistre'])->name('infosinistre');
+    Route::get('/sinis', [StatController::class, 'sinis'])->name('sinis');
+    Route::get('/productions', [StatController::class, 'productions'])->name('productions');
+    Route::get('/statapporteur', [StatController::class, 'statapporteur'])->name('statapporteur');
+    Route::get('/statsupprime', [StatController::class, 'statsupprime'])->name('statsupprime');
+    Route::get('detailsapporteurs/{id_apporteur}', [StatController::class, 'detailsapporteurs'])->name('detailsapporteurs');
+
+    Route::get('/expiredata/{search?}', [StatController::class, 'expiredata']);
+
     // //  Roles
-    // Route::resource('roles', RoleController::class);
+    Route::resource('roles', RoleController::class);
 
 
 
     // // Users
-    // Route::resource('utilisateurs', UtilisateurController::class);
-    // Route::get('utilisateurs/edit/{id}', [UtilisateurController::class, 'edit']);
-    // Route::get('get/logs', [UtilisateurController::class, 'getLogs']);
-    // Route::get('getrole', [UtilisateurController::class, 'getRole']);
+    Route::resource('utilisateurs', UtilisateurController::class);
+    Route::get('utilisateurs/edit/{id}', [UtilisateurController::class, 'edit']);
+    Route::get('get/logs', [UtilisateurController::class, 'getLogs']);
+    Route::get('getrole', [UtilisateurController::class, 'getRole']);
 
     // Route::get('get/expires', [HomeController::class, 'getexpires'])->name('contrats/getexpires');
     // Route::get('get/nonsoldes', [HomeController::class, 'getnonsoldes']);

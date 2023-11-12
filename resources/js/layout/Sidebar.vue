@@ -23,7 +23,7 @@
                     </span>
                 </router-link>
 
-                <router-link to="/statistiques" class="nav-link menu" id="modulestat" title="Statistiques" role="tab"
+                <router-link to="/statistique" class="nav-link menu" id="modulestat" title="Statistiques" role="tab"
                     aria-controls="v-pills-apps" aria-selected="false">
                     <span class="material-icons-outlined">
                         leaderboard

@@ -89,14 +89,17 @@ class HomeController extends Controller
         $year = Avenant::where('id_avenant', $request->year)->pluck('annee')->first();
         // $year = $request->year;
         $branch = $request->branch;
+        $user =  JWTAuth::parseToken()->authenticate();
+        $entreprise = $user->id_entreprise;
+
+
 
         if ($branch == null) {
             // Année actuelle
             $Year = date("Y");
             // Date du jour
             $date = date('Y-m-d');
-            $user =  JWTAuth::parseToken()->authenticate();
-            $entreprise = $user->id_entreprise;
+
 
             $contrats = Contrat::where('expire_le', '>', $date)
                 ->whereYear('souscrit_le', '=', $Year)
@@ -157,20 +160,18 @@ class HomeController extends Controller
             $Year = date("Y");
             // Date du jour
             $date = date('Y-m-d');
-            $user =  JWTAuth::parseToken()->authenticate();
-            $entreprise = $user->id_entreprise;
 
-            $contrats = Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-                ->where('expire_le', '>', $date)
-                ->whereYear('contrats.created_at', '=', $year)
-                ->where('contrats.id_entreprise', $entreprise)
+
+            $contrats = Contrat::where('expire_le', '>', $date)
+                ->whereYear('souscrit_le', '=', $Year)
+                ->where('id_entreprise', $entreprise)
                 ->where('supprimer_contrat', '=', 0)
                 ->count();
 
             $prospects = Prospect::where('etat', 0)
-                ->where('prospects.id_entreprise', $entreprise)
+                ->whereYear('created_at', '=', $Year)
+                ->where('id_entreprise', $entreprise)
                 ->where('supprimer_prospect', '=', 0)
-                ->whereYear('created_at', '=', $year)
                 ->count();
 
             $clients = Client::where('id_entreprise', $entreprise)
@@ -179,21 +180,19 @@ class HomeController extends Controller
 
             $sinistres = Sinistre::where('etat', '0')
                 ->whereYear('date_survenance', '=', $Year)
-                ->whereYear('created_at', '=', $year)
                 ->where('id_entreprise', $entreprise)
                 ->where('supprimer_sinistre', '=', 0)
                 ->count();
 
             // Commission apporteur
             $comissionapporteur = Contrat::whereYear('souscrit_le', '=', $Year)
-                ->whereYear('created_at', '=', $year)
                 ->where('id_entreprise', $entreprise)
                 ->where('supprimer_contrat', '=', 0)
                 ->sum('commission_apporteur');
 
+
             // Commission courtier
-            $comissioncourtier = Contrat::whereYear('souscrit_le', '=', $Year)
-                ->whereYear('created_at', '=', $year)
+            $comissioncourtier =   $comissioncourtier = Contrat::whereYear('souscrit_le', '=', $Year)
                 ->where('id_entreprise', $entreprise)
                 ->where('supprimer_contrat', '=', 0)
                 ->sum('commission_courtier');
@@ -202,19 +201,19 @@ class HomeController extends Controller
             // Nbre de contrats à echeance
             $exp = Carbon::now()->subDays(15);
             $echeance = DB::table('contrats')->whereDate('expire_le', '< ', $exp)
-                ->whereYear('created_at', '=', $year)
                 ->whereYear('souscrit_le', '=', $Year)
                 ->where('id_entreprise', $entreprise)
                 ->where('supprimer_contrat', '=', 0)
                 ->count();
 
             $prime = Avenant::where('annee', $Year)
-                ->whereYear('created_at', '=', $year)
                 ->where('id_entreprise', $entreprise)
+                ->where('supprimer_avenant', '=', 0)
                 ->sum('prime_nette');
 
             $accesoire = Avenant::where('annee', $Year)
                 ->where('id_entreprise', $entreprise)
+                ->where('supprimer_avenant', '=', 0)
                 ->sum('accessoires');
 
             $countemission = $prime + $accesoire;
@@ -225,19 +224,21 @@ class HomeController extends Controller
             $Year = date("Y");
             // Date du jour
             $date = date('Y-m-d');
-            $user =  JWTAuth::parseToken()->authenticate();
-            $entreprise = $user->id_entreprise;
 
-            $contrats = Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-                ->where('expire_le', '>', $date)
-                ->whereYear('contrats.effet_police', '=', $year)
-                ->where('contrats.id_branche', '=', $branch)
-                ->where('contrats.id_entreprise', $entreprise)
+            // dd($branch);
+            $contrats = Contrat::where('expire_le', '>', $date)
+                ->whereYear('souscrit_le', '=', $Year)
+                ->where('id_entreprise', $entreprise)
+                ->where('supprimer_contrat', '=', 0)
+                ->where('id_branche',  $branch)
                 ->count();
 
+
+
             $prospects = Prospect::where('etat', 0)
-                ->where('prospects.id_entreprise', $entreprise)
-                ->whereYear('created_at', '=', $year)
+                ->whereYear('created_at', '=', $Year)
+                ->where('id_entreprise', $entreprise)
+                ->where('supprimer_prospect', '=', 0)
                 ->count();
 
             $clients = Client::where('id_entreprise', $entreprise)

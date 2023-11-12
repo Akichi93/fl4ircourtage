@@ -383,11 +383,7 @@ export default {
                     this.error = error.response.data.message || error.message;
                 });
         },
-        editSinistre() {
-            let urlParams = new URLSearchParams(window.location.search);
-            let id = urlParams.get('sinistre');
-            window.location.href = '/edit/sinistre?sinistre=' + id
-        },
+        
         dateMoment(created) {
             moment.locale('fr');
             var d = new Date(created);

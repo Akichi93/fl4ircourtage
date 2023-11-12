@@ -28,6 +28,15 @@ import editsinistre from "../pages/sinistres/editsinistre";
 import voirsinistre from "../pages/sinistres/voirsinistre";
 import reglement from "../pages/sinistres/reglement";
 import upload from "../pages/uploads/upload";
+import statistique from "../pages/module/statistique";
+import statcontrat from "../pages/statistiques/statcontrat";
+import statsinistre from "../pages/statistiques/statsinistre";
+import statclient from "../pages/statistiques/statclient";
+import infoclient from "../pages/statistiques/infoclient";
+import infocontrat from "../pages/statistiques/infocontrat";
+import statapporteur from "../pages/statistiques/statapporteur";
+import infoapporteur from "../pages/statistiques/infoapporteur";
+import statsupprime from "../pages/statistiques/statsupprime";
 
 const routes = [
   {
@@ -183,6 +192,54 @@ const routes = [
     path: '/upload',
     name: 'upload',
     component: upload
+  },
+  {
+    path: '/statistique',
+    name: 'statistique',
+    component: statistique
+  },
+  {
+    path: '/statcontrat',
+    name: 'statcontrat',
+    component: statcontrat
+  },
+  {
+    path: '/statsinistre',
+    name: 'statsinistre',
+    component: statsinistre
+  },
+  {
+    path: '/statclient',
+    name: 'statclient',
+    component: statclient
+  },
+  {
+    path: '/statclient/details/:id_client',
+    name: 'infoclient',
+    component: infoclient,
+    props: true
+  },
+  {
+    path: '/statclient/detailcontrats/:id_contrat',
+    name: 'infocontrat',
+    component: infocontrat,
+    props: true
+  },
+  {
+    path: '/statapporteur',
+    name: 'statapporteur',
+    component: statapporteur
+  },
+  {
+    path: '/statapporteur/details/:id_apporteur',
+    name: 'infoapporteur',
+    component: infoapporteur,
+    props: true
+  },
+  {
+    path: '/statsupprime',
+    name: 'statsupprime',
+    component: statsupprime
   },
 ];
 

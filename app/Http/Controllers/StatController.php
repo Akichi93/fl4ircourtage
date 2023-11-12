@@ -1,31 +1,70 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Client;
-use App\Models\Avenant;
+use App\Models\Salary;
 use App\Models\Branche;
 use App\Models\Contrat;
+use App\Models\Depense;
 use App\Models\Prospect;
 use App\Models\Sinistre;
 use App\Models\Apporteur;
+use App\Models\Compagnie;
 use App\Models\FileAvenant;
 use App\Models\FileSinistre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
-use App\Models\Compagnie;
-use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class StatController extends Controller
 {
     public function synthese()
     {
-        $data['tables'] = Client::where('id_entreprise', Auth::user()->id_entreprise)
+        $user =  JWTAuth::parseToken()->authenticate();
+        $clients = Client::where('id_entreprise', $user->id_entreprise)
             ->where('supprimer_client', 0)
             ->get();
 
-        return view('synthese', $data);
+        return response()->json($clients);
+    }
+
+    public function detailsclient($id_client)
+    {
+        $clients = Client::findOrFail($id_client);
+
+        $listescontrats = Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
+            ->where('id_client', $clients->id_client)
+            ->where('supprimer_contrat', 0)
+            ->get();
+        $listesinistres = Sinistre::join("contrats", 'sinistres.id_contrat', '=', 'contrats.id_contrat')
+            ->where('id_client', $clients->id_client)
+            ->where('supprimer_sinistre', 0)
+            ->get();
+
+        return response()->json(["clients" => $clients, "listescontrats" => $listescontrats, "listesinistres" => $listesinistres]);
+    }
+
+
+    public function infosinistre($id_sinistre)
+    {
+        $sinistres = Sinistre::join("contrats", 'sinistres.id_contrat', '=', 'contrats.id_contrat')
+            ->findOrFail($id_sinistre);
+
+        $files = FileSinistre::join("sinistres", 'file_sinistres.id_sinistre', '=', 'sinistres.id_sinistre')->where('id_contrat', $id_sinistre)->get();
+
+        return response()->json(["sinistres" => $sinistres, "files" => $files]);
+    }
+
+    public function detailscontrats($id_contrat)
+    {
+        $contrats = Contrat::join("clients", 'contrats.id_client', '=', 'clients.id_client')->findOrFail($id_contrat);
+
+        $files = FileAvenant::join("avenants", 'file_avenants.id_avenant', '=', 'avenants.id_avenant')->where('id_contrat', $id_contrat)->get();
+
+
+        return response()->json(["contrats" => $contrats, "files" => $files]);
     }
 
     public function expiredata(Request $request)
@@ -64,61 +103,64 @@ class StatController extends Controller
                 return response()->json($contrats);
             } elseif ($filtre == "expire") {
                 $date = date('Y-m-d');
-
+                $user =  JWTAuth::parseToken()->authenticate();
                 $contrats =  Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
                     ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
                     ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
                     ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
                     ->where('expire_le', '<', $date)
-                    ->where('supprimer_contrat', 0)
-                    ->where('contrats.id_entreprise', Auth::user()->id_entreprise)
+                    ->where('supprimer_contrat', '=', '0')
+                    ->where('contrats.id_entreprise', $user->id_entreprise)
                     ->get();
 
                 return response()->json($contrats);
             } elseif ($filtre == "solde") {
+                $user =  JWTAuth::parseToken()->authenticate();
                 $contrats = Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
                     ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
                     ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
                     ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
                     ->where('solde', '=', '1')
-                    ->where('supprimer_contrat', 0)
-                    ->where('contrats.id_entreprise', Auth::user()->id_entreprise)
+                    ->where('supprimer_contrat', '=', '0')
+                    ->where('contrats.id_entreprise', $user->id_entreprise)
                     ->get();
 
                 return response()->json($contrats);
             } elseif ($filtre == "nonsolde") {
+                $user =  JWTAuth::parseToken()->authenticate();
                 $contrats = Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
                     ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
                     ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
                     ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
                     ->where('solde', '=', '0')
-                    ->where('supprimer_contrat', 0)
-                    ->where('contrats.id_entreprise', Auth::user()->id_entreprise)
+                    ->where('supprimer_contrat', '=', '0')
+                    ->where('contrats.id_entreprise', $user->id_entreprise)
                     ->get();
 
                 return response()->json($contrats);
             } else if ($filtre == "reverse") {
+                $user =  JWTAuth::parseToken()->authenticate();
                 $contrats = Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
                     ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
                     ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
                     ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
                     ->where('solde', '=', '1')
                     ->where('reverse', 0)
-                    ->where('supprimer_contrat', 0)
-                    ->where('contrats.id_entreprise', Auth::user()->id_entreprise)
+                    ->where('supprimer_contrat', '=', '0')
+                    ->where('contrats.id_entreprise', $user->id_entreprise)
                     ->get();
 
                 return response()->json($contrats);
             } elseif ($fin != null) {
-
+                $user =  JWTAuth::parseToken()->authenticate();
 
                 $contrats =  Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
                     ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
                     ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
                     ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
                     ->whereBetween('expire_le', [$debut, $fin])
-                    ->where('supprimer_contrat', 0)
-                    ->where('contrats.id_entreprise', Auth::user()->id_entreprise)
+                    ->where('supprimer_contrat', '=', '0')
+                    ->where('contrats.id_entreprise', $user->id_entreprise)
                     ->get();
 
                 return response()->json($contrats);
@@ -126,104 +168,12 @@ class StatController extends Controller
         }
     }
 
-    public function detailsclient($id_client)
-    {
-        $clients = Client::findOrFail($id_client);
-
-        $listescontrats = Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-            ->where('id_client', $clients->id_client)
-            ->where('supprimer_contrat', 0)
-            ->get();
-        $listesinistres = Sinistre::join("contrats", 'sinistres.id_contrat', '=', 'contrats.id_contrat')
-            ->where('id_client', $clients->id_client)
-            ->where('supprimer_sinistre', 0)
-            ->get();
-
-        return view('customer.details', compact('clients', 'listescontrats', 'listesinistres'));
-    }
-
-    public function detailscontrats($id_contrat)
-    {
-        $contrats = Contrat::join("clients", 'contrats.id_client', '=', 'clients.id_client')->findOrFail($id_contrat);
-
-        $files = FileAvenant::join("avenants", 'file_avenants.id_avenant', '=', 'avenants.id_avenant')->where('id_contrat', $id_contrat)->get();
-
-        return view('voircontrat', compact('contrats', 'files'));
-    }
-
-    public function infosinistre($id_sinistre)
-    {
-        $sinistres = Sinistre::join("contrats", 'sinistres.id_contrat', '=', 'contrats.id_contrat')
-            ->findOrFail($id_sinistre);
-
-        $files = FileSinistre::join("sinistres", 'file_sinistres.id_sinistre', '=', 'sinistres.id_sinistre')->where('id_contrat', $id_sinistre)->get();
-
-        return view('infosinistre', compact('sinistres', 'files'));
-    }
-
-
-
-    public function sinis()
-    {
-
-        $data['clients'] = Sinistre::join("contrats", 'sinistres.id_contrat', '=', 'contrats.id_contrat')
-            ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-            ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
-            ->where('contrats.id_entreprise', Auth::user()->id_entreprise)
-            ->get();
-
-        return view('sinistre', $data);
-    }
-
-    public function productions()
-    {
-        $date = date('Y-m-d');
-
-        $data['expires'] = Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-            ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
-            ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
-            ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
-            ->where('expire_le', '<', $date)
-            ->where('supprimer_contrat', 0)
-            ->where('contrats.id_entreprise', Auth::user()->id_entreprise)
-            ->get();
-
-        $data['soldes'] = Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-            ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
-            ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
-            ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
-            ->where('solde', '=', '1')
-            ->where('supprimer_contrat', 0)
-            ->where('contrats.id_entreprise', Auth::user()->id_entreprise)
-            ->get();
-
-        $data['nonsoldes'] = Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-            ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
-            ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
-            ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
-            ->where('solde', '=', '0')
-            ->where('supprimer_contrat', 0)
-            ->where('contrats.id_entreprise', Auth::user()->id_entreprise)
-            ->get();
-
-        $data['nonreverses'] = Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-            ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
-            ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
-            ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
-            ->where('solde', '=', '1')
-            ->where('reverse', 0)
-            ->where('supprimer_contrat', 0)
-            ->where('contrats.id_entreprise', Auth::user()->id_entreprise)
-            ->get();
-
-        return view('production', $data);
-    }
-
     public function statapporteur()
     {
+        $user =  JWTAuth::parseToken()->authenticate();
+        $apporteurs = Apporteur::where('id_entreprise', $user->id_entreprise)->where('supprimer_apporteur', 0)->get();
 
-        $data['apporteurs'] = Apporteur::where('id_entreprise', Auth::user()->id_entreprise)->where('supprimer_apporteur', 0)->get();
-        return view('statapporteur', $data);
+        return response()->json($apporteurs);
     }
 
     public function detailsapporteurs($id_apporteur)
@@ -236,7 +186,7 @@ class StatController extends Controller
             ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
             ->where('contrats.id_apporteur', $apporteurs->id_apporteur)
             ->where('supprimer_contrat', 0)
-            ->groupBy('numero_police')
+            ->groupBy('nom_branche', 'numero_police')
             ->get();
 
         $sommes = Contrat::join("avenants", 'contrats.id_contrat', '=', 'avenants.id_contrat')
@@ -244,24 +194,39 @@ class StatController extends Controller
             ->where('supprimer_contrat', 0)
             ->sum('commission');
 
-        return view('apporteur.details', compact('apporteurs', 'listescontrats', 'sommes'));
+        return response()->json(["apporteurs" => $apporteurs, "listescontrats" => $listescontrats, "sommes" => $sommes]);
     }
 
     public function statsupprime()
     {
-        $data['clients'] = Client::where('supprimer_client', 1)->get();
-        $data['prospects'] = Prospect::where('supprimer_prospect', 1)->get();
-        $data['branches'] = Branche::where('supprimer_branche', 1)->get();
-        $data['apporteurs'] = Apporteur::where('supprimer_apporteur', 1)->get();
-        $data['compagnies'] = Compagnie::where('supprimer_compagnie', 1)->get();
-        $data['contrats'] = Contrat::join("clients", 'contrats.id_client', '=', 'clients.id_client')
+        $user =  JWTAuth::parseToken()->authenticate();
+        $clients = Client::where('supprimer_client', 1)->where('id_entreprise', $user->id_entreprise)->get();
+        $prospects = Prospect::where('supprimer_prospect', 1)->where('id_entreprise', $user->id_entreprise)->get();
+        $branches = Branche::where('supprimer_branche', 1)->get();
+        $apporteurs = Apporteur::where('supprimer_apporteur', 1)->get();
+        $compagnies = Compagnie::where('supprimer_compagnie', 1)->get();
+        $contrats = Contrat::join("clients", 'contrats.id_client', '=', 'clients.id_client')
             ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
             ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
             ->where('supprimer_contrat', 1)
             ->get();
-        $data['sinistres'] = Sinistre::join("contrats", 'sinistres.id_contrat', '=', 'contrats.id_contrat')
+        $sinistres = Sinistre::join("contrats", 'sinistres.id_contrat', '=', 'contrats.id_contrat')
             ->where('supprimer_sinistre', 1)
             ->get();
-        return view('delete', $data);
+            
+        return response()->json(["clients" => $clients, "prospects" => $prospects, "branches" => $branches, "apporteurs" => $apporteurs, "compagnies" => $compagnies, "contrats" => $contrats, "sinistres" => $sinistres]);
+    }
+
+    public function modulestat()
+    {
+        $user =  JWTAuth::parseToken()->authenticate();
+        $users = User::where('id_entreprise', $user->id_entreprise)->count();
+        $clients = Client::where('id_entreprise', $user->id_entreprise)->where('supprimer_client', 0)->count();
+        $contrats = Contrat::where('id_entreprise', $user->id_entreprise)->where('supprimer_contrat', 0)->count();
+        $sinistres = Sinistre::where('id_entreprise', $user->id_entreprise)->where('supprimer_sinistre', 0)->count();
+        $depenses = Depense::where('id_entreprise', $user->id_entreprise)->count();
+        $salaires = Salary::where('id_entreprise', $user->id_entreprise)->count();
+
+        return response()->json(["users" => $users, "clients" => $clients, "contrats" => $contrats, "sinistres" => $sinistres, "depenses" => $depenses, "salaires" => $salaires]);
     }
 }

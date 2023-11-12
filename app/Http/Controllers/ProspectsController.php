@@ -195,11 +195,13 @@ class ProspectsController extends Controller
 
     public function getBrancheDiffProspect(Request $request)
     {
+
+        $user =  JWTAuth::parseToken()->authenticate();
         // Branche de l'entreprise
-        $getbranches = Branche::where('id_entreprise', auth()->user()->id_entreprise)->pluck('id_branche')->toArray();
+        $getbranches = Branche::where('id_entreprise', $user->id_entreprise)->pluck('id_branche')->toArray();
 
         $result = BrancheProspect::join("branches", 'branche_prospects.id_branche', '=', 'branches.id_branche')
-            ->where('branche_prospects.id_prospect', $request->propsect)->pluck('branches.id_branche')->toArray();
+            ->where('branche_prospects.id_prospect', $request->prospect)->pluck('branches.id_branche')->toArray();
 
         $array = array_diff($getbranches, $result);
 

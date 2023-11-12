@@ -50,8 +50,6 @@
                     <th>Branche</th>
                     <th>Date d'effet</th>
                     <th>Date d'échéance</th>
-                    <!-- <th>Solde</th>
-                  <th>Reverse</th> -->
                     <th class="text-end">Action</th>
                   </tr>
                 </thead>

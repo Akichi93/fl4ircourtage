@@ -9,7 +9,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input hidden="hidden" v-model="tauxtoedit.id_tauxcomp" />
+                    <!-- <input hidden="hidden" v-model="tauxtoedit.id_tauxcomp" /> -->
                     <form>
                         <div class="form-group">
                             <label>Commentaire</label>
