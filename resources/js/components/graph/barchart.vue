@@ -11,6 +11,7 @@
   export default {
     name: 'BarChart',
     components: { Bar },
+    props:["name","y"],
     data() {
       return {
         chartData: {

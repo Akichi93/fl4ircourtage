@@ -103,14 +103,20 @@
         </div>
       </div>
 
-      <barchart></barchart>
+      <Bar :data="chartData" />
+
     </div>
   </div>
 </template>
 <script>
 import Header from "../layout/Header";
 import Sidebar from "../layout/Sidebar";
-import barchart from "../components/graph/barchart.vue"
+// import barchart from "../components/graph/barchart.vue"
+
+import { Bar } from 'vue-chartjs'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 export default {
   data() {
     return {
@@ -126,7 +132,19 @@ export default {
       countemission: "",
       getYear: {},
       branches: {},
+      chartData: {
+        labels:  [''],
+        datasets: [
+          {
+            label: 'Data One',
+            backgroundColor: '#f87979',
+            data: [0]
+          }
+        ]
+      }
     };
+
+
 
   },
   created() {
@@ -140,7 +158,7 @@ export default {
     this.getgraph()
   },
   name: "dashboard",
-  components: { Header, Sidebar, barchart },
+  components: { Header, Sidebar, Bar },
   methods: {
     fetchData() {
       const token = localStorage.getItem("token");
@@ -181,6 +199,7 @@ export default {
       axios.get("/api/auth/year", { headers }).then(
         function (response) {
           this.getYear = response.data;
+          console.log(this.getYear)
         }.bind(this)
       );
     },
@@ -196,6 +215,7 @@ export default {
       axios.get("/api/auth/retrievebranche", { headers }).then(
         function (response) {
           this.branches = response.data;
+          console.log(this.branches)
         }.bind(this)
       );
     },
@@ -244,8 +264,21 @@ export default {
       axios
         .get("/api/auth/graph", { headers })
         .then((response) => {
-          this.graph = response.data.primes.map(prime => prime.name);
-          console.log(response.data.primes.map(prime => prime.y))
+          const labels = response.data.primes.map(prime => prime.name);
+          const data = response.data.primes.map(prime => prime.y);
+          // this.graph = response.data.primes.map(prime => prime.y);
+          this.chartData = {
+                labels:  labels,
+                datasets: [
+                  {
+                    label: 'Data One',
+                    backgroundColor: '#f87979',
+                    data: data
+                  }
+                ]
+              };
+
+              console.log(this.chartData, labels, data)
         })
         .catch((error) => {
           this.loading = false;
