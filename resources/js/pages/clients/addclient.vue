@@ -208,8 +208,6 @@ export default {
   },
   data() {
     return {
-      value: null,
-      //Client form
       civilite: "",
       civil: "",
       nom_client: "",

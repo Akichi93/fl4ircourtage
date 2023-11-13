@@ -44,6 +44,8 @@ import infoclient from "../js/pages/statistiques/infoclient";
 import statsupprime from "../js/pages/statistiques/statsupprime";
 import statapporteur from "../js/pages/statistiques/statapporteur";
 import infoapporteur from "../js/pages/statistiques/infoapporteur";
+import rh from "../js/pages/module/rh";
+import listuser from "../js/pages/users/listuser"
 
 const options = {
     name: '_blank',
@@ -103,7 +105,9 @@ createApp({
         infoclient,
         statapporteur,
         statsupprime,
-        infoapporteur
+        infoapporteur,
+        rh,
+        listuser
     }
 }).use(router)
     .use(BootstrapVue3)

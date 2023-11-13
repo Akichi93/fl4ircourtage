@@ -37,6 +37,8 @@ import infocontrat from "../pages/statistiques/infocontrat";
 import statapporteur from "../pages/statistiques/statapporteur";
 import infoapporteur from "../pages/statistiques/infoapporteur";
 import statsupprime from "../pages/statistiques/statsupprime";
+import rh from "../pages/module/rh";
+import listuser from "../pages/users/listuser"
 
 const routes = [
   {
@@ -240,6 +242,16 @@ const routes = [
     path: '/statsupprime',
     name: 'statsupprime',
     component: statsupprime
+  },
+  {
+    path: '/rh',
+    name: 'rh',
+    component: rh
+  },
+  {
+    path: '/listuser',
+    name: 'listuser',
+    component: listuser
   },
 ];
 

@@ -68,6 +68,7 @@ import Sidebar from "../../layout/Sidebar.vue";
 import { postBranche } from "../../services/brancheservice";
 export default {
   components: { Header, Sidebar },
+
   data() {
     return {
       form: {

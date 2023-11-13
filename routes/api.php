@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\StatController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\BrancheController;
 use App\Http\Controllers\ContratController;
@@ -14,8 +15,8 @@ use App\Http\Controllers\SinistreController;
 use App\Http\Controllers\ApporteurController;
 use App\Http\Controllers\CompagnieController;
 use App\Http\Controllers\ProspectsController;
-use App\Http\Controllers\StatController;
 use App\Http\Controllers\EntrepriseController;
+use App\Http\Controllers\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -237,10 +238,10 @@ Route::group([
 
 
     // // Users
-    Route::resource('utilisateurs', UtilisateurController::class);
-    Route::get('utilisateurs/edit/{id}', [UtilisateurController::class, 'edit']);
-    Route::get('get/logs', [UtilisateurController::class, 'getLogs']);
-    Route::get('getrole', [UtilisateurController::class, 'getRole']);
+    Route::resource('utilisateurs', UsersController::class);
+    Route::get('utilisateurs/edit/{id}', [UsersController::class, 'edit']);
+    Route::get('get/logs', [UsersController::class, 'getLogs']);
+    Route::get('getrole', [UsersController::class, 'getRole']);
 
     // Route::get('get/expires', [HomeController::class, 'getexpires'])->name('contrats/getexpires');
     // Route::get('get/nonsoldes', [HomeController::class, 'getnonsoldes']);
