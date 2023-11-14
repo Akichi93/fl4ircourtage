@@ -40,7 +40,7 @@ class HomeController extends Controller
             ->groupBy('nom_branche')
             ->get();
 
-        $tbjson = json_encode($accesoires, true);
+        // $tbjson = json_encode($accesoires, true);
 
         $contrats = DB::table('contrats')
             ->select(
@@ -82,7 +82,7 @@ class HomeController extends Controller
         // return view('home', compact('json', 'tbjson', 'infos', 'nbre', 'compagnie'));
 
 
-        return response()->json(["primes" => $primes, "tbjson" => $tbjson]);
+        return response()->json(["primes" => $primes, "accesoires" => $accesoires]);
     }
     public function stat(Request $request)
     {

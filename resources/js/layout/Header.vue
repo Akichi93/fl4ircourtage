@@ -238,8 +238,7 @@
           <span>{{ user.name }}</span>
         </a>
         <div class="dropdown-menu">
-          <a class="dropdown-item" href="profile.html">Mon profile</a>
-          <a class="dropdown-item" href="settings.html">Parametre</a>
+          <router-link class="dropdown-item" to="/profil">Mon profile</router-link>
           <router-link to="/logout" class="dropdown-item"
             >Se deconnecter</router-link
           >

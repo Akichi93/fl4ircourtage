@@ -102,8 +102,15 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-6">
+          <Bar :data="chartData" />
+        </div>
+        <div class="col-md-6">
+          <Bar :data="chartDonnees" />
+        </div>
+      </div>
 
-      <Bar :data="chartData" />
 
     </div>
   </div>
@@ -133,10 +140,20 @@ export default {
       getYear: {},
       branches: {},
       chartData: {
-        labels:  [''],
+        labels: [''],
         datasets: [
           {
-            label: 'Data One',
+            label: "Chiffre d\'affaire par mois dans l\'année",
+            backgroundColor: '#f87979',
+            data: [0]
+          }
+        ]
+      },
+      chartDonnees: {
+        labels: [''],
+        datasets: [
+          {
+            label: "Chiffres d\'affaires par branche",
             backgroundColor: '#f87979',
             data: [0]
           }
@@ -199,7 +216,6 @@ export default {
       axios.get("/api/auth/year", { headers }).then(
         function (response) {
           this.getYear = response.data;
-          console.log(this.getYear)
         }.bind(this)
       );
     },
@@ -215,7 +231,6 @@ export default {
       axios.get("/api/auth/retrievebranche", { headers }).then(
         function (response) {
           this.branches = response.data;
-          console.log(this.branches)
         }.bind(this)
       );
     },
@@ -267,18 +282,32 @@ export default {
           const labels = response.data.primes.map(prime => prime.name);
           const data = response.data.primes.map(prime => prime.y);
           // this.graph = response.data.primes.map(prime => prime.y);
-          this.chartData = {
-                labels:  labels,
-                datasets: [
-                  {
-                    label: 'Data One',
-                    backgroundColor: '#f87979',
-                    data: data
-                  }
-                ]
-              };
 
-              console.log(this.chartData, labels, data)
+          const label = response.data.accesoires.map(accesoire => accesoire.name);
+          const donnees = response.data.accesoires.map(accesoire => accesoire.y);
+          this.chartData = {
+            labels: labels,
+            datasets: [
+              {
+                label: "Chiffre d\'affaire par mois dans l\'année",
+                backgroundColor: '#2980B9',
+                data: data
+              }
+            ]
+          };
+
+          this.chartDonnees = {
+            labels: label,
+            datasets: [
+              {
+                label: "Chiffres d\'affaires par branche",
+                backgroundColor: '#2980B9',
+                data: donnees
+              }
+            ]
+          };
+
+          console.log(response.data.accesoires.map(accesoire => accesoire.name))
         })
         .catch((error) => {
           this.loading = false;

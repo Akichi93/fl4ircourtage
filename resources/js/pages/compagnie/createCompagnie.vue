@@ -216,7 +216,7 @@ export default {
           toaster.success(`Compagnie ajouté avec succès`, {
             position: "top-right",
           });
-          this.contrats = response.data;
+          // this.contrats = response.data;
           // }
           this.$router.push("/listcompagnie");
         })

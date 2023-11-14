@@ -24,7 +24,7 @@
                                             <label>Mot de passe</label>
                                         </div>
                                         <div class="col-auto">
-                                            <router-link class="text-muted" to="/resetpassword">
+                                            <router-link class="text-muted" to="/forgot">
                                                 Mot de passe oublié?
                                             </router-link>
                                         </div>

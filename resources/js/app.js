@@ -9,6 +9,8 @@ import BootstrapVue3 from 'bootstrap-vue-3'
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
 // import login
 import login from "../js/pages/auth/login";
+import register from "../js/pages/auth/register";
+import forgot from "../js/pages/auth/forgot";
 import dashboard from "../js/pages/dashboard";
 import courtage from "../js/pages/module/courtage";
 import listbranche from "../js/pages/branche/listBranche";
@@ -45,7 +47,8 @@ import statsupprime from "../js/pages/statistiques/statsupprime";
 import statapporteur from "../js/pages/statistiques/statapporteur";
 import infoapporteur from "../js/pages/statistiques/infoapporteur";
 import rh from "../js/pages/module/rh";
-import listuser from "../js/pages/users/listuser"
+import listuser from "../js/pages/users/listuser";
+import profil from "../js/pages/users/profil"
 
 const options = {
     name: '_blank',
@@ -71,6 +74,8 @@ window.User = User
 createApp({
     components: {
         login,
+        register,
+        forgot,
         dashboard,
         courtage,
         listbranche,
@@ -107,7 +112,8 @@ createApp({
         statsupprime,
         infoapporteur,
         rh,
-        listuser
+        listuser,
+        profil
     }
 }).use(router)
     .use(BootstrapVue3)

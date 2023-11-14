@@ -267,9 +267,16 @@ class EntrepriseController extends Controller
         $this->validate($request, $rules, $customMessages);
 
         $entreprise = $request->nom;
+        $email = $request->email;
         if (Entreprise::where('nom', '=', $entreprise)->count() > 0) {
-            return response()->json(['message' => 'Entreprise existante'], 422);
-        } else {
+            return response()->json(['message' => 'Entreprise existante'], 423);
+        }
+
+        if (Entreprise::where('nom', '=', $email)->count() > 0) {
+            return response()->json(['message' => 'Email existant'], 423);
+        }
+
+
             $now = date('Y-m-d');
 
             $client = new Entreprise();
@@ -283,6 +290,6 @@ class EntrepriseController extends Controller
 
             //redirection
             return back()->with('success', 'Votre demande à été enregistré avec succès. Nous entamons le traitement de votre demande');
-        }
+    
     }
 }

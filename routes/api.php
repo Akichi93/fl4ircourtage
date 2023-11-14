@@ -216,9 +216,12 @@ Route::group([
     Route::resource('entreprises', EntrepriseController::class);
     Route::get('entreprises/edit/{id_entreprise}', [EntrepriseController::class, 'edit']);
 
+    Route::post('post-registration', [EntrepriseController::class, 'postRegistration'])->name('register.post');
+    Route::post('post-reset', [EntrepriseController::class, 'postReset'])->name('reset.post');
+
 
     // Statistiques
-    
+
     Route::get('/modulestat', [StatController::class, 'modulestat'])->name('modulestat');
     Route::get('/synthese', [StatController::class, 'synthese'])->name('synthese');
     Route::get('detailsclient/{id_client}', [StatController::class, 'detailsclient'])->name('detailsclient');

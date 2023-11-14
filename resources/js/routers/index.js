@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import login from "../pages/auth/login";
+import register from "../pages/auth/register";
+import forgot from "../pages/auth/forgot";
 import logout from "../pages/auth/logout";
 import dashboard from "../pages/dashboard";
 import courtage from "../pages/module/courtage";
@@ -38,13 +40,24 @@ import statapporteur from "../pages/statistiques/statapporteur";
 import infoapporteur from "../pages/statistiques/infoapporteur";
 import statsupprime from "../pages/statistiques/statsupprime";
 import rh from "../pages/module/rh";
-import listuser from "../pages/users/listuser"
+import listuser from "../pages/users/listuser";
+import profil from "../pages/users/profil"
 
 const routes = [
   {
     path: '/',
     name: 'welcome',
     component: login
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: register
+  },
+  {
+    path: '/forgot',
+    name: 'forgot',
+    component: forgot
   },
   {
     path: '/home',
@@ -252,6 +265,11 @@ const routes = [
     path: '/listuser',
     name: 'listuser',
     component: listuser
+  },
+  {
+    path: '/profil',
+    name: 'profil',
+    component: profil
   },
 ];
 
