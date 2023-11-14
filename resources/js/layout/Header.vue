@@ -255,7 +255,7 @@
         ><i class="fa fa-ellipsis-v"></i
       ></a>
       <div class="dropdown-menu dropdown-menu-right">
-        <a class="dropdown-item" href="profile.html">Mon profile</a>
+        <a class="dropdown-item" href="">Mon profile</a>
         <router-link to="/logout" class="dropdown-item"
           >Se deconnecter</router-link
         >
@@ -288,13 +288,13 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    logout() {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      axios.post("/api/auth/logout").then(() => {
-        this.$router.push({ name: "welcome" });
-      });
-    },
+    // logout() {
+    //   localStorage.removeItem("token");
+    //   localStorage.removeItem("user");
+    //   axios.post("/api/auth/logout").then(() => {
+    //     this.$router.push({ name: "welcome" });
+    //   });
+    // },
   },
   created() {
     this.info();

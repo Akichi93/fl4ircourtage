@@ -20,7 +20,6 @@ class AppStorage  {
         this.storeToken(token)
         this.storeUser(user)
         this.storeId(id)
-        // this.storeEmail(email)
         this.storeEntreprise(entreprise)
     }
 
@@ -28,7 +27,7 @@ class AppStorage  {
         localStorage.removeItem('token')
         localStorage.removeItem('user')
         localStorage.removeItem('id')
-        // localStorage.removeItem('email')
+        localStorage.removeItem('entreprise')
     }
 
     getToken () {
