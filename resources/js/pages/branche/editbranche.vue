@@ -29,6 +29,11 @@
 </template>
 
 <script>
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   props: ['branchetoedit'],
 
@@ -40,6 +45,9 @@ export default {
       })
         .then((response) => {
           this.$emit('task-updated', response)
+          toaster.success(`Branche modifié avec succès`, {
+            position: "top-right",
+          });
         })
         .catch((error) => {
           console.log(error)

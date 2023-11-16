@@ -186,7 +186,7 @@
                 @click="editClient"
                 data-bs-dismiss="modal"
               >
-                Ajouter
+                Modifier
               </button>
             </div>
           </form>
@@ -222,10 +222,9 @@ export default {
         })
         .then((response) => {
           if (response.status === 200) {
-            // toaster.success(`Client modifié avec succès`, {
-            //   position: "top-right",
-            // });
-            this.taches = response.data;
+            toaster.success(`Client modifié avec succès`, {
+              position: "top-right",
+            });
           }
         })
         .catch((error) => {

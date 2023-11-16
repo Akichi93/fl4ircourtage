@@ -6,27 +6,17 @@
           <div class="form-header">
             <h3>Supprimer branche</h3>
             <p>
-              Voulez vous supprimer la branche  <b>{{ branchetoedit.nom_branche }}</b> ?
+              Voulez vous supprimer la branche <b>{{ branchetoedit.nom_branche }}</b> ?
             </p>
           </div>
           <div class="modal-btn delete-action">
             <div class="row">
               <div class="col-6">
-                <a
-                  href="javascript:void(0);"
-                  class="btn btn-primary continue-btn"
-                  data-bs-dismiss="modal"
-                  @click.prevent="brancheDelete"
-                  >supprimer</a
-                >
+                <a href="javascript:void(0);" class="btn btn-primary continue-btn" data-bs-dismiss="modal"
+                  @click.prevent="brancheDelete">supprimer</a>
               </div>
               <div class="col-6">
-                <a
-                  href="javascript:void(0);"
-                  data-bs-dismiss="modal"
-                  class="btn btn-primary cancel-btn"
-                  >Annuler</a
-                >
+                <a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-primary cancel-btn">Annuler</a>
               </div>
             </div>
           </div>
@@ -36,7 +26,12 @@
   </div>
 </template>
   
-  <script>
+<script>
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   props: ["branchetoedit"],
 
@@ -54,6 +49,9 @@ export default {
         })
         .then((response) => {
           this.$emit("task-delete", response);
+          toaster.success(`Branche supprimé avec succès`, {
+            position: "top-right",
+          });
         })
         .catch((error) => {
           console.log(error);

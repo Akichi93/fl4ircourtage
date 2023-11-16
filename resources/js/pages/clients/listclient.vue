@@ -12,7 +12,9 @@
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="/home">Tableau de bord</a>
+                    <router-link to="/home">
+                      Tableau de bord
+                    </router-link>
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Client
@@ -27,13 +29,8 @@
           <div class="col-md-8"></div>
           <div class="col-md-4">
             <div class="add-emp-section">
-              <a
-                href="#"
-                data-bs-toggle="modal"
-                data-bs-target="#add_client"
-                class="btn btn-success btn-add-emp"
-                style="width: auto"
-                ><i class="fas fa-plus"></i> Ajouter client
+              <a href="#" data-bs-toggle="modal" data-bs-target="#add_client" class="btn btn-success btn-add-emp"
+                style="width: auto"><i class="fas fa-plus"></i> Ajouter client
               </a>
             </div>
           </div>
@@ -41,13 +38,7 @@
 
         <div class="row">
           <div class="col-row">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Rechercher un client"
-              v-model="q"
-              @keyup="searchtask"
-            />
+            <searchbranche :placeholder="'Rechercher un client'" v-model="q" @keyup="searchtask"></searchbranche>
           </div>
           <div class="col-md-12">
             <div class="table-responsive">
@@ -63,7 +54,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="(client, i) in clients.data" :key="i">
+                  <template v-for="(client, i) in clients" :key="i">
                     <tr>
                       <td v-text="client.nom_client"></td>
                       <td v-text="client.adresse_client"></td>
@@ -71,47 +62,29 @@
                       <td v-text="client.tel_client"></td>
                       <td v-text="client.profession_client"></td>
                       <td class="text-end ico-sec d-flex justify-content-end">
-                        <a
-                          href="#"
-                          data-bs-toggle="modal"
-                          data-bs-target="#edit_project"
-                          @click="editClient(client.id_client)"
-                          ><i class="fas fa-pen"></i
-                        ></a>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#edit_project"
+                          @click="editClient(client.id_client)"><i class="fas fa-pen"></i></a>
                       </td>
                     </tr>
                   </template>
                 </tbody>
               </table>
             </div>
-            <addclient></addclient>
-            <editclient
-              v-bind:clientoedit="clientoedit"
-              @client-updated="refresh"
-            ></editclient>
-            
-            <!-- <pagination
-              align="center"
-              :data="clients"
-              :limit="5"
-              :current_page="clients.current_page"
-              :last_page="clients.last_page"
-              @pagination-change-page="listclient"
-            >
-            </pagination> -->
+            <addclient @client-add="refresh"></addclient>
+            <editclient v-bind:clientoedit="clientoedit" @client-updated="refresh"></editclient>
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-  <script>
-// import pagination from "laravel-vue-pagination";
+<script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import addclient from "./addclient.vue";
 import { getClientsList } from "../../services/clientservice";
 import editclient from "./editclient.vue";
+import searchbranche from "../../components/search/searchbranche.vue";
 export default {
   name: "prospect",
   components: {
@@ -119,6 +92,7 @@ export default {
     Sidebar,
     addclient,
     editclient,
+    searchbranche
   },
   props: ["current_page", "last_page"],
   data() {
@@ -128,7 +102,7 @@ export default {
       localisations: {},
       professions: {},
       q: "",
-      clientoedit:''
+      clientoedit: ''
     };
   },
   created() {
@@ -212,11 +186,38 @@ export default {
     },
 
     searchtask() {
-      axios
-        .get("api/auth/clientList/" + this.q)
-        .then((response) => (this.clients = response.data))
-        .catch((error) => console.log(error));
+      const token = localStorage.getItem("token");
+
+      // Configurez les en-têtes de la requête
+      const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+      };
+
+      if (this.q.length > 0) {
+        axios
+          .get("/api/auth/clientList/" + this.q, { headers })
+          .then(
+            (response) => (
+              (this.clients = response.data.data), console.log(response.data)
+            )
+          )
+          .catch((error) => console.log(error));
+      } else {
+        axios
+          .get("/api/auth/clientList/", { headers })
+          .then(
+            (response) => (
+              (this.clients = response.data), console.log(response.data)
+            )
+          )
+          .catch((error) => console.log(error));
+      }
     },
+
+    refresh(clients) {
+      this.clients = clients.data;
+    }
   },
 };
 </script>

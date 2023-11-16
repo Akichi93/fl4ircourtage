@@ -102,7 +102,8 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Client:</label>
-                            <clientcomponent :placeholder="'selectionnez un client'" v-model="client_id">
+                            <clientcomponent :placeholder="'selectionnez un client'" v-model="client_id"
+                            >
                             </clientcomponent>
                             <p style="color: red" class="text-red" v-if="errors.id_compagnie"
                               v-text="errors.id_client[0]"></p>
@@ -1024,7 +1025,6 @@ export default {
           }
         });
     },
-
 
 
     calculttc: function (event) {

@@ -114,7 +114,9 @@ class CompagnieController extends Controller
         $compagnies->save();
 
         if ($compagnies) {
-            $compagnies = Compagnie::where('supprimer_compagnie', '=', '0')->latest()->get();
+            $user =  JWTAuth::parseToken()->authenticate();
+            $compagnies = Compagnie::where('id_entreprise', $user->id_entreprise)
+                ->where('supprimer_compagnie', '=', '0')->latest()->get();
 
             return response()->json($compagnies);
         }
@@ -150,10 +152,10 @@ class CompagnieController extends Controller
     public function getBrancheDiffCompagnie($id_compagnie)
     {
         // Branche de l'entreprise
-        $getbranches = Branche::pluck('id_branche')->toArray();
+        $getbranches = Branche::where('supprimer_branche', 0)->pluck('id_branche')->toArray();
 
         $result = TauxCompagnie::join("branches", 'taux_compagnies.id_branche', '=', 'branches.id_branche')
-            ->where('taux_compagnies.id_compagnie', $id_compagnie)->pluck('branches.id_branche')->toArray();
+            ->where('taux_compagnies.id_compagnie', $id_compagnie)->where('supprimer_branche', 0)->pluck('branches.id_branche')->toArray();
 
         $array = array_diff($getbranches, $result);
 
@@ -203,14 +205,25 @@ class CompagnieController extends Controller
     {
         $data = $request->all();
 
-        // Insertion dans la bdd
-        $Data = $this->compagnie->updateTauxCompagnie($data);
+        $id_tauxcomp  = $data['id_tauxcomp'];
+        $tauxcomp = $data['tauxcomp'];
+        $compagnies = TauxCompagnie::where('id_tauxcomp', $id_tauxcomp)->update(['tauxcomp' => $tauxcomp]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Taux compagnie modifié avec succès',
-            'compagnie' => $Data
-        ], Response::HTTP_OK);
+        if ($compagnies) {
+            $compagnies = TauxCompagnie::join("branches", 'taux_compagnies.id_branche', '=', 'branches.id_branche')
+                ->where('taux_compagnies.id_compagnie', $data['id'])->get();
+
+            return response()->json($compagnies);
+        }
+
+        // Insertion dans la bdd
+        // $Data = $this->compagnie->updateTauxCompagnie($data);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'Taux compagnie modifié avec succès',
+        //     'compagnie' => $Data
+        // ], Response::HTTP_OK);
     }
 
     public function getCompagnie()

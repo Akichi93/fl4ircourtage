@@ -62,8 +62,12 @@
   </div>
 </template> 
 <script>
-
 import adressecomponent from "../../components/select/adressecomponent.vue";
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   props: ['apporteurtoedit'],
   name: "editapporteur",
@@ -86,6 +90,9 @@ export default {
       })
         .then((response) => {
           this.$emit('apporteur-updated', response)
+          toaster.success(`Apporteur modifié avec succès`, {
+              position: "top-right",
+            });
         })
         .catch((error) => {
           console.log(error)

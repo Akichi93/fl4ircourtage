@@ -64,7 +64,7 @@
                           name: 'tauxapporteur',
                           params: { id_apporteur: apporteur.id_apporteur },
                         }">
-                        <i class="fa fa-pen-fancy"></i>
+                          <i class="fa fa-pen-fancy"></i>
                         </router-link>
                         <a href="#" data-bs-toggle="modal" data-bs-target="#edit_department"
                           @click="editApporteur(apporteur.id_apporteur)" title="Modifier"><i class="fas fa-pen"></i>
@@ -115,7 +115,7 @@ export default {
     };
   },
   created() {
-   this.getApporteurs()
+    this.getApporteurs()
   },
   methods: {
     getApporteurs: function () {
@@ -132,13 +132,36 @@ export default {
     },
 
     searchtask() {
-      axios
-        .get("/api/auth/apporteurList/" + this.q)
-        .then((response) => (this.apporteurs = response.data))
-        .catch((error) => console.log(error));
+      const token = localStorage.getItem("token");
+
+      // Configurez les en-têtes de la requête
+      const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+      };
+
+      if (this.q.length > 0) {
+        axios
+          .get("/api/auth/apporteurList/" + this.q, { headers })
+          .then(
+            (response) => (
+              (this.apporteurs = response.data.data)
+            )
+          )
+          .catch((error) => console.log(error));
+      } else {
+        axios
+          .get("/api/auth/apporteurList/", { headers })
+          .then(
+            (response) => (
+              (this.apporteurs = response.data)
+            )
+          )
+          .catch((error) => console.log(error));
+      }
     },
 
-    refresh(apporteurs){
+    refresh(apporteurs) {
       this.apporteurs = apporteurs.data;
     }
   },

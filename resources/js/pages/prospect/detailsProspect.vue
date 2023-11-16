@@ -32,13 +32,8 @@
           <div class="col-md-8"></div>
           <div class="col-md-4">
             <div class="add-emp-section">
-              <a
-                href="#"
-                data-bs-toggle="modal"
-                data-bs-target="#add_prospect"
-                class="btn btn-success btn-add-emp"
-                style="width: auto"
-                ><i class="fas fa-plus"></i> Ajouter des branches
+              <a href="#" data-bs-toggle="modal" data-bs-target="#add_prospect" class="btn btn-success btn-add-emp"
+                style="width: auto"><i class="fas fa-plus"></i> Ajouter des branches
               </a>
             </div>
           </div>
@@ -56,39 +51,34 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- <template v-for="prospect in prospects" :key="prospect.id_prosbranche">
-                                        <tr>
-                                            <td v-text="prospect.nom_branche"></td>
-                                            <td v-text="prospect.description"></td>
-                                            <td class="text-end ico-sec d-flex justify-content-end">
-                                                <a href="#" data-bs-toggle="modal" data-bs-target="#edit_department"
-                                                     title="Modifier"><i
-                                                        class="fas fa-pen"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </template> -->
+                  <template v-for="prospect in prospects" :key="prospect.id_prosbranche">
+                    <tr>
+                      <td v-text="prospect.nom_branche"></td>
+                      <td v-text="prospect.description"></td>
+                      <td class="text-end ico-sec d-flex justify-content-end">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#edit_department" title="Modifier"><i
+                            class="fas fa-pen"></i>
+                        </a>
+                      </td>
+                    </tr>
+                  </template>
                 </tbody>
               </table>
             </div>
           </div>
         </div>
+
+        <addprospectbranche @prospectbranche-add="refresh"></addprospectbranche>
+        <editprospectbranche></editprospectbranche>
       </div>
     </div>
   </div>
-
-  <addprospectbranche></addprospectbranche>
-  <editprospectbranche></editprospectbranche>
 </template>
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import editprospectbranche from "../prospect/editprospectbranche.vue";
 import addprospectbranche from "../prospect/addprospectbranche.vue";
-import { createToaster } from "@meforma/vue-toaster";
-const toaster = createToaster({
-  /* options */
-});
 export default {
   name: "detailsprospect",
   components: {
@@ -100,29 +90,38 @@ export default {
   data() {
     return {
       names: "",
-      prospects: {},
+      prospects: [],
     };
+  },
+  created() {
+    this.fetchData();
   },
   methods: {
     fetchData() {
       var that = this;
-      let myParam = this.$route.params.id_prospect;
       axios
         .all([
-          axios.get("/api/auth/getBrancheProspect?prospect=" + myParam),
-          axios.get("/api/auth/getNameProspect?prospect=" + myParam),
+          axios.get("/api/auth/getBrancheProspect?prospect=" + this.$route.params.id_prospect),
+          axios.get("/api/auth/getNameProspect?prospect=" + this.$route.params.id_prospect),
         ])
         .then(
-          axios.spread(function (prospects,names) {
+          axios.spread(function (prospects, names) {
             that.prospects = prospects.data;
             that.names = names.data;
           })
         );
     },
+
+    getProspectBranche(id){
+
+    },
+
+    refresh(prospects) {
+      this.prospects = prospects.data
+    }
   },
-  created() {
-    this.fetchData();
-  },
+
+
 };
 </script>
 

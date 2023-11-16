@@ -66,6 +66,11 @@
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import { postBranche } from "../../services/brancheservice";
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   components: { Header, Sidebar },
 
@@ -86,6 +91,9 @@ export default {
       postBranche(this.form)
         .then((response) => {
           this.$router.push("/listbranche");
+          toaster.success(`Branche ajouté avec succès`, {
+            position: "top-right",
+          });
         })
         .catch((error) => {
           console.log("error", error);

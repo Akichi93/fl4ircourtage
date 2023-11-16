@@ -27,7 +27,7 @@ class ClientController extends Controller
                 ->get();
             return response()->json($clients);
         } else {
-            $clients = Client::where('id_entreprise', $user->id_entreprise)->latest()->paginate(10);
+            $clients = Client::where('id_entreprise', $user->id_entreprise)->latest()->get();
             return response()->json($clients);
         }
     }
@@ -39,10 +39,9 @@ class ClientController extends Controller
             'civilite' => 'required',
             'nom_client' => 'required',
             'tel_client' => 'required|numeric',
-            // 'postal_client' => 'required',
             'adresse_client' => 'required',
             'profession_client' => 'required',
-            // 'fax_client' => 'required',
+            'email_client' => 'required|email|unique:clients',
         ];
 
         $customMessages = [
@@ -50,10 +49,9 @@ class ClientController extends Controller
             'nom_client.required' => 'Veuillez entrer le nom du client',
             'tel_client.required' => 'Veuillez entrer le contact de l\'apporteur',
             'tel_client.numeric' => 'Veuillez entrer un contact de',
-            // 'postal_client.required' => 'Veuillez entrer l\'adresse du client',
             'adresse_client.required' => 'Veuillez entrer l\'adresse du client',
             'profession_client.required' => 'Veuillez entrer la profession du client',
-            // 'fax_client.required' => 'Veuillez entrer le fax du client',
+            'email_client.required' => 'Veuillez entrer',
         ];
 
         $this->validate($request, $rules, $customMessages);
@@ -93,7 +91,13 @@ class ClientController extends Controller
             $client->user_id = $request->id;
             $client->save();
 
-            return ['message' => 'Insertion avec succes'];
+            if($client){
+                $clients = Client::where('id_entreprise', $request->id_entreprise)->latest()->get(); 
+
+                return response()->json($clients);
+            }
+
+            
         } catch (\Exception $exception) {
             die("Impossible de se connecter à la base de données.  Veuillez vérifier votre configuration. erreur:" . $exception);
             return response()->json(['message' => 'Apporteur non enregistré'], 422);
@@ -108,18 +112,22 @@ class ClientController extends Controller
 
     public function updateClient(Request $request, $id_client)
     {
-        $clients = Client::find($id_client);
-        $clients->civilite = request('civilite');
-        $clients->nom_client = request('nom_client');
-        $clients->postal_client = request('postal_client');
-        $clients->adresse_client = request('adresse_client');
-        $clients->tel_client = request('tel_client');
-        $clients->profession_client = request('profession_client');
-        $clients->fax_client = request('fax_client');
-        $clients->email_client = request('email_client');
-        $clients->save();
+        $client = Client::find($id_client);
+        $client->civilite = request('civilite');
+        $client->nom_client = request('nom_client');
+        $client->postal_client = request('postal_client');
+        $client->adresse_client = request('adresse_client');
+        $client->tel_client = request('tel_client');
+        $client->profession_client = request('profession_client');
+        $client->fax_client = request('fax_client');
+        $client->email_client = request('email_client');
+        $client->save();
 
-        return response()->json($clients);
+        if($client){
+            $clients = Client::where('id_entreprise', $request->id_entreprise)->latest()->get(); 
+
+            return response()->json($clients);
+        }
     }
 
     public function getClient()

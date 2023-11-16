@@ -256,7 +256,7 @@ class ApporteurController extends Controller
             $apporteurs = TauxApporteur::join("branches", 'taux_apporteurs.id_branche', '=', 'branches.id_branche')
                 ->where('taux_apporteurs.id_apporteur', $data['id'])->get();
 
-            return $apporteurs;
+            return response()->json($apporteurs);
         }
 
         // Insertion dans la bdd

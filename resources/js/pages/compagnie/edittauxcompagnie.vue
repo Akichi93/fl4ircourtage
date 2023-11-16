@@ -29,18 +29,24 @@
 </template>
 
 <script>
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
     props: ['tauxtoedit'],
-  name: "edittauxcompagnie",
+    name: "edittauxcompagnie",
     methods: {
         editTaux() {
             axios
                 .post("/api/auth/updateTauxCompagnie", {
                     id_tauxcomp: this.tauxtoedit.id_tauxcomp,
                     tauxcomp: this.tauxtoedit.tauxcomp,
+                    id: this.tauxtoedit.id_compagnie,
                 })
                 .then((response) => {
-                    this.getauto();
+                    this.$emit('tauxcompagnie-updated', response)
                     if (response.status === 200) {
                         toaster.success(`Taux modifié`, {
                             position: "top-right",

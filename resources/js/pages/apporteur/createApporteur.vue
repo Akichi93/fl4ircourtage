@@ -28,20 +28,10 @@
             <div class="col-lg-12 col-md-12 col-sm-12 line-tabs">
               <ul class="nav nav-tabs nav-tabs-bottom pt-3 pb-2">
                 <li class="nav-item">
-                  <a
-                    href="#emp_profile"
-                    data-bs-toggle="tab"
-                    class="nav-link active"
-                    >Général</a
-                  >
+                  <a href="#emp_profile" data-bs-toggle="tab" class="nav-link active">Général</a>
                 </li>
                 <li class="nav-item">
-                  <a
-                    href="#bank_statutory"
-                    data-bs-toggle="tab"
-                    class="nav-link"
-                    >Taux</a
-                  >
+                  <a href="#bank_statutory" data-bs-toggle="tab" class="nav-link">Taux</a>
                 </li>
               </ul>
             </div>
@@ -61,42 +51,23 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Nom de l'apporteur</label>
-                            <inputText
-                              :placeholder="'Entrez le nom de l apporteur'"
-                              v-model="nom_apporteur"
-                            ></inputText>
-                            <p
-                              style="color: red"
-                              class="text-red"
-                              v-if="errors.nom_apporteur"
-                              v-text="errors.nom_apporteur[0]"
-                            ></p>
+                            <inputText :placeholder="'Entrez le nom de l apporteur'" v-model="nom_apporteur"></inputText>
+                            <p style="color: red" class="text-red" v-if="errors.nom_apporteur"
+                              v-text="errors.nom_apporteur[0]"></p>
                           </div>
                           <div class="form-group">
                             <label>Contact</label>
-                            <inputText
-                              :placeholder="'Entrez le contact de l\'apporteur'"
-                              v-model="contact_apporteur"
-                            ></inputText>
-                            <p
-                              style="color: red"
-                              class="text-red"
-                              v-if="errors.contact_apporteur"
-                              v-text="errors.contact_apporteur[0]"
-                            ></p>
+                            <inputText :placeholder="'Entrez le contact de l\'apporteur'" v-model="contact_apporteur">
+                            </inputText>
+                            <p style="color: red" class="text-red" v-if="errors.contact_apporteur"
+                              v-text="errors.contact_apporteur[0]"></p>
                           </div>
                           <div class="form-group">
                             <label>Code postal</label>
-                            <inputText
-                              :placeholder="'Entrez le code postal de l\'apporteur'"
-                              v-model="code_postal"
-                            ></inputText>
-                            <p
-                              style="color: red"
-                              class="text-red"
-                              v-if="errors.code_postal"
-                              v-text="errors.code_postal[0]"
-                            ></p>
+                            <inputText :placeholder="'Entrez le code postal de l\'apporteur'" v-model="code_postal">
+                            </inputText>
+                            <p style="color: red" class="text-red" v-if="errors.code_postal"
+                              v-text="errors.code_postal[0]"></p>
                           </div>
                         </div>
                         <div class="col-md-6">
@@ -104,16 +75,10 @@
                             <div class="col-md-12">
                               <div class="form-group">
                                 <label>Email</label>
-                                <inputText
-                                  :placeholder="'Entrez l\'email de de l\'apporteur'"
-                                  v-model="email_apporteur"
-                                ></inputText>
-                                <p
-                                  style="color: red"
-                                  class="text-red"
-                                  v-if="errors.email_apporteur"
-                                  v-text="errors.email_apporteur[0]"
-                                ></p>
+                                <inputText :placeholder="'Entrez l\'email de de l\'apporteur'" v-model="email_apporteur">
+                                </inputText>
+                                <p style="color: red" class="text-red" v-if="errors.email_apporteur"
+                                  v-text="errors.email_apporteur[0]"></p>
                               </div>
                             </div>
                           </div>
@@ -122,25 +87,15 @@
                             <div class="col-md-9 adresse">
                               <div class="form-group">
                                 <label>Adresse</label>
-                                <adressecomponent
-                                  :placeholder="'selectionnez l\'adresse'"
-                                  v-model="adresse_apporteur"
-                                ></adressecomponent>
-                                <p
-                                  style="color: red"
-                                  class="text-red"
-                                  v-if="errors.adresse_apporteur"
-                                  v-text="errors.adresse_apporteur[0]"
-                                ></p>
+                                <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="adresse_apporteur">
+                                </adressecomponent>
+                                <p style="color: red" class="text-red" v-if="errors.adresse_apporteur"
+                                  v-text="errors.adresse_apporteur[0]"></p>
                               </div>
                             </div>
                             <div class="col-md-3 ajout">
                               <div class="form-group">
-                                <button
-                                  type="button"
-                                  style="margin-top: 25px"
-                                  class="btn btn-primary"
-                                >
+                                <button type="button" style="margin-top: 25px" class="btn btn-primary">
                                   Ajouter
                                 </button>
                               </div>
@@ -148,22 +103,14 @@
                             <div class="col-md-4 form1" style="display: none">
                               <div>
                                 <label>Adresse</label>
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  placeholder="Entrez une nouvelle adresse"
-                                  v-model="ajout_adresse"
-                                />
+                                <input type="text" class="form-control" placeholder="Entrez une nouvelle adresse"
+                                  v-model="ajout_adresse" />
                               </div>
                             </div>
                             <div class="col-md-2 form2" style="display: none">
                               <div>
-                                <button
-                                  type="button"
-                                  class="btn btn-primary"
-                                  style="margin-top: 25px"
-                                  @click="storeAdresse"
-                                >
+                                <button type="button" class="btn btn-primary" style="margin-top: 25px"
+                                  @click="storeAdresse">
                                   Ajouter
                                 </button>
                               </div>
@@ -184,31 +131,16 @@
                 <h3 class="card-title">Taux</h3>
 
                 <div class="row">
-                  <div
-                    class="col-md-6"
-                    v-for="branche in branches"
-                    :key="branche.id_branche"
-                  >
+                  <div class="col-md-6" v-for="branche in branches" :key="branche.id_branche">
                     <div class="form-group">
                       <label>{{ branche.nom_branche }}</label>
-                      <input
-                        type="number"
-                        class="form-control"
-                        placeholder="Entrez le taux"
-                        :key="branche.id_branche"
-                        v-model="branche.value"
-                        min="0"
-                        max="100"
-                      />
+                      <input type="number" class="form-control" placeholder="Entrez le taux" :key="branche.id_branche"
+                        v-model="branche.value" min="0" max="100" />
                     </div>
                   </div>
                 </div>
                 <div class="submit-section">
-                  <button
-                    class="btn btn-primary submit-btn"
-                    type="button"
-                    @click="storeApporteur"
-                  >
+                  <button class="btn btn-primary submit-btn" type="button" @click="storeApporteur">
                     Enregistrer
                   </button>
                 </div>
@@ -220,12 +152,17 @@
     </div>
   </div>
 </template>
-  <script>
+<script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import inputText from "../../components/input/inputText.vue";
 import adressecomponent from "../../components/select/adressecomponent.vue";
 import { getBrancheList } from "../../services/formservice";
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 
 export default {
   name: "createapporteur",

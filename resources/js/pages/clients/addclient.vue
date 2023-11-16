@@ -199,6 +199,11 @@ import adressecomponent from "../../components/select/adressecomponent.vue";
 import professioncomponent from "../../components/select/professioncomponent.vue";
 import civilitecomponent from "../../components/select/civilitecomponent.vue";
 import inputText from "../../components/input/inputText.vue";
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   components: {
     adressecomponent,
@@ -245,6 +250,8 @@ export default {
           id_entreprise: entrepriseId,
         })
         .then((response) => {
+          // this.$emit('client-add', response)
+          this.$emit('client-added', response.data);
           this.civilite =
             this.nom_client =
             this.prenom_client =
@@ -259,25 +266,24 @@ export default {
             toaster.success(`Client ajouté avec succès`, {
               position: "top-right",
             });
-            this.clients = response.data;
           }
         })
         .catch((error) => {
-          // console.log(error.response.headers);
+          console.log(error.response.headers);
 
-        //   if (error.response.status === 422) {
-        //     this.errors = error.response.data.errors;
-        //     toaster.error(`Veuillez remplir les champs`, {
-        //       position: "top-right",
-        //     });
-        //     // console.log("Message non enregisté")
-        //   } else if (error.request) {
-        //     // The request was made but no response was received
-        //     console.log(error.request);
-        //   } else {
-        //     // Something happened in setting up the request that triggered an Error
-        //     console.log("Error", error.message);
-        //   }
+          if (error.response.status === 422) {
+            this.errors = error.response.data.errors;
+            toaster.error(`Veuillez remplir les champs`, {
+              position: "top-right",
+            });
+            // console.log("Message non enregisté")
+          } else if (error.request) {
+            // The request was made but no response was received
+            console.log(error.request);
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            console.log("Error", error.message);
+          }
         });
     },
   },

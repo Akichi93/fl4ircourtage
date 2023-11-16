@@ -21,7 +21,7 @@ class BrancheController extends Controller
                 ->get();
             return response()->json($branches);
         } else {
-            $branches = Branche::where('id_entreprise', $user->id_entreprise)->where('supprimer_branche', '=', '0')->orderBy('id_branche', 'DESC')->get();
+            $branches = Branche::where('id_entreprise', $user->id_entreprise)->where('supprimer_branche', '=', '0')->orderBy('id_branche', 'DESC')->latest()->get();
             return response()->json($branches);
         }
     }

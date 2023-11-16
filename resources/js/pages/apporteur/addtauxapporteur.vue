@@ -103,17 +103,17 @@ export default {
       }
       axios
         .post("/api/auth/postTauxApporteur", {
-          id: this.tauxapporteurtoedit.id_apporteur,
+          id: this.$route.params.id_apporteur,
           accidents: donnees,
           ids: datas,
         })
         .then((response) => {
-          this.$emit('taux-add', response)
-          // if (response.status === 200) {
-          //   toaster.success("Taux ajouté", {
-          //     position: "top-right",
-          //   });
-          // }
+          this.$emit('tauxapporteur-add', response)
+          if (response.status === 200) {
+            toaster.success("Taux ajouté", {
+              position: "top-right",
+            });
+          }
         });
     },
   },

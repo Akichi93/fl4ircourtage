@@ -51,7 +51,7 @@
               <div class="col-sm-12">
                 <div class="form-group">
                   <label>Ville</label>
-                  <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="compagnietoedit.adresse_apporteur"></adressecomponent>
+                  <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="compagnietoedit.adresse_compagnie"></adressecomponent>
                 </div>
               </div>
             </div>
@@ -80,8 +80,12 @@
   </div>
 </template>
 <script>
-
 import adressecomponent from "../../components/select/adressecomponent.vue";
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   props: ['compagnietoedit'],
   name: "editcompagnie",
@@ -98,6 +102,9 @@ export default {
       })
         .then((response) => {
           this.$emit('compagnie-updated', response)
+          toaster.success(`Compagnie modifié avec succès`, {
+            position: "top-right",
+          });
         })
         .catch((error) => {
           console.log(error)

@@ -15,10 +15,10 @@
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="/home">Tableau de bord</a>
+                    <router-link to="/home">Tableau de bord</router-link>
                   </li>
                   <li class="breadcrumb-item">
-                    <a href="/apporteur">Listes des apporteurs</a>
+                    <router-link to="/listapporteur">Listes des apporteurs</router-link>
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Taux apporteurs
@@ -83,7 +83,7 @@
 
             <addtauxapporteur
               v-bind:tauxapporteurtoedit="tauxapporteurtoedit"
-              @taux-add="refresh"
+              @tauxapporteur-add="refresh"
             ></addtauxapporteur>
 
             <edittauxapporteur
@@ -100,11 +100,6 @@
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import { createToaster } from "@meforma/vue-toaster";
-// import $ from "jquery";
-const toaster = createToaster({
-  /* options */
-});
 import addtauxapporteur from "./addtauxapporteur.vue";
 import edittauxapporteur from "./edittauxapporteur.vue";
 export default {

@@ -61,7 +61,7 @@
                         <router-link :to="{
                           name: 'tauxcompagnie',
                           params: { id_compagnie: compagnie.id_compagnie },
-                          
+
                         }">
                           <i class="fa fa-pen-fancy"></i>
                         </router-link>
@@ -79,15 +79,7 @@
               </table>
             </div>
             <editCompagnie v-bind:compagnietoedit="compagnietoedit" @compagnie-updated="refresh"></editCompagnie>
-            <deleteCompagnie v-bind:compagnietoedit="compagnietoedit" @compagnie-deleted="refresh"></deleteCompagnie>
-            <!-- <Pagination
-              align="center"
-              :data="compagnies"
-              :limit="5"
-              :current_page="compagnies.current_page"
-              :last_page="compagnies.last_page"
-              @pagination-change-page="listcompagnie"
-            /> -->
+            <deleteCompagnie v-bind:compagnietoedit="compagnietoedit" @compagnie-delete="refresh"></deleteCompagnie>
           </div>
         </div>
       </div>
@@ -138,10 +130,33 @@ export default {
     },
 
     searchtask() {
-      axios
-        .get("/api/auth/compagnieList/" + this.q)
-        .then((response) => (this.compagnies = response.data))
-        .catch((error) => console.log(error));
+      const token = localStorage.getItem("token");
+
+      // Configurez les en-têtes de la requête
+      const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+      };
+
+      if (this.q.length > 0) {
+        axios
+          .get("/api/auth/compagnieList/" + this.q, { headers })
+          .then(
+            (response) => (
+              (this.compagnies = response.data.data)
+            )
+          )
+          .catch((error) => console.log(error));
+      } else {
+        axios
+          .get("/api/auth/compagnieList/", { headers })
+          .then(
+            (response) => (
+              (this.compagnies = response.data)
+            )
+          )
+          .catch((error) => console.log(error));
+      }
     },
 
     refresh(compagnies) {

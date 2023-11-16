@@ -193,7 +193,7 @@ class ProspectsController extends Controller
         }
     }
 
-    public function getBrancheDiffProspect(Request $request)
+    public function getBrancheDiffProspect(Request $request, $id_prospect)
     {
 
         $user =  JWTAuth::parseToken()->authenticate();
@@ -201,7 +201,7 @@ class ProspectsController extends Controller
         $getbranches = Branche::where('id_entreprise', $user->id_entreprise)->pluck('id_branche')->toArray();
 
         $result = BrancheProspect::join("branches", 'branche_prospects.id_branche', '=', 'branches.id_branche')
-            ->where('branche_prospects.id_prospect', $request->prospect)->pluck('branches.id_branche')->toArray();
+            ->where('branche_prospects.id_prospect', $id_prospect)->pluck('branches.id_branche')->toArray();
 
         $array = array_diff($getbranches, $result);
 
@@ -212,17 +212,17 @@ class ProspectsController extends Controller
 
     public function postBrancheProspect(Request $request)
     {
-
-        $id_prospect = Prospect::where('id_entreprise', auth()->user()->id_entreprise)
-            ->where('nom_prospect', $request->name)->pluck('id_prospect')->first();
-
         $prospects = new BrancheProspect();
         $prospects->id_branche = $request->id_branche;
-        $prospects->id_prospect = $id_prospect;
+        $prospects->id_prospect = $request->id;
         $prospects->description = $request->description;
         $prospects->save();
+        if ($prospects) {
+            $prospects = BrancheProspect::join("branches", 'branche_prospects.id_branche', '=', 'branches.id_branche')
+                ->where('branche_prospects.id_prospect', $request->id)->get();
 
-        return ['message' => 'Insertion avec succes'];
+            return response()->json($prospects);
+        }
     }
 
     public function getNameProspect(Request $request)

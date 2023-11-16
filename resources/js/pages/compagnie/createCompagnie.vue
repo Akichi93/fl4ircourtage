@@ -46,68 +46,68 @@
                     <h4 class="card-title mb-0">Général</h4>
                   </div>
                   <div class="card-body">
-                
-                      <div class="row">
-                        <div class="col-md-6">
-                          <div class="form-group">
-                            <label>Nom de la compagnie</label>
-                            <inputText :placeholder="'Entrez le nom de la compagnie'" v-model="nom_compagnie"></inputText>
 
-                            <p style="color: red" class="text-red" v-if="errors.nom_compagnie"
-                              v-text="errors.nom_compagnie[0]"></p>
-                          </div>
-                          <div class="form-group">
-                            <label>Contact</label>
-                            <inputText :placeholder="'Entrez le contact de la compagnie'" v-model="contact_compagnie">
-                            </inputText>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Nom de la compagnie</label>
+                          <inputText :placeholder="'Entrez le nom de la compagnie'" v-model="nom_compagnie"></inputText>
+
+                          <p style="color: red" class="text-red" v-if="errors.nom_compagnie"
+                            v-text="errors.nom_compagnie[0]"></p>
+                        </div>
+                        <div class="form-group">
+                          <label>Contact</label>
+                          <inputText :placeholder="'Entrez le contact de la compagnie'" v-model="contact_compagnie">
+                          </inputText>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group">
+                              <label>Email</label>
+                              <inputText :placeholder="'Entrez l\'email de la compagnie'" v-model="email_compagnie">
+                              </inputText>
+                            </div>
                           </div>
                         </div>
-                        <div class="col-md-6">
-                          <div class="row">
-                            <div class="col-md-12">
-                              <div class="form-group">
-                                <label>Email</label>
-                                <inputText :placeholder="'Entrez l\'email de la compagnie'" v-model="email_compagnie">
-                                </inputText>
-                              </div>
+
+                        <div class="row">
+                          <div class="col-md-9 adresse">
+                            <div class="form-group">
+                              <label>Adresse</label>
+                              <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="adresse_compagnie">
+                              </adressecomponent>
+                              <p style="color: red" class="text-red" v-if="errors.adresse_compagnie"
+                                v-text="errors.adresse_compagnie[0]"></p>
                             </div>
                           </div>
-
-                          <div class="row">
-                            <div class="col-md-9 adresse">
-                              <div class="form-group">
-                                <label>Adresse</label>
-                                <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="adresse_compagnie">
-                                </adressecomponent>
-                                <p style="color: red" class="text-red" v-if="errors.adresse_compagnie"
-                                  v-text="errors.adresse_compagnie[0]"></p>
-                              </div>
+                          <div class="col-md-3 ajout">
+                            <div class="form-group">
+                              <button type="button" style="margin-top: 25px" class="btn btn-primary">
+                                Ajouter
+                              </button>
                             </div>
-                            <div class="col-md-3 ajout">
-                              <div class="form-group">
-                                <button type="button" style="margin-top: 25px" class="btn btn-primary">
-                                  Ajouter
-                                </button>
-                              </div>
+                          </div>
+                          <div class="col-md-4 form1" style="display: none">
+                            <div>
+                              <label>Adresse</label>
+                              <input type="text" class="form-control" placeholder="Entrez une nouvelle adresse"
+                                v-model="ajout_adresse" />
                             </div>
-                            <div class="col-md-4 form1" style="display: none">
-                              <div>
-                                <label>Adresse</label>
-                                <input type="text" class="form-control" placeholder="Entrez une nouvelle adresse"
-                                  v-model="ajout_adresse" />
-                              </div>
-                            </div>
-                            <div class="col-md-2 form2" style="display: none">
-                              <div>
-                                <button type="button" class="btn btn-primary" style="margin-top: 25px"
-                                  @click="storeAdresse">
-                                  Ajouter
-                                </button>
-                              </div>
+                          </div>
+                          <div class="col-md-2 form2" style="display: none">
+                            <div>
+                              <button type="button" class="btn btn-primary" style="margin-top: 25px"
+                                @click="storeAdresse">
+                                Ajouter
+                              </button>
                             </div>
                           </div>
                         </div>
                       </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -180,7 +180,15 @@ export default {
   created() {
     this.getBranche();
   },
+
   methods: {
+    getBranche: function () {
+      getBrancheList().then((result) => {
+        this.branches = result;
+        console.log(result);
+      });
+    },
+
     storeCompagnie() {
       const token = localStorage.getItem("token");
       const userId = localStorage.getItem("id");
@@ -216,8 +224,6 @@ export default {
           toaster.success(`Compagnie ajouté avec succès`, {
             position: "top-right",
           });
-          // this.contrats = response.data;
-          // }
           this.$router.push("/listcompagnie");
         })
         .catch((error) => {
@@ -277,12 +283,7 @@ export default {
         });
     },
 
-    getBranche: function () {
-      getBrancheList().then((result) => {
-        this.branches = result;
-        console.log(result);
-      });
-    },
+
   },
 };
 </script>

@@ -67,7 +67,7 @@
 
 
     <addtauxcompagnie v-bind:tauxcompagnietoedit="tauxcompagnietoedit" @tauxcompagnie-add="refresh"></addtauxcompagnie>
-    <edittauxcompagnie v-bind:tauxtoedit="tauxtoedit" @tauxcompagnie-update="refresh"></edittauxcompagnie>
+    <edittauxcompagnie v-bind:tauxtoedit="tauxtoedit" @tauxcompagnie-updated="refresh"></edittauxcompagnie>
 
 </template>
 <script>
@@ -123,6 +123,7 @@ export default {
                     axios.get(
                         `/api/auth/getBrancheDiffCompagnie/${this.$route.params.id_compagnie}`
                     ),
+                    
                 ])
                 .then(
                     axios.spread(function (names, compagnies, branches) {

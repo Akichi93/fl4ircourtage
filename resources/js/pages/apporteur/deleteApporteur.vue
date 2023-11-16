@@ -35,6 +35,11 @@
 </template>
 
 <script>
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   props: ["apporteurtoedit"],
   name: "deleteApporteur",
@@ -44,6 +49,9 @@ export default {
       .patch("/api/auth/deleteApporteur/" + this.apporteurtoedit.id_apporteur)
         .then((response) => {
           this.$emit("apporteur-delete", response);
+          toaster.success(`Apporteur supprimé avec succès`, {
+              position: "top-right",
+            });
         })
         .catch((error) => {
           console.log(error);
