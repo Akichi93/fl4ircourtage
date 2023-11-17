@@ -102,8 +102,7 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Client:</label>
-                            <clientcomponent :placeholder="'selectionnez un client'" v-model="client_id"
-                            >
+                            <clientcomponent :placeholder="'selectionnez un client'" v-model="client_id">
                             </clientcomponent>
                             <p style="color: red" class="text-red" v-if="errors.id_compagnie"
                               v-text="errors.id_client[0]"></p>
@@ -753,13 +752,7 @@
         <addcouleur></addcouleur>
         <addgenre></addgenre>
         <addmarque></addmarque>
-        <addclient></addclient>
-
-
-
-
-
-
+        <addclient @client-added="handleClientAdded"></addclient>
       </div>
     </div>
   </div>
@@ -789,6 +782,8 @@ import addclient from '../../pages/clients/addclient.vue'
 
 
 import { getBrancheList } from "../../services/formservice";
+import { getClientsList } from "../../services/clientservice";
+
 import { createToaster } from "@meforma/vue-toaster";
 // import $ from "jquery";
 const toaster = createToaster({
@@ -836,6 +831,7 @@ export default {
       errors: [],
       typegarantie: [],
       branches: [],
+      clients: [],
 
       // Contrat form
       compagnie_id: "",
@@ -891,6 +887,7 @@ export default {
   },
   created() {
     this.getBranche();
+    this.getClientList()
   },
   methods: {
     getBranche: function () {
@@ -899,6 +896,19 @@ export default {
       });
     },
 
+    getClientList() {
+      getClientsList().then((resultat) => {
+        this.clients = resultat;
+      });
+    },
+
+    handleClientAdded(clientData) {
+      console.log("Handling client-added event with data:", clientData);
+      this.clients.push(clientData);
+      toaster.success(`Client ajouté avec succès`, {
+        position: "top-right",
+      });
+    },
 
     onChange(event) {
       // console.log(event.target.value);

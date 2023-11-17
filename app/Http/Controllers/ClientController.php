@@ -77,21 +77,21 @@ class ClientController extends Controller
 
 
 
-            $client = new Client();
-            $client->numero_client = $ref;
-            $client->civilite = $request->civilite;
-            $client->nom_client = $request->nom_client;
-            $client->tel_client = $request->tel_client;
-            $client->postal_client = $request->postal_client;
-            $client->adresse_client = $request->adresse_client;
-            $client->profession_client = $request->profession_client;
-            $client->fax_client = $request->fax_client;
-            $client->email_client = $request->email_client;
-            $client->id_entreprise = $request->id_entreprise;
-            $client->user_id = $request->id;
-            $client->save();
+            $clients = new Client();
+            $clients->numero_client = $ref;
+            $clients->civilite = $request->civilite;
+            $clients->nom_client = $request->nom_client;
+            $clients->tel_client = $request->tel_client;
+            $clients->postal_client = $request->postal_client;
+            $clients->adresse_client = $request->adresse_client;
+            $clients->profession_client = $request->profession_client;
+            $clients->fax_client = $request->fax_client;
+            $clients->email_client = $request->email_client;
+            $clients->id_entreprise = $request->id_entreprise;
+            $clients->user_id = $request->id;
+            $clients->save();
 
-            if($client){
+            if($clients){
                 $clients = Client::where('id_entreprise', $request->id_entreprise)->latest()->get(); 
 
                 return response()->json($clients);
@@ -112,18 +112,18 @@ class ClientController extends Controller
 
     public function updateClient(Request $request, $id_client)
     {
-        $client = Client::find($id_client);
-        $client->civilite = request('civilite');
-        $client->nom_client = request('nom_client');
-        $client->postal_client = request('postal_client');
-        $client->adresse_client = request('adresse_client');
-        $client->tel_client = request('tel_client');
-        $client->profession_client = request('profession_client');
-        $client->fax_client = request('fax_client');
-        $client->email_client = request('email_client');
-        $client->save();
+        $clients = Client::find($id_client);
+        $clients->civilite = request('civilite');
+        $clients->nom_client = request('nom_client');
+        $clients->postal_client = request('postal_client');
+        $clients->adresse_client = request('adresse_client');
+        $clients->tel_client = request('tel_client');
+        $clients->profession_client = request('profession_client');
+        $clients->fax_client = request('fax_client');
+        $clients->email_client = request('email_client');
+        $clients->save();
 
-        if($client){
+        if($clients){
             $clients = Client::where('id_entreprise', $request->id_entreprise)->latest()->get(); 
 
             return response()->json($clients);

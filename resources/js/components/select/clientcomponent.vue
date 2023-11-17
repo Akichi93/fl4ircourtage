@@ -4,6 +4,7 @@
     </Multiselect>
 </template>
 <script>
+// import Vue from 'vue';  // Importez Vue
 import Multiselect from "@vueform/multiselect";
 import { getClientList } from "../../services/formservice";
 
@@ -19,21 +20,20 @@ export default {
         this.getClient();
     },
     methods: {
-        getClient: function () {
-            getClientList().then((result) => {
-                this.clients = result;
-                console.log(result)
-            });
+        refresh(clients) {
+            this.clients = clients.data;
         },
 
+        getClient: function () {
+            getClientList().then((resultat) => {
+                this.clients = resultat;
+                console.log(resultat)
+            });
+        },
     },
     watch: {
-        // Watcher pour réagir aux changements dans la propriété 'client'
-        client(newClient) {
-            // Exemple: affichez le nom du nouveau client sélectionné dans la console
-            console.log("Nouveau client sélectionné:", newClient);
-
-            // Vous pouvez ajouter ici d'autres logiques en fonction de vos besoins
+        client: function (newClient) {
+            this.getClient();
         },
     },
     components: { Multiselect },

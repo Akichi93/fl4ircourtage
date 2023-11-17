@@ -250,18 +250,19 @@ export default {
           id_entreprise: entrepriseId,
         })
         .then((response) => {
-          // this.$emit('client-add', response)
+          // this.$emit('client-add', response);
           this.$emit('client-added', response.data);
-          this.civilite =
-            this.nom_client =
-            this.prenom_client =
-            this.postal_client =
-            this.adresse_client =
-            this.tel_client =
-            this.profession_client =
-            this.fax_client =
-            this.email_client =
-              "";
+          console.log("Emitted client-added event with data:", response.data);
+          // this.civilite =
+          //   this.nom_client =
+          //   this.prenom_client =
+          //   this.postal_client =
+          //   this.adresse_client =
+          //   this.tel_client =
+          //   this.profession_client =
+          //   this.fax_client =
+          //   this.email_client =
+          //     "";
           if (response.status === 200) {
             toaster.success(`Client ajouté avec succès`, {
               position: "top-right",
