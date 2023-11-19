@@ -29,7 +29,6 @@ import createsinistre from "../pages/sinistres/createsinistre";
 import editsinistre from "../pages/sinistres/editsinistre";
 import voirsinistre from "../pages/sinistres/voirsinistre";
 import reglement from "../pages/sinistres/reglement";
-import upload from "../pages/uploads/upload";
 import statistique from "../pages/module/statistique";
 import statcontrat from "../pages/statistiques/statcontrat";
 import statsinistre from "../pages/statistiques/statsinistre";
@@ -41,7 +40,9 @@ import infoapporteur from "../pages/statistiques/infoapporteur";
 import statsupprime from "../pages/statistiques/statsupprime";
 import rh from "../pages/module/rh";
 import listuser from "../pages/users/listuser";
-import profil from "../pages/users/profil"
+import profil from "../pages/users/profil";
+import entreprise from "../pages/parametre/entreprise";
+import upload from "../pages/uploads/upload"
 
 const routes = [
   {
@@ -204,11 +205,6 @@ const routes = [
     props: true
   },
   {
-    path: '/upload',
-    name: 'upload',
-    component: upload
-  },
-  {
     path: '/statistique',
     name: 'statistique',
     component: statistique
@@ -270,6 +266,16 @@ const routes = [
     path: '/profil',
     name: 'profil',
     component: profil
+  },
+  {
+    path: '/entreprise',
+    name: 'entreprise',
+    component: entreprise
+  },
+  {
+    path: '/upload',
+    name: 'upload',
+    component: upload
   },
 ];
 

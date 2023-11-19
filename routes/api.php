@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\StatController;
+use App\Http\Controllers\UsersController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\BrancheController;
 use App\Http\Controllers\ContratController;
@@ -15,8 +16,8 @@ use App\Http\Controllers\SinistreController;
 use App\Http\Controllers\ApporteurController;
 use App\Http\Controllers\CompagnieController;
 use App\Http\Controllers\ProspectsController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\EntrepriseController;
-use App\Http\Controllers\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,10 @@ use App\Http\Controllers\UsersController;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+
+
+Route::post('post-registration', [EntrepriseController::class, 'postRegistration'])->name('register.post');
+Route::post('post-reset', [EntrepriseController::class, 'postReset'])->name('reset.post');
 
 Route::group([
     'middleware' => 'api',
@@ -216,8 +221,7 @@ Route::group([
     Route::resource('entreprises', EntrepriseController::class);
     Route::get('entreprises/edit/{id_entreprise}', [EntrepriseController::class, 'edit']);
 
-    Route::post('post-registration', [EntrepriseController::class, 'postRegistration'])->name('register.post');
-    Route::post('post-reset', [EntrepriseController::class, 'postReset'])->name('reset.post');
+
 
 
     // Statistiques

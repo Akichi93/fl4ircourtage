@@ -102,7 +102,7 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Client:</label>
-                            <clientcomponent :placeholder="'selectionnez un client'" v-model="client_id">
+                            <clientcomponent :placeholder="'selectionnez un client'" v-model="client_id" :updateClients="updateClients">
                             </clientcomponent>
                             <p style="color: red" class="text-red" v-if="errors.id_compagnie"
                               v-text="errors.id_client[0]"></p>
@@ -816,17 +816,6 @@ export default {
   },
   data() {
     return {
-      customer: {
-        civilite: "",
-        nom_client: "",
-        prenom_client: "",
-        postal_client: "",
-        adresse_client: "",
-        tel_client: "",
-        profession_client: "",
-        fax_client: "",
-        email_client: "",
-      },
       value: null,
       errors: [],
       typegarantie: [],
@@ -905,9 +894,15 @@ export default {
     handleClientAdded(clientData) {
       console.log("Handling client-added event with data:", clientData);
       this.clients.push(clientData);
+
+      this.clients = [...this.clients];
       toaster.success(`Client ajouté avec succès`, {
         position: "top-right",
       });
+    },
+
+    updateClients(clientData) {
+      this.clients = clientData;
     },
 
     onChange(event) {

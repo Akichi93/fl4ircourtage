@@ -64,7 +64,7 @@ export default {
     },
     methods: {
         register() {
-            axios.post('/api/auth/post-registration', this.form)
+            axios.post('/api/post-registration', this.form)
                 .then(res => {
                     toaster.success(`Entreprise ajouté avec succès. Votre dossier est en traitemaent`, {
                         position: "top-right",

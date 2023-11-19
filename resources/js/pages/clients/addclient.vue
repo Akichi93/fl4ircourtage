@@ -250,9 +250,10 @@ export default {
           id_entreprise: entrepriseId,
         })
         .then((response) => {
-          // this.$emit('client-add', response);
           this.$emit('client-added', response.data);
-          console.log("Emitted client-added event with data:", response.data);
+          this.$emit('client-add', response);
+
+          console.log("Emitted client-added event with data:",  response.data);
           // this.civilite =
           //   this.nom_client =
           //   this.prenom_client =
@@ -270,21 +271,21 @@ export default {
           }
         })
         .catch((error) => {
-          console.log(error.response.headers);
+          // console.log(error.response.headers);
 
-          if (error.response.status === 422) {
-            this.errors = error.response.data.errors;
-            toaster.error(`Veuillez remplir les champs`, {
-              position: "top-right",
-            });
-            // console.log("Message non enregisté")
-          } else if (error.request) {
-            // The request was made but no response was received
-            console.log(error.request);
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            console.log("Error", error.message);
-          }
+          // if (error.response.status === 422) {
+          //   this.errors = error.response.data.errors;
+          //   toaster.error(`Veuillez remplir les champs`, {
+          //     position: "top-right",
+          //   });
+          //   // console.log("Message non enregisté")
+          // } else if (error.request) {
+          //   // The request was made but no response was received
+          //   console.log(error.request);
+          // } else {
+          //   // Something happened in setting up the request that triggered an Error
+          //   console.log("Error", error.message);
+          // }
         });
     },
   },

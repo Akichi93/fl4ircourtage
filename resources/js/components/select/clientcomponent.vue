@@ -1,7 +1,17 @@
 <template>
-    <Multiselect :value="client" :options="clients" :custom-label="({ id_client, nom_client }) => `${id_client} - [${nom_client}]`
-        " valueProp="id_client" :placeholder="placeholder" label="nom_client" track-by="nom_client" :searchable="true">
-    </Multiselect>
+  <Multiselect
+    :value="client"
+    :options="clients"
+    :custom-label="
+      ({ id_client, nom_client }) => `${id_client} - [${nom_client}]`
+    "
+    valueProp="id_client"
+    :placeholder="placeholder"
+    label="nom_client"
+    track-by="nom_client"
+    :searchable="true"
+  >
+  </Multiselect>
 </template>
 <script>
 // import Vue from 'vue';  // Importez Vue
@@ -9,34 +19,53 @@ import Multiselect from "@vueform/multiselect";
 import { getClientList } from "../../services/formservice";
 
 export default {
-    name: "clientcomponent",
-    props: ["client", "placeholder"],
-    data() {
-        return {
-            clients: [],
-        };
-    },
-    created() {
-        this.getClient();
-    },
-    methods: {
-        refresh(clients) {
-            this.clients = clients.data;
-        },
+  name: "clientcomponent",
+  props: ["client", "placeholder", "updateClients: Function"],
+  data() {
+    return {
+      clients: [],
+    };
+  },
+  created() {
+    this.getClient();
+  },
+  methods: {
+    // refresh(clients) {
+    //     this.clients = clients.data;
+    // },
 
-        getClient: function () {
-            getClientList().then((resultat) => {
-                this.clients = resultat;
-                console.log(resultat)
-            });
-        },
+    getClient: function () {
+      getClientList().then((resultat) => {
+        this.clients = resultat;
+        console.log(resultat);
+      });
     },
-    watch: {
-        client: function (newClient) {
-            this.getClient();
-        },
+
+    handleClientsChange(clientData) {
+      // Traitement des changements dans la liste des clients
+      console.log("Liste des clients mise à jour :", clientData);
+
+      // Supposez que vous voulez loguer le dernier client ajouté
+      // const dernierClientAjoute = clientData[clientData.length - 1];
+      // console.log("Dernier client ajouté :", dernierClientAjoute);
+
+      // console.log("Liste des clients mise à jour dans le watcher :", clientData);
+
+      this.updateClients(clientData);
     },
-    components: { Multiselect },
+  },
+  watch: {
+    // client: function (response) {
+    //   console.log("Nouveau client sélectionné :", response.data);
+    //   this.getClient();
+    // },
+
+    clients: {
+      handler: "handleClientsChange",
+      deep: true,
+    },
+  },
+  components: { Multiselect },
 };
 </script>
       

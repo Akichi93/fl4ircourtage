@@ -128,7 +128,8 @@
                         <div class="card flex-fill tickets-card">
                             <div class="card-header">
                                 <div class="text-center w-100 p-3">
-                                    <h2><a href="/uploads">Upload des bases</a></h2>
+                                    <h2>
+                                        <router-link to="/upload">Upload des bases</router-link></h2>
                                     <h2 class="bl-text mb-1">Ce module permet l'ajoût des differntes données</h2>
                                 </div>
                             </div>

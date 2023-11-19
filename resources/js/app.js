@@ -37,7 +37,6 @@ import createsinistre from "../js/pages/sinistres/createsinistre";
 import editsinistre from '../js/pages/sinistres/editsinistre';
 import voirsinistre from '../js/pages/sinistres/voirsinistre';
 import reglement from '../js/pages/sinistres/reglement';
-import upload from "../js/pages/uploads/upload";
 import statistique from "../js/pages/module/statistique";
 import statcontrat from "../js/pages/statistiques/statcontrat";
 import statsinitre from "../js/pages/statistiques/statsinistre";
@@ -48,7 +47,9 @@ import statapporteur from "../js/pages/statistiques/statapporteur";
 import infoapporteur from "../js/pages/statistiques/infoapporteur";
 import rh from "../js/pages/module/rh";
 import listuser from "../js/pages/users/listuser";
-import profil from "../js/pages/users/profil"
+import profil from "../js/pages/users/profil";
+import entreprise from "../js/pages/parametre/entreprise";
+import upload from "../js/pages/uploads/upload"
 
 const options = {
     name: '_blank',
@@ -102,7 +103,6 @@ createApp({
         editsinistre,
         voirsinistre,
         reglement,
-        upload,
         statistique,
         statcontrat,
         statsinitre,
@@ -113,7 +113,9 @@ createApp({
         infoapporteur,
         rh,
         listuser,
-        profil
+        profil,
+        entreprise,
+        upload
     }
 }).use(router)
     .use(BootstrapVue3)
