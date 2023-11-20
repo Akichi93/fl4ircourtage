@@ -68,6 +68,7 @@
                           data-bs-target="#edit_department"
                           ><i class="fas fa-check"></i
                         ></a>
+                        
                         <a
                           href="#"
                           data-bs-toggle="modal"
@@ -75,6 +76,7 @@
                           data-bs-target="#edit_department"
                           ><i class="fas fa-close"></i
                         ></a>
+
                       </td>
                       <td v-if="entreprise.statut == 1">PAS D'ACTION</td>
                     </tr>
@@ -85,6 +87,8 @@
           </div>
         </div>
       </div>
+
+      <validateentreprise></validateentreprise>
     </div>
   </div>
 
@@ -94,6 +98,7 @@
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import { getEntreprisesList } from "../../services/entrepriseservice";
+import validateentreprise from "./validateentreprise.vue"
 import Multiselect from "@vueform/multiselect";
 import { createToaster } from "@meforma/vue-toaster";
 // import $ from "jquery";
@@ -105,6 +110,7 @@ export default {
     Multiselect,
     Header,
     Sidebar,
+    validateentreprise
   },
   data() {
     return {

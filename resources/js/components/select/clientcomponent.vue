@@ -20,7 +20,7 @@ import { getClientList } from "../../services/formservice";
 
 export default {
   name: "clientcomponent",
-  props: ["client", "placeholder", "updateClients: Function"],
+  props: ["client", "placeholder","updateClients"],
   data() {
     return {
       clients: [],
@@ -64,6 +64,10 @@ export default {
       handler: "handleClientsChange",
       deep: true,
     },
+  },
+  mounted() {
+    // Appeler la fonction updateClients du parent avec les clients actuels
+    this.updateClients(this.clients.data);
   },
   components: { Multiselect },
 };
