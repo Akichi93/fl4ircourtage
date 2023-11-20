@@ -40,10 +40,11 @@
 </template>
 <script>
 export default {
+  props: ["entreprisetoedit"],
   methods: {
     editEntreprise() {
       axios
-        .patch("/entreprises/" + this.entreprisetoedit.id_entreprise, {
+        .patch("/api/auth/entreprises/" + this.entreprisetoedit.id_entreprise, {
           nom: this.entreprisetoedit.nom,
           contact: this.entreprisetoedit.contact,
           email: this.entreprisetoedit.email,

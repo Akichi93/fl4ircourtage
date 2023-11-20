@@ -1,18 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Branche;
-use App\Models\Contrat;
 use App\Models\Prospect;
 use App\Models\Sinistre;
 use App\Models\Apporteur;
-use App\Models\Compagnie;
 use Illuminate\Http\Request;
 use App\Models\TauxApporteur;
-use App\Models\TauxCompagnie;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class UploadController extends Controller
@@ -20,75 +16,75 @@ class UploadController extends Controller
     public function importclient(Request $request)
     {
         // dd($request->all());
-        $request->validate([
-            'import_client' => ['file']
-        ]);
+        // $request->validate([
+        //     'import_client' => ['file']
+        // ]);
 
-        if (!empty($request->import_client)) {
-            $file = $request->import_client;
-            $rows  = array_map("str_getcsv", file($file, FILE_SKIP_EMPTY_LINES));
-            $header = array_shift($rows);
-            $f = fopen($file, "r");
-            $firstLine = fgets($f);
-            //get first line of csv file
-            fclose($f); // close file
-            $foundHeaders = str_getcsv(trim($firstLine), ',', '"'); //parse to array
+        // if (!empty($request->import_client)) {
+        //     $file = $request->import_client;
+        //     $rows  = array_map("str_getcsv", file($file, FILE_SKIP_EMPTY_LINES));
+        //     $header = array_shift($rows);
+        //     $f = fopen($file, "r");
+        //     $firstLine = fgets($f);
+        //     //get first line of csv file
+        //     fclose($f); // close file
+        //     $foundHeaders = str_getcsv(trim($firstLine), ',', '"'); //parse to array
 
-            $requiredHeaders = array('civilite', 'nom_client', 'postal_client', 'adresse_client', 'tel_client', 'profession_client', 'fax_client', 'email_client', 'numero_client');
-
-
-            if ($foundHeaders !== $requiredHeaders) {
-                echo 'Headers do not match: ' . implode(', ', $foundHeaders);
-                return back()->with('success', 'Veuillez entrer la bonne base');
-            } else {
-                $file = $request->import_client;
-
-                // Open uploaded CSV file with read-only mode
-                $csvFile  = fopen($file, "r");
-
-                // Skip the first line
-                fgetcsv($csvFile);
-
-                // Parse data from CSV file line by line
-                while (($getData = fgetcsv($csvFile, 10000, ",")) !== FALSE) {
-                    // Get row data
-                    $civilite[] = $getData[0];
-                    $nom_client[] = $getData[1];
-                    $postal_client[] = $getData[2];
-                    $adresse_client[] = $getData[3];
-                    $tel_client[] = $getData[4];
-                    $profession_client[] = $getData[5];
-                    $fax_client[] = $getData[6];
-                    $email_client[] = $getData[7];
-                    $numero_client[] = $getData[8];
-                    $id_entreprise[] = Auth::user()->id_entreprise;
-                    $user_id[] = Auth::user()->id;
+        //     $requiredHeaders = array('civilite', 'nom_client', 'postal_client', 'adresse_client', 'tel_client', 'profession_client', 'fax_client', 'email_client', 'numero_client');
 
 
-                    $pcreate_data[] =
-                        array(
-                            'civilite' => $getData[0],
-                            'nom_client' => $getData[1],
-                            'postal_client' => $getData[2],
-                            'adresse_client' => $getData[3],
-                            'tel_client' => $getData[4],
-                            'profession_client' => $getData[5],
-                            'fax_client' => $getData[6],
-                            'email_client' => $getData[7],
-                            'numero_client' => $getData[8],
-                            'id_entreprise' =>  Auth::user()->id_entreprise,
-                            'user_id' =>  Auth::user()->id,
+        //     if ($foundHeaders !== $requiredHeaders) {
+        //         echo 'Headers do not match: ' . implode(', ', $foundHeaders);
+        //         return back()->with('success', 'Veuillez entrer la bonne base');
+        //     } else {
+        //         $file = $request->import_client;
 
-                        );
-                }
+        //         // Open uploaded CSV file with read-only mode
+        //         $csvFile  = fopen($file, "r");
 
-                foreach ($pcreate_data as $data) {
-                    Client::create($data);
-                }
+        //         // Skip the first line
+        //         fgetcsv($csvFile);
 
-                return back()->with('success', 'Base de donnees clients importes');
-            }
-        }
+        //         // Parse data from CSV file line by line
+        //         while (($getData = fgetcsv($csvFile, 10000, ",")) !== FALSE) {
+        //             // Get row data
+        //             $civilite[] = $getData[0];
+        //             $nom_client[] = $getData[1];
+        //             $postal_client[] = $getData[2];
+        //             $adresse_client[] = $getData[3];
+        //             $tel_client[] = $getData[4];
+        //             $profession_client[] = $getData[5];
+        //             $fax_client[] = $getData[6];
+        //             $email_client[] = $getData[7];
+        //             $numero_client[] = $getData[8];
+        //             $id_entreprise[] = Auth::user()->id_entreprise;
+        //             $user_id[] = Auth::user()->id;
+
+
+        //             $pcreate_data[] =
+        //                 array(
+        //                     'civilite' => $getData[0],
+        //                     'nom_client' => $getData[1],
+        //                     'postal_client' => $getData[2],
+        //                     'adresse_client' => $getData[3],
+        //                     'tel_client' => $getData[4],
+        //                     'profession_client' => $getData[5],
+        //                     'fax_client' => $getData[6],
+        //                     'email_client' => $getData[7],
+        //                     'numero_client' => $getData[8],
+        //                     'id_entreprise' =>  Auth::user()->id_entreprise,
+        //                     'user_id' =>  Auth::user()->id,
+
+        //                 );
+        //         }
+
+        //         foreach ($pcreate_data as $data) {
+        //             Client::create($data);
+        //         }
+
+        //         return back()->with('success', 'Base de donnees clients importes');
+        //     }
+        // }
     }
 
     public function importprospect(Request $request)

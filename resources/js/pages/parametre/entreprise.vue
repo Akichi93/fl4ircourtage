@@ -88,7 +88,7 @@
         </div>
       </div>
 
-      <validateentreprise></validateentreprise>
+      <validateentreprise v-bind:entreprisetoedit="entreprisetoedit"></validateentreprise>
     </div>
   </div>
 
@@ -135,7 +135,6 @@ export default {
           this.entreprisetoedit = response.data;
           console.log(response.data);
         })
-        // .then((response) => console.log(response.data))
         .catch((error) => console.log(error));
     },
   
