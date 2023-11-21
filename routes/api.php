@@ -265,7 +265,6 @@ Route::group([
       // Import de fichier
       Route::post('importclient', [UploadController::class, 'importclient'])->name('importclient');
       Route::post('importprospect', [UploadController::class, 'importprospect'])->name('importprospect');
-      Route::post('importbranche', [UploadController::class, 'importbranche'])->name('importbranche');
       Route::post('importapporteur', [UploadController::class, 'importapporteur'])->name('importapporteur');
       Route::post('importauxapporteur', [UploadController::class, 'importauxapporteur'])->name('importauxapporteur');
       Route::post('importcompagnie', [UploadController::class, 'importcompagnie'])->name('importcompagnie');

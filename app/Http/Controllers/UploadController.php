@@ -9,223 +9,200 @@ use App\Models\Sinistre;
 use App\Models\Apporteur;
 use Illuminate\Http\Request;
 use App\Models\TauxApporteur;
+use App\Models\TauxCompagnie;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UploadController extends Controller
 {
     public function importclient(Request $request)
     {
-        // dd($request->all());
-        // $request->validate([
-        //     'import_client' => ['file']
-        // ]);
-
-        // if (!empty($request->import_client)) {
-        //     $file = $request->import_client;
-        //     $rows  = array_map("str_getcsv", file($file, FILE_SKIP_EMPTY_LINES));
-        //     $header = array_shift($rows);
-        //     $f = fopen($file, "r");
-        //     $firstLine = fgets($f);
-        //     //get first line of csv file
-        //     fclose($f); // close file
-        //     $foundHeaders = str_getcsv(trim($firstLine), ',', '"'); //parse to array
-
-        //     $requiredHeaders = array('civilite', 'nom_client', 'postal_client', 'adresse_client', 'tel_client', 'profession_client', 'fax_client', 'email_client', 'numero_client');
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'import_client' => 'required|file|mimes:csv,txt',
+        ]);
 
 
-        //     if ($foundHeaders !== $requiredHeaders) {
-        //         echo 'Headers do not match: ' . implode(', ', $foundHeaders);
-        //         return back()->with('success', 'Veuillez entrer la bonne base');
-        //     } else {
-        //         $file = $request->import_client;
+        $user = JWTAuth::parseToken()->authenticate();
 
-        //         // Open uploaded CSV file with read-only mode
-        //         $csvFile  = fopen($file, "r");
+        $entreprise = $user->id_entreprise;
 
-        //         // Skip the first line
-        //         fgetcsv($csvFile);
+        $id = $user->id;
 
-        //         // Parse data from CSV file line by line
-        //         while (($getData = fgetcsv($csvFile, 10000, ",")) !== FALSE) {
-        //             // Get row data
-        //             $civilite[] = $getData[0];
-        //             $nom_client[] = $getData[1];
-        //             $postal_client[] = $getData[2];
-        //             $adresse_client[] = $getData[3];
-        //             $tel_client[] = $getData[4];
-        //             $profession_client[] = $getData[5];
-        //             $fax_client[] = $getData[6];
-        //             $email_client[] = $getData[7];
-        //             $numero_client[] = $getData[8];
-        //             $id_entreprise[] = Auth::user()->id_entreprise;
-        //             $user_id[] = Auth::user()->id;
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 422);
+        }
 
+        $file = $request->file('import_client');
 
-        //             $pcreate_data[] =
-        //                 array(
-        //                     'civilite' => $getData[0],
-        //                     'nom_client' => $getData[1],
-        //                     'postal_client' => $getData[2],
-        //                     'adresse_client' => $getData[3],
-        //                     'tel_client' => $getData[4],
-        //                     'profession_client' => $getData[5],
-        //                     'fax_client' => $getData[6],
-        //                     'email_client' => $getData[7],
-        //                     'numero_client' => $getData[8],
-        //                     'id_entreprise' =>  Auth::user()->id_entreprise,
-        //                     'user_id' =>  Auth::user()->id,
+        // Check if the file is empty
+        if ($file->getSize() === 0) {
+            return response()->json(['error' => 'Le fichier CSV est vide.'], 422);
+        }
 
-        //                 );
-        //         }
+        // Define expected data types for each column
+        $expectedTypes = [
+            'civilite' => 'string',
+            'nom_client' => 'string',
+            'postal_client' => 'string',
+            'adresse_client' => 'string',
+            'tel_client' => 'string',
+            'profession_client' => 'string',
+            'fax_client' => 'string',
+            'email_client' => 'email',
+            'numero_client' => 'string',
+            'age_client' => 'integer',
+        ];
 
-        //         foreach ($pcreate_data as $data) {
-        //             Client::create($data);
-        //         }
+        // Process CSV data in batches
+        $batchSize = 1000; // Nombre de lignes par lot
 
-        //         return back()->with('success', 'Base de donnees clients importes');
-        //     }
-        // }
+        $csvFile = fopen($file->getPathname(), 'r');
+        $header = fgetcsv($csvFile); // Get the header
+
+        // Validate the headers
+        $validator = $this->validateHeaders($header, array_keys($expectedTypes));
+        if ($validator->fails()) {
+            fclose($csvFile);
+            return response()->json(['error' => 'Les en-têtes ne correspondent pas : ' . $validator->errors()->first()], 422);
+        }
+
+        $pcreate_data = [];
+        $processedRows = [];
+        $duplicateRows = [];
+
+        while (($getData = fgetcsv($csvFile, 10000, ",")) !== false) {
+            // Check for duplicate rows
+            $hash = md5(implode(',', $getData));
+            if (in_array($hash, $processedRows)) {
+                $duplicateRows[] = $getData;
+            } else {
+                $processedRows[] = $hash;
+
+                // Validate the data types of each column
+                $validator = $this->validateDataTypes($getData, $expectedTypes);
+                if ($validator->fails()) {
+                    fclose($csvFile);
+                    return response()->json(['error' => 'Type de données incorrect dans une colonne : ' . $validator->errors()->first()], 422);
+                }
+
+                $pcreate_data[] = array_combine($header, $getData) + [
+                    'id_entreprise' => $entreprise,
+                    'user_id' => $id,
+                ];
+            }
+
+            // Si le lot est prêt ou si nous avons atteint la fin du fichier
+            if (count($pcreate_data) >= $batchSize || feof($csvFile)) {
+                // Insérer le lot dans la base de données
+                $this->insertBatchData($pcreate_data);
+
+                // Réinitialiser le tableau pour le prochain lot
+                $pcreate_data = [];
+            }
+        }
+
+        fclose($csvFile);
+
+        if (!empty($duplicateRows)) {
+            return response()->json(['success' => 'Base de données clients importée avec succès, mais des doublons ont été détectés.', 'duplicates' => $duplicateRows], 200);
+        }
+
+        return response()->json(['success' => 'Base de données clients importée avec succès'], 200);
     }
 
     public function importprospect(Request $request)
     {
-        // dd($request->all());
-        $request->validate([
-            'import_prospect' => ['file']
+        $user = JWTAuth::parseToken()->authenticate();
+        $entreprise = $user->id_entreprise;
+        $id = $user->id;
+
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'import_prospect' => 'required|file|mimes:csv,txt',
         ]);
 
-        if (!empty($request->import_prospect)) {
-            $file = $request->import_prospect;
-            $rows  = array_map("str_getcsv", file($file, FILE_SKIP_EMPTY_LINES));
-            $header = array_shift($rows);
-            $f = fopen($file, "r");
-            $firstLine = fgets($f); //get first line of csv file
-            fclose($f); // close file
-            $foundHeaders = str_getcsv(trim($firstLine), ',', '"'); //parse to array
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 422);
+        }
 
-            $requiredHeaders = array('civilite', 'nom_prospect', 'postal_prospect', 'adresse_prospect', 'tel_prospect', 'profession_prospect', 'fax_prospect', 'email_prospect');
+        $file = $request->file('import_prospect');
 
+        // Check if the file is empty
+        if ($file->getSize() === 0) {
+            return response()->json(['error' => 'Le fichier CSV est vide.'], 422);
+        }
 
+        // Define expected data types for each column
+        $expectedTypes = [
+            'civilite' => 'string',
+            'nom_prospect' => 'string',
+            'postal_prospect' => 'string',
+            'adresse_prospect' => 'string',
+            'tel_prospect' => 'string',
+            'profession_prospect' => 'string',
+            'fax_prospect' => 'string',
+            'email_prospect' => 'email',
+        ];
 
-            if ($foundHeaders !== $requiredHeaders) {
-                echo 'Headers do not match: ' . implode(', ', $foundHeaders);
-                return back()->with('success', 'Veuillez entrer la bonne base');
+        // Process CSV data in batches
+        $batchSize = 1000; // Nombre de lignes par lot
+
+        $csvFile = fopen($file->getPathname(), 'r');
+        $header = fgetcsv($csvFile); // Get the header
+
+        // Validate the headers
+        $validator = $this->validateHeadersProspect($header, array_keys($expectedTypes));
+        if ($validator->fails()) {
+            fclose($csvFile);
+            return response()->json(['error' => 'Les en-têtes ne correspondent pas : ' . $validator->errors()->first()], 422);
+        }
+
+        $pcreate_data = [];
+        $processedEmails = [];
+        $duplicateRows = [];
+
+        while (($getData = fgetcsv($csvFile, 10000, ",")) !== false) {
+            // Validate the data types of each column
+            $validator = $this->validateDataTypesProspect($getData, $expectedTypes);
+            if ($validator->fails()) {
+                fclose($csvFile);
+                return response()->json(['error' => 'Type de données incorrect dans une colonne : ' . $validator->errors()->first()], 422);
+            }
+
+            $email = $getData[array_search('email_prospect', $header)];
+
+            // Check for duplicate emails
+            if (in_array($email, $processedEmails)) {
+                $duplicateRows[] = $getData;
             } else {
+                $processedEmails[] = $email;
 
-                $file = $request->import_prospect;
+                $pcreate_data[] = array_combine($header, $getData) + [
+                    'id_entreprise' => $entreprise,
+                    'user_id' => $id,
+                ];
+            }
 
+            // Si le lot est prêt ou si nous avons atteint la fin du fichier
+            if (count($pcreate_data) >= $batchSize || feof($csvFile)) {
+                // Insérer le lot dans la base de données
+                $this->insertBatchDataProspect($pcreate_data);
 
-
-                // Open uploaded CSV file with read-only mode
-                $csvFile  = fopen($file, "r");
-
-
-
-                // Skip the first line
-                fgetcsv($csvFile);
-
-                // Parse data from CSV file line by line
-                while (($getData = fgetcsv($csvFile, 10000, ",")) !== FALSE) {
-                    // Get row data
-                    $civilite[] = $getData[0];
-                    $nom_prospect[] = $getData[1];
-                    $postal_prospect[] = $getData[2];
-                    $adresse_prospect[] = $getData[3];
-                    $tel_prospect[] = $getData[4];
-                    $profession_prospect[] = $getData[5];
-                    $fax8prospect[] = $getData[6];
-                    $email_prospect[] = $getData[7];
-                    $id_entreprise[] = Auth::user()->id_entreprise;
-                    $user_id[] = Auth::user()->id;
-
-
-                    $pcreate_data[] =
-                        array(
-                            'civilite' => $getData[0],
-                            'nom_prospect' => $getData[1],
-                            'postal_prospect' => $getData[2],
-                            'adresse_prospect' => $getData[3],
-                            'tel_prospect' => $getData[4],
-                            'profession_prospect' => $getData[5],
-                            'fax_prospect' => $getData[6],
-                            'email_prospect' => $getData[7],
-                            'etat' => 0,
-                            'id_entreprise' =>  Auth::user()->id_entreprise,
-                            'user_id' =>  Auth::user()->id,
-
-                        );
-                }
-
-                foreach ($pcreate_data as $data) {
-                    Prospect::create($data);
-                }
-
-                return back()->with('success', 'Base de donnees prospect importes');
+                // Réinitialiser le tableau pour le prochain lot
+                $pcreate_data = [];
             }
         }
-    }
 
-    public function importbranche(Request $request)
-    {
-        // dd($request->all());
-        $request->validate([
-            'import_branche' => ['file']
-        ]);
+        fclose($csvFile);
 
-        if (!empty($request->import_branche)) {
-            $file = $request->import_branche;
-            $rows  = array_map("str_getcsv", file($file, FILE_SKIP_EMPTY_LINES));
-            $header = array_shift($rows);
-            $f = fopen($file, "r");
-            $firstLine = fgets($f); //get first line of csv file
-            fclose($f); // close file
-            $foundHeaders = str_getcsv(trim($firstLine), ',', '"'); //parse to array
-
-            $requiredHeaders = array('nom_branche');
-
-
-
-            if ($foundHeaders !== $requiredHeaders) {
-                echo 'Headers do not match: ' . implode(', ', $foundHeaders);
-                return back()->with('success', 'Veuillez entrer la bonne base');
-            } else {
-
-                $file = $request->import_branche;
-
-
-
-                // Open uploaded CSV file with read-only mode
-                $csvFile  = fopen($file, "r");
-
-
-
-                // Skip the first line
-                fgetcsv($csvFile);
-
-                // Parse data from CSV file line by line
-                while (($getData = fgetcsv($csvFile, 10000, ",")) !== FALSE) {
-                    // Get row data
-                    $nom_branche[] = $getData[0];
-                    $id_entreprise[] = Auth::user()->id_entreprise;
-                    $user_id[] = Auth::user()->id;
-
-
-                    $pcreate_data[] =
-                        array(
-                            'nom_branche' => strtoupper($getData[0]),
-                            'id_entreprise' =>  Auth::user()->id_entreprise,
-                            'user_id' =>  Auth::user()->id,
-
-                        );
-                }
-
-                foreach ($pcreate_data as $data) {
-                    Branche::create($data);
-                }
-
-                return back()->with('success', 'Base de donnees prospect importes');
-            }
+        if (!empty($duplicateRows)) {
+            return response()->json(['success' => 'Base de données prospects importé avec succès, mais des doublons ont été détectés.', 'duplicates' => $duplicateRows], 200);
         }
+
+        return response()->json(['success' => 'Base de données prospects importée avec succès'], 200);
     }
 
     public function importapporteur(Request $request)
@@ -618,6 +595,79 @@ class UploadController extends Controller
             }
 
             return view('parametre.upload')->with('success', 'Base de donnees sinistre importes');
+        }
+    }
+
+    private function validateHeaders($headers, $expectedHeaders)
+    {
+        return Validator::make($headers, [
+            '*' => 'in:' . implode(',', $expectedHeaders),
+        ]);
+    }
+
+    private function validateDataTypes($data, $expectedTypes)
+    {
+        $rules = [];
+        foreach ($expectedTypes as $column => $type) {
+            $rules[$column] = $type;
+        }
+
+        return Validator::make($data, $rules);
+    }
+
+    private function insertBatchData($batchData)
+    {
+        try {
+            DB::beginTransaction();
+
+            foreach ($batchData as $data) {
+                Client::create($data);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error during client import: ' . $e->getMessage());
+            // Gérer l'erreur si nécessaire
+        }
+    }
+
+    private function validateHeadersProspect($headers, $expectedHeaders)
+    {
+        return Validator::make($headers, [
+            '*' => 'in:' . implode(',', $expectedHeaders),
+        ]);
+    }
+
+    private function validateDataTypesProspect($data, $expectedTypes)
+    {
+        $rules = [];
+        foreach ($expectedTypes as $column => $type) {
+            $rules[$column] = $type;
+        }
+
+        return Validator::make($data, $rules);
+    }
+
+    private function insertBatchDataProspect($batchDataProspect)
+    {
+        try {
+            DB::beginTransaction();
+
+            foreach ($batchDataProspect as $data) {
+                // Check for existing prospect by email
+                $existingProspect = Prospect::where('email_prospect', $data['email_prospect'])->first();
+
+                if (!$existingProspect) {
+                    Prospect::create($data);
+                }
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error during prospect import: ' . $e->getMessage());
+            // Gérer l'erreur si nécessaire
         }
     }
 }

@@ -8,12 +8,13 @@
         aria-orientation="vertical"
       >
         <router-link
-          class="nav-link menu active"
+          class="nav-link menu"
           to="/home"
-          id="home"
+          title="Accueil"
           role="tab"
           aria-controls="v-pills-dashboard"
-          aria-selected="true"
+          aria-selected="false"
+          :class="{ active: $route.path === '/home' }"
         >
           <span class="material-icons-outlined"> home </span>
         </router-link>
@@ -21,11 +22,11 @@
         <router-link
           to="/courtage"
           class="nav-link menu"
-          id="modulecourtage"
           title="Courtage"
           role="tab"
           aria-controls="v-pills-apps"
           aria-selected="false"
+          :class="{ active: $route.path === '/courtage' }"
         >
           <span class="material-icons-outlined"> dashboard </span>
         </router-link>
@@ -33,11 +34,11 @@
         <router-link
           to="/rh"
           class="nav-link menu"
-          id="modulerh"
           title="RH"
           role="tab"
           aria-controls="v-pills-apps"
           aria-selected="false"
+          :class="{ active: $route.path === '/rh' }"
         >
           <span class="material-icons-outlined"> people </span>
         </router-link>
@@ -50,6 +51,7 @@
           role="tab"
           aria-controls="v-pills-apps"
           aria-selected="false"
+          :class="{ active: $route.path === '/statistique' }"
         >
           <span class="material-icons-outlined"> leaderboard </span>
         </router-link>
@@ -61,6 +63,7 @@
           id="enterprise"
           role="tab"
           aria-selected="false"
+          :class="{ active: $route.path === '/entreprise' }"
         >
           <span class="material-icons-outlined"> settings </span>
         </router-link>

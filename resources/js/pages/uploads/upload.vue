@@ -36,9 +36,7 @@
                   <a href="#emp_profile" data-bs-toggle="tab" class="nav-link">Prospects</a>
                 </li>
 
-                <li class="nav-item">
-                  <a href="#branche_tab" data-bs-toggle="tab" class="nav-link">Branches</a>
-                </li>
+
 
                 <li class="nav-item">
                   <a href="#apporteurs" data-bs-toggle="tab" class="nav-link">Apporteurs</a>
@@ -69,102 +67,22 @@
         </div>
 
         <div class="tab-content">
+
           <clientfile></clientfile>
 
           <prospectfile></prospectfile>
 
-          <div id="branche_tab" class="pro-overview tab-pane fade show">
-            <div class="row">
-              <div class="col-md-12 d-flex">
-                <div class="card profile-box flex-fill">
-                  <div class="card-body">
-                    <h3 class="card-title">
-                      Branches
-                      <a href="" download class="edit-icon"><i class="fas fa-download" title="Télécharger le model"></i>
-                      </a>
-                    </h3>
-
-
-
-                    <form action="" method="POST" enctype="multipart/form-data">
-                      <div class="form-group">
-                        <label>Téléverser fichier</label>
-                        <input class="form-control" type="file" name="import_branche" accept=".csv" required />
-                      </div>
-                      <div class="submit-section">
-                        <button type="submit" class="btn btn-primary submit-btn">
-                          Importer la base de donnée
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <apporteurfile></apporteurfile>
 
-          <tauxapporteur></tauxapporteur>
+          <tauxapporteurfile></tauxapporteurfile>
 
           <compagniefile></compagniefile>
 
-          <div class="tab-pane fade" id="taux_compagnies">
-            <div class="row">
-              <div class="col-md-12 d-flex">
-                <div class="card profile-box flex-fill">
-                  <div class="card-body">
-                    <h3 class="card-title">
-                      Taux Compagnies
-                      <a href="" download class="edit-icon"><i class="fas fa-download" title="Télécharger le model"></i>
-                      </a>
-                    </h3>
+          <tauxcompagniefile></tauxcompagniefile>
 
-                    <form action="" method="POST" enctype="multipart/form-data">
-                      <div class="form-group">
-                        <label>Téléverser fichier</label>
-                        <input class="form-control" type="file" name="import_tauxcompagnie" accept=".csv" required />
-                      </div>
-                      <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">
-                          Importer la base de donnée
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <contratfile></contratfile>
 
-          <div class="tab-pane fade" id="contrats_tab">
-            <div class="row">
-              <div class="col-md-12 d-flex">
-                <div class="card profile-box flex-fill">
-                  <div class="card-body">
-                    <h3 class="card-title">
-                      Contrats
-                      <a href="" download class="edit-icon"><i class="fas fa-download" title="Télécharger le model"></i>
-                      </a>
-                    </h3>
-
-                    <form action="" method="POST" enctype="multipart/form-data">
-
-                      <div class="form-group">
-                        <label>Téléverser fichier</label>
-                        <input class="form-control" type="file" name="import_contrat" accept=".csv" required />
-                      </div>
-                      <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">
-                          Importer la base de donnée
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <sinistrefile></sinistrefile>
 
 
         </div>
@@ -177,10 +95,14 @@
 import clientfile from '../../components/file/clientfile.vue';
 import prospectfile from '../../components/file/prospectfile.vue';
 import apporteurfile from '../../components/file/apporteurfile.vue';
+import tauxapporteurfile from '../../components/file/tauxapporteurfile.vue';
+import compagniefile from '../../components/file/compagniefile.vue';
+import tauxcompagniefile from '../../components/file/tauxcompagniefile.vue'
 import Header from "../../layout/Header.vue"
 import Sidebar from "../../layout/Sidebar.vue";
-import tauxapporteur from '../apporteur/tauxapporteur.vue';
-import compagniefile from '../../components/file/compagniefile.vue';
+import Contratfile from '../../components/file/contratfile.vue';
+import sinistrefile from '../../components/file/sinistrefile.vue';
+
 export default {
   name: "upload",
   data() {
@@ -191,6 +113,6 @@ export default {
   methods: {
 
   },
-  components: { Header, Sidebar, clientfile, prospectfile, apporteurfile, tauxapporteur, compagniefile },
+  components: { Header, Sidebar, clientfile, prospectfile, apporteurfile, tauxapporteurfile, compagniefile, tauxcompagniefile, Contratfile, sinistrefile },
 }
 </script>
