@@ -105,14 +105,6 @@ import sinistrefile from '../../components/file/sinistrefile.vue';
 
 export default {
   name: "upload",
-  data() {
-    return {
-      selectedFile: null,
-    };
-  },
-  methods: {
-
-  },
   components: { Header, Sidebar, clientfile, prospectfile, apporteurfile, tauxapporteurfile, compagniefile, tauxcompagniefile, Contratfile, sinistrefile },
 }
 </script>

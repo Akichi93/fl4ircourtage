@@ -7,13 +7,14 @@ use App\Models\Branche;
 use App\Models\Prospect;
 use App\Models\Sinistre;
 use App\Models\Apporteur;
+use App\Models\Compagnie;
 use Illuminate\Http\Request;
 use App\Models\TauxApporteur;
 use App\Models\TauxCompagnie;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class UploadController extends Controller
 {
