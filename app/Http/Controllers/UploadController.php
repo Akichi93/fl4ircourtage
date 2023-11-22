@@ -53,7 +53,6 @@ class UploadController extends Controller
             'fax_client' => 'string',
             'email_client' => 'email',
             'numero_client' => 'string',
-            'age_client' => 'integer',
         ];
 
         // Process CSV data in batches
@@ -115,9 +114,6 @@ class UploadController extends Controller
 
     public function importprospect(Request $request)
     {
-        $user = JWTAuth::parseToken()->authenticate();
-        $entreprise = $user->id_entreprise;
-        $id = $user->id;
 
         // Validate the request
         $validator = Validator::make($request->all(), [
@@ -127,6 +123,10 @@ class UploadController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->first()], 422);
         }
+
+        $user = JWTAuth::parseToken()->authenticate();
+        $entreprise = $user->id_entreprise;
+        $id = $user->id;
 
         $file = $request->file('import_prospect');
 
@@ -207,118 +207,125 @@ class UploadController extends Controller
 
     public function importapporteur(Request $request)
     {
-        $request->validate([
-            'import_apporteur' => ['file']
+        $validator = Validator::make($request->all(), [
+            'import_apporteur' => 'required|file|mimes:csv,txt',
         ]);
 
-        if (!empty($request->import_apporteur)) {
-            $file = $request->import_apporteur;
-            $rows  = array_map("str_getcsv", file($file, FILE_SKIP_EMPTY_LINES));
-            $header = array_shift($rows);
-            $f = fopen($file, "r");
-            $firstLine = fgets($f); //get first line of csv file
-            fclose($f); // close file
-            $foundHeaders = str_getcsv(trim($firstLine), ',', '"'); //parse to array
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 422);
+        }
 
-            $requiredHeaders = array('nom_apporteur', 'email_apporteur', 'adresse_apporteur', 'contact_apporteur', 'code_apporteur', 'code_postal');
+        $user = JWTAuth::parseToken()->authenticate();
+        $entreprise = $user->id_entreprise;
+        $id = $user->id;
 
-            if ($foundHeaders !== $requiredHeaders) {
-                echo 'Headers do not match: ' . implode(', ', $foundHeaders);
-                return back()->with('success', 'Veuillez entrer la bonne base');
+        $file = $request->file('import_apporteur');
+
+
+        // Check if the file is empty
+        if ($file->getSize() === 0) {
+            return response()->json(['error' => 'Le fichier CSV est vide.'], 422);
+        }
+
+        // Define expected data types for each column
+        $expectedTypes = [
+            'nom_apporteur' => 'string',
+            'email_apporteur' => 'email',
+            'adresse_apporteur' => 'string',
+            'contact_apporteur' => 'string',
+            'code_apporteur' => 'string',
+            'code_postal' => 'string',
+        ];
+
+        // Process CSV data in batches
+        $batchSize = 1000; // Nombre de lignes par lot
+
+        $csvFile = fopen($file->getPathname(), 'r');
+        $header = fgetcsv($csvFile); // Get the header
+
+        // Validate the headers
+        $validator = $this->validateHeadersApporteur($header, array_keys($expectedTypes));
+        if ($validator->fails()) {
+            fclose($csvFile);
+            return response()->json(['error' => 'Les en-têtes ne correspondent pas : ' . $validator->errors()->first()], 422);
+        }
+
+        $pcreate_data = [];
+        $processedEmails = [];
+        $duplicateRows = [];
+
+        while (($getData = fgetcsv($csvFile, 10000, ",")) !== false) {
+            // Validate the data types of each column
+            $validator = $this->validateDataTypesApporteur($getData, $expectedTypes);
+            if ($validator->fails()) {
+                fclose($csvFile);
+                return response()->json(['error' => 'Type de données incorrect dans une colonne : ' . $validator->errors()->first()], 422);
+            }
+
+            $email = $getData[array_search('email_apporteur', $header)];
+
+            // Check for duplicate emails
+            if (in_array($email, $processedEmails)) {
+                $duplicateRows[] = $getData;
             } else {
+                $processedEmails[] = $email;
 
-                $file = $request->import_apporteur;
+                $pcreate_data[] = array_combine($header, $getData) + [
+                    'id_entreprise' => $entreprise,
+                    'user_id' => $id,
+                ];
+            }
 
+            // Si le lot est prêt ou si nous avons atteint la fin du fichier
+            if (count($pcreate_data) >= $batchSize || feof($csvFile)) {
+                // Insérer le lot dans la base de données
+                $this->insertBatchDataApporteur($pcreate_data);
 
-
-                // Open uploaded CSV file with read-only mode
-                $csvFile  = fopen($file, "r");
-
-
-
-                // Skip the first line
-                fgetcsv($csvFile);
-
-                // Parse data from CSV file line by line
-                while (($getData = fgetcsv($csvFile, 10000, ",")) !== FALSE) {
-
-
-                    $pcreate_data[] =
-                        array(
-                            'nom_apporteur' => $getData[0],
-                            'email_apporteur' => $getData[1],
-                            'adresse_apporteur' => $getData[2],
-                            'contact_apporteur' => $getData[3],
-                            'code_apporteur' => $getData[4],
-                            'code_postal' => $getData[5],
-                            'id_entreprise' =>  Auth::user()->id_entreprise,
-                            'user_id' =>  Auth::user()->id,
-                        );
-                }
-
-                foreach ($pcreate_data as $data) {
-                    Apporteur::create($data);
-                }
-
-                return back()->with('success', 'Base de donnees clients importes');
+                // Réinitialiser le tableau pour le prochain lot
+                $pcreate_data = [];
             }
         }
+
+        fclose($csvFile);
+
+        if (!empty($duplicateRows)) {
+            return response()->json(['success' => 'Base de données prospects importé avec succès, mais des doublons ont été détectés.', 'duplicates' => $duplicateRows], 200);
+        }
+
+        return response()->json(['success' => 'Base de données prospects importée avec succès'], 200);
     }
 
     public function importauxapporteur(Request $request)
     {
-        $request->validate([
-            'import_tauxapporteur' => ['file']
+        $validator = Validator::make($request->all(), [
+            'import_tauxapporteur' => ['required', 'file', 'mimes:csv,txt', 'max:10240'] // Adjust max file size as needed
         ]);
 
-        if (!empty($request->import_tauxapporteur)) {
-            $file = $request->import_tauxapporteur;
-            $rows  = array_map("str_getcsv", file($file, FILE_SKIP_EMPTY_LINES));
-            $header = array_shift($rows);
-            $f = fopen($file, "r");
-            $firstLine = fgets($f); //get first line of csv file
-            fclose($f); // close file
-            $foundHeaders = str_getcsv(trim($firstLine), ',', '"'); //parse to array
-
-            $requiredHeaders = array('code_apporteur', 'nom_branche', 'taux',);
-
-            if ($foundHeaders !== $requiredHeaders) {
-                echo 'Headers do not match: ' . implode(', ', $foundHeaders);
-                return back()->with('success', 'Veuillez entrer la bonne base');
-            } else {
-
-
-                // Parse data from CSV file line by line
-                $filePath = $request->import_tauxapporteur;
-                $file = fopen($filePath, 'r');
-
-                $header = fgetcsv($file);
-
-                $tauxapporteur = [];
-                while ($row = fgetcsv($file)) {
-                    $tauxapporteur[] = array_combine($header, $row);
-                }
-
-                fclose($file);
-
-                return view('parametre.upload', compact('tauxapporteur'));
-            }
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 400);
         }
-    }
 
-    public function validatetauxapporteur(Request $request)
-    {
-        if ($request->isMethod('post')) {
-            $data = $request->all();
+        $file = $request->file('import_tauxapporteur');
 
+        try {
+            DB::beginTransaction();
 
-            foreach ($data['attrId'] as $key => $attr) {
-                if (!empty($attr)) {
-                    TauxApporteur::create(['id_apporteur' => $data['id_apporteur'][$key], 'id_branche' => $data['id_branche'][$key], 'taux' => $data['taux'][$key]]);
-                }
+            $header = $this->getCSVHeaderTauxApporteur($file);
+
+            if (!$this->validateCSVHeaderTauxApporteur($header)) {
+                throw new \Exception('Les en-têtes du fichier ne correspondent pas aux attentes.');
             }
 
-            return view('parametre.upload')->with('success', 'Base de donnees taux apporteurs importes');
+            $tauxapporteur = $this->parseCSVDataTauxApporteur($file, $header);
+
+            $this->processCSVDataTauxApporteur($tauxapporteur);
+
+            DB::commit();
+            return response()->json(['success' => true, 'data' => $tauxapporteur], 200);
+        } catch (\Exception $e) {
+            \Log::error('Error importing data: ' . $e->getMessage());
+            DB::rollBack();
+            return response()->json(['error' => 'Une erreur est survenue lors de l\'importation. Veuillez réessayer.'], 500);
         }
     }
 
@@ -598,6 +605,7 @@ class UploadController extends Controller
         }
     }
 
+    // Validation des entetes de l'importation clients
     private function validateHeaders($headers, $expectedHeaders)
     {
         return Validator::make($headers, [
@@ -605,6 +613,7 @@ class UploadController extends Controller
         ]);
     }
 
+    // Validation des types de données de la base clients
     private function validateDataTypes($data, $expectedTypes)
     {
         $rules = [];
@@ -615,6 +624,7 @@ class UploadController extends Controller
         return Validator::make($data, $rules);
     }
 
+    // insertion dans la de données clients
     private function insertBatchData($batchData)
     {
         try {
@@ -623,7 +633,7 @@ class UploadController extends Controller
             foreach ($batchData as $data) {
                 Client::create($data);
             }
-
+            \Log::info('Inserting batch dataclient: ' . json_encode($batchData));
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -668,6 +678,121 @@ class UploadController extends Controller
             DB::rollBack();
             \Log::error('Error during prospect import: ' . $e->getMessage());
             // Gérer l'erreur si nécessaire
+        }
+    }
+
+    private function validateHeadersApporteur($headers, $expectedHeaders)
+    {
+        return Validator::make($headers, [
+            '*' => 'in:' . implode(',', $expectedHeaders),
+        ]);
+    }
+
+    private function validateDataTypesApporteur($data, $expectedTypes)
+    {
+        $rules = [];
+        foreach ($expectedTypes as $column => $type) {
+            $rules[$column] = $type;
+        }
+
+        return Validator::make($data, $rules);
+    }
+
+    private function insertBatchDataApporteur($batchDataApporteur)
+    {
+        try {
+            DB::beginTransaction();
+
+            foreach ($batchDataApporteur as $data) {
+                // Check for existing prospect by email
+                $existingProspect = Apporteur::where('email_apporteur', $data['email_apporteur'])->first();
+
+                if (!$existingProspect) {
+                    Apporteur::create($data);
+                }
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error during prospect import: ' . $e->getMessage());
+            // Gérer l'erreur si nécessaire
+        }
+    }
+
+    private function getCSVHeaderTauxApporteur($file)
+    {
+        $fileResource = fopen($file, 'r');
+        $header = fgetcsv($fileResource);
+        fclose($fileResource);
+
+        return $header;
+    }
+
+    private function validateCSVHeaderTauxApporteur($header)
+    {
+        $requiredHeaders = ['code_apporteur', 'nom_branche', 'taux'];
+        sort($header);
+        sort($requiredHeaders);
+        return array_map('strtolower', $header) == array_map('strtolower', $requiredHeaders);
+    }
+
+    private function parseCSVDataTauxApporteur($file, $header)
+    {
+        $tauxapporteur = [];
+        $fileResource = fopen($file, 'r');
+
+        while ($row = fgetcsv($fileResource)) {
+            $tauxapporteur[] = array_combine($header, $row);
+        }
+
+        fclose($fileResource);
+        return $tauxapporteur;
+    }
+
+    private function processCSVDataTauxApporteur($tauxapporteur)
+    {
+        // Remove the header
+        $header = array_shift($tauxapporteur);
+
+        // Initialize arrays to store values
+        $apporteurIds = [];
+        $brancheIds = [];
+        $tauxValues = [];
+
+        foreach ($tauxapporteur as $data) {
+            $apporteur = Apporteur::where('code_apporteur', $data['code_apporteur'])->first();
+            $branche = Branche::where('nom_branche', $data['nom_branche'])->first();
+
+            if ($apporteur && $branche) {
+                // Assign directly to the array using references
+                $apporteurIds[] = $apporteur->id_apporteur;
+                $brancheIds[] = $branche->id_branche;
+
+                // Store the 'taux' value in the array
+                $tauxValues[] = $data['taux'];
+            } else {
+                \Log::error('Correspondance d\'apporteur ou de branche non trouvée. Code apporteur : ' . $data['code_apporteur'] . ', Nom branche : ' . $data['nom_branche']);
+                throw new \Exception('Correspondance d\'apporteur ou de branche non trouvée. Code apporteur : ' . $data['code_apporteur'] . ', Nom branche : ' . $data['nom_branche']);
+            }
+
+            $tauxValues[] = $data['taux'];
+        }
+
+        // Stockage des données dans la base de données
+        foreach ($tauxapporteur as $key => $data) {
+            try {
+                // Use individual values, not arrays
+                TauxApporteur::create([
+                    'id_apporteur' => $apporteurIds[$key] ?? null,
+                    'id_branche' => $brancheIds[$key] ?? null,
+                    'taux' => $tauxValues[$key] ?? null,
+                ]);
+                
+            } catch (\Exception $e) {
+                \Log::error('Error inserting data into taux_apporteurs: ' . $e->getMessage());
+                \Log::error('Failed data: ' . json_encode($data));
+            }
         }
     }
 }

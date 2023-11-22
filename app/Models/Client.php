@@ -21,6 +21,7 @@ class Client extends Model
         'profession_client',
         'fax_client',
         'numero_client',
+        'email_client',
         'id_entreprise',
         'user_id',
     ];

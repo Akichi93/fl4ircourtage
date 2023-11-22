@@ -263,13 +263,15 @@ Route::group([
 
 
       // Import de fichier
-      Route::post('importclient', [UploadController::class, 'importclient'])->name('importclient');
-      Route::post('importprospect', [UploadController::class, 'importprospect'])->name('importprospect');
-      Route::post('importapporteur', [UploadController::class, 'importapporteur'])->name('importapporteur');
-      Route::post('importauxapporteur', [UploadController::class, 'importauxapporteur'])->name('importauxapporteur');
-      Route::post('importcompagnie', [UploadController::class, 'importcompagnie'])->name('importcompagnie');
-      Route::post('importauxcompagnie', [UploadController::class, 'importauxcompagnie'])->name('importauxcompagnie');
-      Route::post('importcontrat', [UploadController::class, 'importcontrat'])->name('importcontrat');
-      Route::post('importsinistre', [UploadController::class, 'importsinistre'])->name('importsinistre');
-      Route::post('importautomobile', [UploadController::class, 'importautomobile'])->name('importautomobile');
+      Route::controller(UploadController::class)->group(function () { 
+        Route::post('importclient', 'importclient');
+        Route::post('importprospect', 'importprospect');
+        Route::post('importapporteur', 'importapporteur');
+        Route::post('importauxapporteur', 'importauxapporteur');
+        Route::post('importcompagnie', 'importcompagnie');
+        Route::post('importauxcompagnie', 'importauxcompagnie');
+        Route::post('importcontrat', 'importcontrat');
+        Route::post('importsinistre', 'importsinistre');
+        Route::post('importautomobile', 'importautomobile');
+      });
 });

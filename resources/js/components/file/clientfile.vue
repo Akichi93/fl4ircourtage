@@ -22,17 +22,16 @@
                                 required />
                         </div>
                         <div class="submit-section">
-                            <button @click="uploadFile" :disabled="loading" class="btn btn-primary submit-btn">
+                            <button v-if="!loading" @click="uploadFile" :disabled="loading" class="btn btn-primary submit-btn">
                                 Importer la base de donnée
                             </button>
-                        </div>
 
-                        <!-- Afficher l'indicateur de chargement si le fichier est en cours d'envoi -->
-                        <div v-if="loading" class="loading-container">
-                            <div class="loading-progress" :style="{ width: progress + '%' }"></div>
-                            <span>{{ progress }}%</span>
+                            <!-- Afficher l'indicateur de chargement si le fichier est en cours d'envoi -->
+                            <div v-if="loading" class="loading-container">
+                                <div class="loading-progress" :style="{ transform: 'rotate(' + (progress * 3.6) + 'deg)' }">
+                                </div>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -83,10 +82,14 @@ export default {
 
             axios.post('/api/auth/importclient', formData, {
                 headers,
-                onUploadProgress: progressEvent => {
-                    // Mettez à jour l'indicateur de chargement en fonction du progrès de l'envoi
-                    this.progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+                onUploadProgress: (progressEvent) => {
+                    if (progressEvent.lengthComputable) {
+                        this.progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+                    } else {
+                        this.progress = 0; // Fallback to 0 if total size is not computable
+                    }
                 },
+
             })
                 .then(response => {
                     console.log(response.data);
@@ -138,39 +141,35 @@ export default {
 <style scoped>
 .loading-container {
     position: relative;
-    width: 100%;
-    height: 20px;
-    background-color: #f0f0f0;
-    border-radius: 5px;
-    overflow: hidden;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 4px solid #e0e0e0;
+    margin: 20px auto;
+    animation: rotation 1s linear infinite;
 }
 
 .loading-progress {
     height: 100%;
-    background-color: #4caf50;
-    width: 0;
-    animation: progress-animation 1s ease-in-out forwards;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
+    width: 100%;
+    border-radius: 50%;
+    border: 4px solid #4caf50;
+    border-top: 4px solid transparent;
+    animation: rotation 1s linear infinite;
 }
 
-@keyframes progress-animation {
+@keyframes rotation {
     to {
-        width: 100%;
+        transform: rotate(360deg);
     }
 }
 
-.loading-container span {
+.loading-container p {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #000000;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    color: #000;
 }
 </style>

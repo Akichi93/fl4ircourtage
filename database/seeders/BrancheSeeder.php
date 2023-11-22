@@ -43,6 +43,8 @@ class BrancheSeeder extends Seeder
             ['id_branche' => 26, 'nom_branche' => 'BRIS DE MACHINES', 'id_entreprise' => '1', 'created_at' => NULL, 'updated_at' => NULL],
         ];
 
+    
+
         Branche::insert($brancheRecords);
     }
 }

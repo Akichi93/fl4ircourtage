@@ -11,17 +11,28 @@
                             </a>
                         </h3>
 
-                        <form action="" method="POST" enctype="multipart/form-data">
-                            <div class="form-group">
-                                <label>Téléverser fichier</label>
-                                <input class="form-control" type="file" name="import_apporteur" accept=".csv" required />
+                        <div v-if="error" class="error-message">
+                            {{ error }}
+                        </div>
+
+                        <div class="form-group">
+                            <label>Téléverser fichier</label>
+                            <input class="form-control" type="file" ref="fileInput" @change="handleFileChange" accept=".csv"
+                                required />
+                        </div>
+                        <div class="submit-section">
+                            <button v-if="!loading" @click="uploadFile" :disabled="loading"
+                                class="btn btn-primary submit-btn">
+                                Importer la base de donnée
+                            </button>
+
+                            <!-- Afficher l'indicateur de chargement si le fichier est en cours d'envoi -->
+                            <div v-if="loading" class="loading-container">
+                                <div class="loading-progress" :style="{ transform: 'rotate(' + (progress * 3.6) + 'deg)' }">
+                                </div>
                             </div>
-                            <div class="submit-section">
-                                <button class="btn btn-primary submit-btn">
-                                    Importer la base de donnée
-                                </button>
-                            </div>
-                        </form>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -61,7 +72,7 @@ export default {
             this.loading = true; // Activer l'indicateur de chargement
 
             const formData = new FormData();
-            formData.append('import_client', this.selectedFile);
+            formData.append('import_apporteur', this.selectedFile);
 
             const token = localStorage.getItem("token");
 
@@ -124,42 +135,39 @@ export default {
 };
 </script>
 
+
 <style scoped>
 .loading-container {
     position: relative;
-    width: 100%;
-    height: 20px;
-    background-color: #f0f0f0;
-    border-radius: 5px;
-    overflow: hidden;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 4px solid #e0e0e0;
+    margin: 20px auto;
+    animation: rotation 1s linear infinite;
 }
 
 .loading-progress {
     height: 100%;
-    background-color: #4caf50;
-    width: 0;
-    animation: progress-animation 1s ease-in-out forwards;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
+    width: 100%;
+    border-radius: 50%;
+    border: 4px solid #4caf50;
+    border-top: 4px solid transparent;
+    animation: rotation 1s linear infinite;
 }
 
-@keyframes progress-animation {
+@keyframes rotation {
     to {
-        width: 100%;
+        transform: rotate(360deg);
     }
 }
 
-.loading-container span {
+.loading-container p {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #000000;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    color: #000;
 }
 </style>
