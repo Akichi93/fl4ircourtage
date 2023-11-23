@@ -332,7 +332,35 @@ class UploadController extends Controller
 
     public function importcompagnie(Request $request)
     {
-        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'import_compagnie' => 'required|file|mimes:csv,txt',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 422);
+        }
+
+        $user = JWTAuth::parseToken()->authenticate();
+        $entreprise = $user->id_entreprise;
+        $id = $user->id;
+
+        $file = $request->file('import_apporteur');
+
+        // Check if the file is empty
+        if ($file->getSize() === 0) {
+            return response()->json(['error' => 'Le fichier CSV est vide.'], 422);
+        }
+
+        // Define expected data types for each column
+        $expectedTypes = [
+            'nom_compagnie' => 'string',
+            'adresse_compagnie' => 'string',
+            'email_compagnie' => 'email',
+            'contact_compagnie' => 'string',
+            'code_apporteur' => 'string',
+            'code_postal' => 'string',
+        ];
+
         $request->validate([
             'import_apporteur' => ['file']
         ]);
@@ -789,7 +817,6 @@ class UploadController extends Controller
                     'id_branche' => $brancheIds[$key] ?? null,
                     'taux' => $tauxValues[$key] ?? null,
                 ]);
-                
             } catch (\Exception $e) {
                 \Log::error('Error inserting data into taux_apporteurs: ' . $e->getMessage());
                 \Log::error('Failed data: ' . json_encode($data));
