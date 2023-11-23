@@ -180,7 +180,15 @@ class FormController extends Controller
 
     public function getBranches()
     {
-        $branches = $this->branche->getBranches();
+        $user = JWTAuth::parseToken()->authenticate();
+
+        $entreprise = $user->id_entreprise;
+
+        $branches = Branche::where('supprimer_branche', '=', '0')
+            ->where('id_entreprise', $entreprise)
+            ->orderBy('created_at', 'DESC')
+            ->get();
+        // $branches = $this->branche->getBranches();
 
         return response()->json($branches);
     }
@@ -362,7 +370,7 @@ class FormController extends Controller
 
         // Insertion dans la bdd
         $Data = $this->branche->postBranches($data);
-        
+
         if ($Data) {
             $branches = Branche::where('supprimer_branche', '=', '0')->orderBy('id_branche', 'DESC')->get();
 

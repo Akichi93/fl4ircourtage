@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Branche;
+use App\Models\Contrat;
 use App\Models\Prospect;
 use App\Models\Sinistre;
 use App\Models\Apporteur;
@@ -13,7 +14,6 @@ use App\Models\TauxApporteur;
 use App\Models\TauxCompagnie;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class UploadController extends Controller
@@ -357,218 +357,139 @@ class UploadController extends Controller
             'adresse_compagnie' => 'string',
             'email_compagnie' => 'email',
             'contact_compagnie' => 'string',
-            'code_apporteur' => 'string',
-            'code_postal' => 'string',
+            'postal_compagnie' => 'string',
+            'code_compagnie' => 'string',
         ];
 
-        $request->validate([
-            'import_apporteur' => ['file']
-        ]);
+        $batchSize = 1000; // Nombre de lignes par lot
 
-        if (!empty($request->import_compagnie)) {
-            $file = $request->import_compagnie;
-            $rows  = array_map("str_getcsv", file($file, FILE_SKIP_EMPTY_LINES));
-            $header = array_shift($rows);
-            $f = fopen($file, "r");
-            $firstLine = fgets($f); //get first line of csv file
-            fclose($f); // close file
-            $foundHeaders = str_getcsv(trim($firstLine), ',', '"'); //parse to array
+        $csvFile = fopen($file->getPathname(), 'r');
+        $header = fgetcsv($csvFile); // Get the header
 
-            $requiredHeaders = array('nom_compagnie', 'adresse_compagnie', 'email_compagnie', 'contact_compagnie', 'postal_compagnie', 'code_compagnie');
+        // Validate the headers
+        $validator = $this->validateHeadersCompagnie($header, array_keys($expectedTypes));
+        if ($validator->fails()) {
+            fclose($csvFile);
+            return response()->json(['error' => 'Les en-têtes ne correspondent pas : ' . $validator->errors()->first()], 422);
+        }
 
-            if ($foundHeaders !== $requiredHeaders) {
-                echo 'Headers do not match: ' . implode(', ', $foundHeaders);
-                return back()->with('success', 'Veuillez entrer la bonne base');
+
+        $pcreate_data = [];
+        $processedEmails = [];
+        $duplicateRows = [];
+
+        while (($getData = fgetcsv($csvFile, 10000, ",")) !== false) {
+            // Validate the data types of each column
+            $validator = $this->validateDataTypesCompagnie($getData, $expectedTypes);
+            if ($validator->fails()) {
+                fclose($csvFile);
+                return response()->json(['error' => 'Type de données incorrect dans une colonne : ' . $validator->errors()->first()], 422);
+            }
+
+            $email = $getData[array_search('email_compagnie', $header)];
+
+            // Check for duplicate emails
+            if (in_array($email, $processedEmails)) {
+                $duplicateRows[] = $getData;
             } else {
+                $processedEmails[] = $email;
 
+                $pcreate_data[] = array_combine($header, $getData) + [
+                    'id_entreprise' => $entreprise,
+                    'user_id' => $id,
+                ];
+            }
 
+            // Si le lot est prêt ou si nous avons atteint la fin du fichier
+            if (count($pcreate_data) >= $batchSize || feof($csvFile)) {
+                // Insérer le lot dans la base de données
+                $this->insertBatchCompagnie($pcreate_data);
 
-                // $header = array_shift($rows);
-
-                $file = $request->import_compagnie;
-
-
-
-                // Open uploaded CSV file with read-only mode
-                $csvFile  = fopen($file, "r");
-
-
-
-                // Skip the first line
-                fgetcsv($csvFile);
-
-                // Parse data from CSV file line by line
-                while (($getData = fgetcsv($csvFile, 10000, ",")) !== FALSE) {
-
-                    // dd($getData);
-
-                    $pcreate_data[] =
-                        array(
-                            'nom_compagnie' => $getData[0],
-                            'adresse_compagnie' => $getData[1],
-                            'email_compagnie' => $getData[2],
-                            'contact_compagnie' => $getData[3],
-                            'postal_compagnie' => $getData[4],
-                            'id_entreprise' =>  Auth::user()->id_entreprise,
-                            'user_id' =>  Auth::user()->id,
-                            'code_compagnie' => $getData[5],
-                        );
-                }
-
-
-
-                foreach ($pcreate_data as $data) {
-                    Compagnie::create($data);
-                }
-
-
-                return back()->with('success', 'Base de donnees compagnies importes');
+                // Réinitialiser le tableau pour le prochain lot
+                $pcreate_data = [];
             }
         }
+
+        fclose($csvFile);
+
+        if (!empty($duplicateRows)) {
+            return response()->json(['success' => 'Base de données prospects importé avec succès, mais des doublons ont été détectés.', 'duplicates' => $duplicateRows], 200);
+        }
+
+        return response()->json(['success' => 'Base de données prospects importée avec succès'], 200);
     }
 
     public function importauxcompagnie(Request $request)
     {
-        $request->validate([
-            'import_tauxcompagnie' => ['file']
+
+        $validator = Validator::make($request->all(), [
+            'import_tauxcompagnie' => ['required', 'file', 'mimes:csv,txt', 'max:10240'] // Adjust max file size as needed
         ]);
 
-        if (!empty($request->import_tauxcompagnie)) {
-            $file = $request->import_tauxcompagnie;
-            $rows  = array_map("str_getcsv", file($file, FILE_SKIP_EMPTY_LINES));
-            $header = array_shift($rows);
-            $f = fopen($file, "r");
-            $firstLine = fgets($f); //get first line of csv file
-            fclose($f); // close file
-            $foundHeaders = str_getcsv(trim($firstLine), ',', '"'); //parse to array
-
-            $requiredHeaders = array('code_compagnie', 'nom_branche', 'taux',);
-
-            if ($foundHeaders !== $requiredHeaders) {
-                echo 'Headers do not match: ' . implode(', ', $foundHeaders);
-                return back()->with('success', 'Veuillez entrer la bonne base');
-            } else {
-
-
-                // Parse data from CSV file line by line
-                $filePath = $request->import_tauxcompagnie;
-                $file = fopen($filePath, 'r');
-
-                $header = fgetcsv($file);
-
-                $tauxcompagnies = [];
-                while ($row = fgetcsv($file)) {
-                    $tauxcompagnies[] = array_combine($header, $row);
-                }
-
-                fclose($file);
-
-                return view('parametre.upload', compact('tauxcompagnies'));
-            }
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 400);
         }
-    }
 
-    public function validatetauxcompagnie(Request $request)
-    {
-        if ($request->isMethod('post')) {
-            $data = $request->all();
+        $file = $request->file('import_tauxcompagnie');
 
 
-            foreach ($data['attrId'] as $key => $attr) {
-                if (!empty($attr)) {
-                    TauxCompagnie::create(['id_compagnie' => $data['id_compagnie'][$key], 'id_branche' => $data['id_branche'][$key], 'tauxcomp' => $data['taux'][$key]]);
-                }
+        try {
+            DB::beginTransaction();
+
+            $header = $this->getCSVHeaderTauxCompagnie($file);
+
+            if (!$this->validateCSVHeaderTauxCompagnie($header)) {
+                throw new \Exception('Les en-têtes du fichier ne correspondent pas aux attentes.');
             }
 
-            return view('parametre.upload')->with('success', 'Base de donnees taux compagnies importes');
+            $tauxcompagnie = $this->parseCSVDataTauxCompagnie($file, $header);
+
+            $this->processCSVDataTauxCompagnie($tauxcompagnie);
+
+            DB::commit();
+            return response()->json(['success' => true, 'data' => $tauxcompagnie], 200);
+        } catch (\Exception $e) {
+            \Log::error('Error importing data: ' . $e->getMessage());
+            DB::rollBack();
+            return response()->json(['error' => 'Une erreur est survenue lors de l\'importation. Veuillez réessayer.'], 500);
         }
     }
 
     public function importcontrat(Request $request)
     {
-        $request->validate([
-            'import_contrat' => ['file']
+
+        $validator = Validator::make($request->all(), [
+            'import_contrat' => ['required', 'file', 'mimes:csv,txt', 'max:10240'] // Adjust max file size as needed
         ]);
 
-        // if (!empty($request->import_contrat)) {
-        //     $file = $request->import_contrat;
-        //     $rows  = array_map("str_getcsv", file($file, FILE_SKIP_EMPTY_LINES));
-        //     $header = array_shift($rows);
-        //     $f = fopen($file, "r");
-        //     $firstLine = fgets($f); //get first line of csv file
-        //     fclose($f); // close file
-        //     $foundHeaders = str_getcsv(trim($firstLine), ',', '"'); //parse to array
-
-        //     $requiredHeaders = array('nom_branche', 'nom_client', 'nom_compagnie', 'nom_apporteur', 'n_police ', 'souscrit_le', 'effet_police', 'heure_police', 'expire_le', 'reconduction', 'prime_nette', 'frais_courtier', ' accessoire', 'cfga', ' taxes_totales', 'prime_ttc', 'commission_courtier', 'gestion', 'commision_apporteur', 'solde', 'reverse');
-
-        //     if ($foundHeaders !== $requiredHeaders) {
-        //         echo 'Headers do not match: ' . implode(', ', $foundHeaders);
-        //         return back()->with('success', 'Veuillez entrer la bonne base');
-        //     } else {
-
-
-        $filePath = $request->import_contrat;
-        $file = fopen($filePath, 'r');
-
-        $header = fgetcsv($file);
-
-        $users = [];
-        while ($row = fgetcsv($file)) {
-            $users[] = array_combine($header, $row);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 400);
         }
 
-        fclose($file);
+        $file = $request->file('import_contrat');
 
-        return view('parametre.upload', compact('users'));
-        // }
-        // }
-    }
+        try {
+            DB::beginTransaction();
 
-    public function validatecontrat(Request $request)
-    {
-        if ($request->isMethod('post')) {
-            $data = $request->all();
+            $header = $this->getCSVHeaderContrat($file);
 
-            // Insertion des contrats
-
-            foreach ($data['attrId'] as $key => $attr) {
-                if (!empty($attr)) {
-                    Contrat::create(
-                        [
-                            'id_branche' => $data['branche'][$key], 'id_client' => $data['client'][$key], 'id_compagnie' => $data['compagnie'][$key],
-                            'id_apporteur' => $data['apporteur'][$key], 'numero_police' => $data['police'][$key], 'souscrit_le' => $data['souscrit'][$key],
-                            'effet_police' => $data['effet'][$key], 'heure_police' => $data['heure'][$key], 'expire_le' => $data['expire'][$key],
-                            'reconduction' => $data['reconduction'][$key], 'prime_nette' => $data['prime'][$key], 'frais_courtier' => $data['frais'][$key],
-                            'accessoires' => $data['accessoires'][$key], 'cfga' => $data['cfga'][$key], 'taxes_totales' => $data['taxes'][$key],
-                            'primes_ttc' => $data['prime_ttc'][$key], 'commission_courtier' => $data['commission'][$key], 'gestion' => $data['gestion'][$key],
-                            'solde' => $data['solde'][$key], 'reverse' => $data['reverse'][$key], 'id_entreprise' => $data['entreprise'][$key], 'user_id' => $data['user'][$key]
-                        ]
-                    );
-                }
+            if (!$this->validateCSVHeaderContrat($header)) {
+                throw new \Exception('Les en-têtes du fichier ne correspondent pas aux attentes.');
             }
 
-            // Insertion des avenants
+            $contrat = $this->parseCSVDataContrat($file, $header);
 
-            // foreach ($data['attrId'] as $key => $attr) {
-            //     if (!empty($attr)) {
-            //         Avenant::create(
-            //             [
-            //                 'id_branche' => $data['branche'][$key], 'id_client' => $data['client'][$key], 'id_compagnie' => $data['compagnie'][$key],
-            //                 'id_apporteur' => $data['apporteur'][$key], 'numero_police' => $data['police'][$key], 'souscrit_le' => $data['souscrit'][$key],
-            //                 'effet_police' => $data['effet'][$key], 'heure_police' => $data['heure'][$key], 'expire_le' => $data['expire'][$key],
-            //                 'reconduction' => $data['reconduction'][$key], 'prime_nette' => $data['prime'][$key], 'frais_courtier' => $data['frais'][$key],
-            //                 'accessoires' => $data['accessoires'][$key], 'cfga' => $data['cfga'][$key], 'taxes_totales' => $data['taxes'][$key],
-            //                 'primes_ttc' => $data['prime_ttc'][$key], 'commission_courtier' => $data['commission'][$key], 'gestion' => $data['gestion'][$key],
-            //                 'solde' => $data['solde'][$key], 'reverse' => $data['reverse'][$key], 'id_entreprise' => $data['entreprise'][$key], 'user_id' => $data['user'][$key]
-            //             ]
-            //         );
-            //     }
-            // }
+            $this->processCSVDataContrat($contrat);
 
-
-            return view('parametre.upload')->with('success', 'Base de donnees contrats importes');;
+            DB::commit();
+            return response()->json(['success' => true, 'data' => $contrat], 200);
+        } catch (\Exception $e) {
+            \Log::error('Error importing data: ' . $e->getMessage());
+            DB::rollBack();
+            return response()->json(['error' => 'Une erreur est survenue lors de l\'importation. Veuillez réessayer.'], 500);
         }
     }
+
 
     public function importsinistre(Request $request)
     {
@@ -608,31 +529,6 @@ class UploadController extends Controller
         // }
     }
 
-    public function validatesinistre(Request $request)
-    {
-        if ($request->isMethod('post')) {
-            $data = $request->all();
-
-
-            foreach ($data['attrId'] as $key => $attr) {
-                if (!empty($attr)) {
-                    Sinistre::create([
-                        'id_contrat' => $data['id_contrat'][$key], 'date_survenance' => $data['date_survenance'][$key],
-                        'heure' => $data['heure'][$key], 'date_declaration' => $data['date_declaration'][$key],
-                        'date_ouverture' => $data['date_ouverture'][$key], 'date_decla_compagnie' => $data['date_decla_compagnie'][$key],
-                        'numero_sinistre' => $data['numero_sinistre'][$key], 'reference_compagnie' => $data['reference_compagnie'][$key],
-                        'gestion_compagnie' => $data['gestion_compagnie'][$key], 'materiel_sinistre' => $data['materiel_sinistre'][$key],
-                        'ipp' => $data['ipp'][$key], 'garantie_applique' => $data['garantie_applique'][$key],
-                        'date_mission' => $data['date_mission'][$key], 'accident_sinistre' => $data['accident_sinistre'][$key],
-                        'lieu_sinistre' => $data['lieu_sinistre'][$key], 'expert' => $data['expert'][$key],
-                        'commentaire_sinistre' => $data['commentaire_sinistre'][$key], 'id_entreprise' => $data['entreprise'][$key], 'user_id' => $data['user'][$key],
-                    ]);
-                }
-            }
-
-            return view('parametre.upload')->with('success', 'Base de donnees sinistre importes');
-        }
-    }
 
     // Validation des entetes de l'importation clients
     private function validateHeaders($headers, $expectedHeaders)
@@ -671,6 +567,7 @@ class UploadController extends Controller
         }
     }
 
+    // Validation des entetes de la base prospect
     private function validateHeadersProspect($headers, $expectedHeaders)
     {
         return Validator::make($headers, [
@@ -678,6 +575,7 @@ class UploadController extends Controller
         ]);
     }
 
+    // Validation des types de données de la base prospect
     private function validateDataTypesProspect($data, $expectedTypes)
     {
         $rules = [];
@@ -688,6 +586,7 @@ class UploadController extends Controller
         return Validator::make($data, $rules);
     }
 
+    // Insertion des clients dans la table
     private function insertBatchDataProspect($batchDataProspect)
     {
         try {
@@ -710,6 +609,7 @@ class UploadController extends Controller
         }
     }
 
+    // Validation des entetes de la base apporteur
     private function validateHeadersApporteur($headers, $expectedHeaders)
     {
         return Validator::make($headers, [
@@ -717,6 +617,7 @@ class UploadController extends Controller
         ]);
     }
 
+    // Validation des types de données de la base apporteur
     private function validateDataTypesApporteur($data, $expectedTypes)
     {
         $rules = [];
@@ -727,6 +628,7 @@ class UploadController extends Controller
         return Validator::make($data, $rules);
     }
 
+    // Insertion des apporteurs dans la table
     private function insertBatchDataApporteur($batchDataApporteur)
     {
         try {
@@ -749,6 +651,7 @@ class UploadController extends Controller
         }
     }
 
+    // Obtenir les entetes de la base taux apporteur
     private function getCSVHeaderTauxApporteur($file)
     {
         $fileResource = fopen($file, 'r');
@@ -758,6 +661,7 @@ class UploadController extends Controller
         return $header;
     }
 
+    // Valider les entetes de la base taux apporteur
     private function validateCSVHeaderTauxApporteur($header)
     {
         $requiredHeaders = ['code_apporteur', 'nom_branche', 'taux'];
@@ -766,6 +670,7 @@ class UploadController extends Controller
         return array_map('strtolower', $header) == array_map('strtolower', $requiredHeaders);
     }
 
+    // 
     private function parseCSVDataTauxApporteur($file, $header)
     {
         $tauxapporteur = [];
@@ -823,4 +728,251 @@ class UploadController extends Controller
             }
         }
     }
+
+    // Validation des entetes de la base compagnie
+    private function validateHeadersCompagnie($headers, $expectedHeaders)
+    {
+        return Validator::make($headers, [
+            '*' => 'in:' . implode(',', $expectedHeaders),
+        ]);
+    }
+
+    // Validation des types de données de la base compagnie
+    private function validateDataTypesCompagnie($data, $expectedTypes)
+    {
+        $rules = [];
+        foreach ($expectedTypes as $column => $type) {
+            $rules[$column] = $type;
+        }
+
+        return Validator::make($data, $rules);
+    }
+
+    // Insertion des compagnues dans la table
+    private function insertBatchCompagnie($batchDataApporteur)
+    {
+        try {
+            DB::beginTransaction();
+
+            foreach ($batchDataApporteur as $data) {
+                // Check for existing prospect by email
+                $existingCompagnie = Compagnie::where('email_compagnie', $data['email_compagnie'])->first();
+
+                if (!$existingCompagnie) {
+                    Compagnie::create($data);
+                }
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error during compagnie import: ' . $e->getMessage());
+            // Gérer l'erreur si nécessaire
+        }
+    }
+
+    // Obtenir les entetes de la base taux compagnie
+    private function getCSVHeaderTauxCompagnie($file)
+    {
+        $fileResource = fopen($file, 'r');
+        $header = fgetcsv($fileResource);
+        fclose($fileResource);
+
+        return $header;
+    }
+
+    // Valider les entetes de la base taux compagnie
+    private function validateCSVHeaderTauxCompagnie($header)
+    {
+        $requiredHeaders = ['code_apporteur', 'nom_branche', 'taux'];
+        sort($header);
+        sort($requiredHeaders);
+        return array_map('strtolower', $header) == array_map('strtolower', $requiredHeaders);
+    }
+
+    //
+    private function parseCSVDataTauxCompagnie($file, $header)
+    {
+        $tauxcompagnie = [];
+        $fileResource = fopen($file, 'r');
+
+        while ($row = fgetcsv($fileResource)) {
+            $tauxcompagnie[] = array_combine($header, $row);
+        }
+
+        fclose($fileResource);
+        return $tauxcompagnie;
+    }
+
+    // Insertion de la base taux compagnie
+    private function processCSVDataTauxCompagnie($tauxcompagnie)
+    {
+        // Remove the header
+        $header = array_shift($tauxcompagnie);
+
+        // Initialize arrays to store values
+        $compagnieIds = [];
+        $brancheIds = [];
+        $tauxValues = [];
+
+        foreach ($tauxcompagnie as $data) {
+            $compagnie = Compagnie::where('code_compagnie', $data['code_compagnie'])->first();
+            $branche = Branche::where('nom_branche', $data['nom_branche'])->first();
+
+            if ($compagnie && $branche) {
+                // Assign directly to the array using references
+                $apporteurIds[] = $compagnie->id_compagnie;
+                $brancheIds[] = $branche->id_branche;
+
+                // Store the 'taux' value in the array
+                $tauxValues[] = $data['taux'];
+            } else {
+                \Log::error('Correspondance d\'apporteur ou de branche non trouvée. Code apporteur : ' . $data['code_compagnie'] . ', Nom branche : ' . $data['nom_branche']);
+                throw new \Exception('Correspondance d\'apporteur ou de branche non trouvée. Code apporteur : ' . $data['code_compagnie'] . ', Nom branche : ' . $data['nom_branche']);
+            }
+        }
+
+        // Stockage des données dans la base de données
+        foreach ($tauxcompagnie as $key => $data) {
+            try {
+                // Use individual values, not arrays
+                TauxCompagnie::create([
+                    'id_compagnie' => $compagnieIds[$key] ?? null,
+                    'id_branche' => $brancheIds[$key] ?? null,
+                    'tauxcomp' => $tauxValues[$key] ?? null,
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Error inserting data into taux_apporteurs: ' . $e->getMessage());
+                \Log::error('Failed data: ' . json_encode($data));
+            }
+        }
+    }
+
+    // Obtenir les entetes de la base contrat
+    private function getCSVHeaderContrat($file)
+    {
+        $fileResource = fopen($file, 'r');
+        $header = fgetcsv($fileResource);
+        fclose($fileResource);
+
+        return $header;
+    }
+
+    // Valider les entetes de la base contrat
+    private function validateCSVHeaderContrat($header)
+    {
+        $requiredHeaders = ['nom_branche', 'nom_client', 'nom_compagnie', 'nom_apporteur', 'n_police ', 'souscrit_le', 'effet_police', 'heure_police', 'expire_le', 'reconduction', 'prime_nette', 'frais_courtier', ' accessoire', 'cfga', ' taxes_totales', 'prime_ttc', 'commission_courtier', 'gestion', 'commision_apporteur', 'solde', 'reverse'];
+        sort($header);
+        sort($requiredHeaders);
+        return array_map('strtolower', $header) == array_map('strtolower', $requiredHeaders);
+    }
+
+    //
+    private function parseCSVDataContrat($file, $header)
+    {
+        $contrat = [];
+        $fileResource = fopen($file, 'r');
+
+        while ($row = fgetcsv($fileResource)) {
+            $contrat[] = array_combine($header, $row);
+        }
+
+        fclose($fileResource);
+        return $contrat;
+    }
+
+    // Insertion de la base contrat
+    private function processCSVDataContrat($contrat)
+    {
+        // Remove the header
+        $header = array_shift($contrat);
+
+        $user = JWTAuth::parseToken()->authenticate();
+        $entreprise = $user->id_entreprise;
+        $id = $user->id;
+
+        // Initialize arrays to store values
+        $compagnieIds = $apporteurIds = $clientIds = $brancheIds = [];
+        $policeValues = $souscritValues = $effetValues = $heureValues = [];
+        $expireValues = $reconductionValues = $primettcValues = [];
+        $fraisValues = $accessoiresValues = $taxesValues = $cfgaValues = [];
+        $commissioncourtierValues = $gestionValues = $commissionapporteurValues = [];
+        $solderValues = $reverserValues = [];
+
+        foreach ($contrat as $data) {
+            $compagnie = Compagnie::where('nom_compagnie', $data['nom_compagnie'])->first();
+            $apporteur = Apporteur::where('nom_apporteur', $data['nom_apporteur'])->first();
+            $client = Client::where('nom_client', $data['nom_client'])->first();
+            $branche = Branche::where('nom_branche', $data['nom_branche'])->first();
+
+            $solderValues[] = ($data['solde'] == 'OUI') ? 0 : 1;
+            $reverserValues[] = ($data['reverse'] == 'OUI') ? 0 : 1;
+
+            if ($compagnie && $apporteur && $branche && $client) {
+                // Assign directly to the array using references
+                $apporteurIds[] = $apporteur->id_apporteur;
+                $compagnieIds[] = $compagnie->id_compagnie;
+                $clientIds[] = $client->id_client;
+                $brancheIds[] = $branche->id_branche;
+            } else {
+                \Log::error('Correspondance d\'apporteur ou de branche non trouvée. Code apporteur : ' . $data['code_compagnie'] . ', Nom branche : ' . $data['nom_branche']);
+                throw new \Exception('Correspondance d\'apporteur ou de branche non trouvée. Code apporteur : ' . $data['code_compagnie'] . ', Nom branche : ' . $data['nom_branche']);
+            }
+
+            $policeValues[] = $data['numero_police'];
+            $souscritValues[] = $data['souscrit_le'];
+            $effetValues[] = $data['effet_police'];
+            $heureValues[] = $data['heure_police'];
+            $expireValues[] = $data['expire_le'];
+            $reconductionValues[] = $data['reconduction'];
+            $primenetteValues[] = $data['prime_nette'];
+            $fraisValues[] = $data['frais_courtier'];
+            $accessoiresValues[] = $data['accessoires'];
+            $taxesValues[] = $data['taxes_totales'];
+            $cfgaValues[] = $data['cfga'];
+            $primettcValues[] = $data['prime_ttc'];
+            $commissioncourtierValues[] = $data['commission_courtier'];
+            $gestionValues[] = $data['gestion'];
+            $commissionapporteurValues[] = $data['commission_apporteur'];
+            $solderValues[] = $solderValues;
+            $solderValues[] = $solderValues;
+        }
+
+        // Stockage des données dans la base de données
+        foreach ($contrat as $key => $data) {
+            try {
+                // Use individual values, not arrays
+                Contrat::create([
+                    'id_branche' => $brancheIds[$key] ?? null,
+                    'id_client' => $clientIds[$key] ?? null,
+                    'id_compagnie' => $compagnieIds[$key] ?? null,
+                    'id_apporteur' => $apporteurIds[$key] ?? null,
+                    'numero_police' => $policeValues[$key] ?? null,
+                    'souscrit_le' => $souscritValues[$key] ?? null,
+                    'effet_police' => $effetValues[$key] ?? null,
+                    'heure_police' => $heureValues[$key] ?? null,
+                    'expire_le' => $expireValues[$key] ?? null,
+                    'reconduction' => $reconductionValues[$key] ?? null,
+                    'prime_nette' => $primenetteValues[$key] ?? null,
+                    'frais_courtier' => $fraisValues[$key] ?? null,
+                    'accessoires' => $accessoiresValues[$key] ?? null,
+                    'cfga' => $cfgaValues[$key] ?? null,
+                    'taxes_totales' => $taxesValues[$key] ?? null,
+                    'prime_ttc' => $primettcValues[$key] ?? null,
+                    'commission_courtier' => $commissioncourtierValues[$key] ?? null,
+                    'gestion' => $gestionValues[$key] ?? null,
+                    'commission_apporteur' => $commissionapporteurValues[$key] ?? null,
+                    'solde' => $solderValues[$key] ?? null,
+                    'reverse' => $reverserValues[$key] ?? null,
+                    'id_entreprise' => $entreprise,
+                    'user_id' => $id,
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Error inserting data into taux_apporteurs: ' . $e->getMessage());
+                \Log::error('Failed data: ' . json_encode($data));
+            }
+        }
+    }
+
+    
 }

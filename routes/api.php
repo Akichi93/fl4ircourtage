@@ -136,7 +136,7 @@ Route::group([
     });
 
 
-    // Client
+    // Clients
     Route::controller(ClientController::class)->group(function () {
         Route::get('/clientList/{q?}', 'clientList');
         Route::post('postClient', 'postClient'); // Ajouter un apporteur
