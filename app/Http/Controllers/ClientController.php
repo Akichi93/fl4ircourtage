@@ -16,18 +16,21 @@ class ClientController extends Controller
 {
     public function clientList(Request $request)
     {
+    
         $user =  JWTAuth::parseToken()->authenticate();
         $data = strlen($request->q);
         if ($data > 0) {
+            dd($request->all());
             $clients['data'] = Client::where('id_entreprise', $user->id_entreprise)
                 ->where('nom_client', 'like', '%' . request('q') . '%')
                 ->orWhere('adresse_client', 'like', '%' . request('q') . '%')
                 ->orWhere('numero_client', 'like', '%' . request('q') . '%')
                 ->orWhere('profession_client', 'like', '%' . request('q') . '%')
-                ->get();
+                ->latest()
+                ->paginate(10);
             return response()->json($clients);
         } else {
-            $clients = Client::where('id_entreprise', $user->id_entreprise)->latest()->get();
+            $clients = Client::where('id_entreprise', $user->id_entreprise)->latest()->paginate(10);
             return response()->json($clients);
         }
     }
@@ -91,13 +94,11 @@ class ClientController extends Controller
             $clients->user_id = $request->id;
             $clients->save();
 
-            if($clients){
-                $clients = Client::where('id_entreprise', $request->id_entreprise)->latest()->get(); 
+            if ($clients) {
+                $clients = Client::where('id_entreprise', $request->id_entreprise)->latest()->paginate(10);
 
                 return response()->json($clients);
             }
-
-            
         } catch (\Exception $exception) {
             die("Impossible de se connecter à la base de données.  Veuillez vérifier votre configuration. erreur:" . $exception);
             return response()->json(['message' => 'Apporteur non enregistré'], 422);
@@ -123,8 +124,8 @@ class ClientController extends Controller
         $clients->email_client = request('email_client');
         $clients->save();
 
-        if($clients){
-            $clients = Client::where('id_entreprise', $request->id_entreprise)->latest()->get(); 
+        if ($clients) {
+            $clients = Client::where('id_entreprise', $request->id_entreprise)->latest()->get();
 
             return response()->json($clients);
         }

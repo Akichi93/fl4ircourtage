@@ -40,6 +40,7 @@
           <div class="col-row">
             <searchbranche :placeholder="'Rechercher un client'" v-model="q" @keyup="searchtask"></searchbranche>
           </div>
+          <button @click="exportToCSV">Export to CSV</button>
           <div class="col-md-12">
             <div class="table-responsive">
               <table class="table table-striped custom-table mb-0">
@@ -54,7 +55,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="(client, i) in clients" :key="i">
+                  <template v-for="(client, i) in clients.data" :key="i">
                     <tr>
                       <td v-text="client.nom_client"></td>
                       <td v-text="client.adresse_client"></td>
@@ -72,6 +73,10 @@
             </div>
             <addclient @client-add="refresh"></addclient>
             <editclient v-bind:clientoedit="clientoedit" @client-updated="refresh"></editclient>
+
+            <pagination align="center" :data="clients" :limit="5" :current_page="clients.current_page"
+              :last_page="clients.last_page" @pagination-change-page="getClients">
+            </pagination>
           </div>
         </div>
       </div>
@@ -85,6 +90,7 @@ import addclient from "./addclient.vue";
 import { getClientsList } from "../../services/clientservice";
 import editclient from "./editclient.vue";
 import searchbranche from "../../components/search/searchbranche.vue";
+import pagination from "laravel-vue-pagination";
 export default {
   name: "prospect",
   components: {
@@ -92,9 +98,9 @@ export default {
     Sidebar,
     addclient,
     editclient,
-    searchbranche
+    searchbranche,
+    pagination,
   },
-  props: ["current_page", "last_page"],
   data() {
     return {
       value: null,
@@ -109,10 +115,23 @@ export default {
     this.getClients();
   },
   methods: {
-    getClients: function () {
-      getClientsList().then((result) => {
+    getClients(page) {
+      getClientsList(page).then((result) => {
         this.clients = result;
       });
+    },
+
+    exportToCSV() {
+      const header = Object.keys(this.clients.data[0]).join(',');
+      const rows = this.clients.data.map(row => Object.values(row).join(','));
+
+      const csvContent = `${header}\n${rows.join('\n')}`;
+
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = 'data.csv';
+      link.click();
     },
     editClient(id_client) {
       axios
@@ -185,7 +204,7 @@ export default {
         });
     },
 
-    searchtask() {
+    searchtask(page = 1) {
       const token = localStorage.getItem("token");
 
       // Configurez les en-têtes de la requête
@@ -196,19 +215,19 @@ export default {
 
       if (this.q.length > 0) {
         axios
-          .get("/api/auth/clientList/" + this.q, { headers })
+          .get("/api/auth/clientList/?page=" + page + this.q, { headers })
           .then(
             (response) => (
-              (this.clients = response.data.data), console.log(response.data)
+              (this.clients = response.data)
             )
           )
           .catch((error) => console.log(error));
       } else {
         axios
-          .get("/api/auth/clientList/", { headers })
+          .get("/api/auth/clientList/?page=" + page, { headers })
           .then(
             (response) => (
-              (this.clients = response.data), console.log(response.data)
+              (this.clients = response.data)
             )
           )
           .catch((error) => console.log(error));
@@ -222,5 +241,14 @@ export default {
 };
 </script>
   
+<style scoped>
+.pagination {
+  margin-bottom: 0;
+}
+
+.curseur:hover {
+  cursor: grab;
+}
+</style>
   
   

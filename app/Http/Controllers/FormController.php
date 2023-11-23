@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Repositories\FormRepository;
 use App\Http\Requests\BrancheRequest;
 use Symfony\Component\HttpFoundation\Response;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 
 class FormController extends Controller
 {
