@@ -11,7 +11,6 @@
                             </a>
                         </h3>
 
-
                         <!-- Section pour afficher les messages d'erreur -->
                         <div v-if="error" class="error-message">
                             {{ error }}
@@ -23,17 +22,20 @@
                                 required />
                         </div>
                         <div class="submit-section">
-                            <button @click="uploadFile" :disabled="loading" class="btn btn-primary submit-btn">
+                            <button v-if="!loading" @click="uploadFile" :disabled="loading"
+                                class="btn btn-primary submit-btn">
                                 Importer la base de donnée
                             </button>
+
+                            <!-- Afficher l'indicateur de chargement si le fichier est en cours d'envoi -->
+                            <div v-if="loading" class="loading-container">
+                                <div class="loading-progress" :style="{ transform: 'rotate(' + (progress * 3.6) + 'deg)' }">
+                                </div>
+                            </div>
                         </div>
 
 
-                        <!-- Afficher l'indicateur de chargement si le fichier est en cours d'envoi -->
-                        <div v-if="loading" class="loading-container">
-                            <div class="loading-progress" :style="{ width: progress + '%' }"></div>
-                            <span>{{ progress }}%</span>
-                        </div>
+
 
                     </div>
                 </div>
@@ -56,6 +58,7 @@ export default {
             loading: false, // Ajout de la variable pour l'indicateur de chargement
             progress: 0, // Ajout de la variable pour le progrès de l'envoi
             error: null, // Ajout de la variable d'erreur
+            result: null
         };
     },
     methods: {
@@ -91,7 +94,7 @@ export default {
                 },
             })
                 .then(response => {
-                    console.log(response.data);
+                    this.result = response.data.duplicates;
                     this.file = ""; // Réinitialiser le champ de fichier après l'envoi réussi
                     toaster.success("Fichier importé avec succès.", {
                         position: "top-right",
@@ -118,6 +121,7 @@ export default {
                     // Traitez les doublons ici si nécessaire
                     if (response.data.details && response.data.details.duplicate_rows) {
                         // Affichez ou traitez les doublons côté client
+
                         console.error(response.data.details.duplicate_rows);
                     }
                 })
@@ -140,39 +144,34 @@ export default {
 <style scoped>
 .loading-container {
     position: relative;
-    width: 100%;
-    height: 20px;
-    background-color: #f0f0f0;
-    border-radius: 5px;
-    overflow: hidden;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 4px solid #e0e0e0;
+    margin: 20px auto;
+    animation: rotation 1s linear infinite;
 }
 
 .loading-progress {
     height: 100%;
-    background-color: #4caf50;
-    width: 0;
-    animation: progress-animation 1s ease-in-out forwards;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
+    width: 100%;
+    border-radius: 50%;
+    border: 4px solid #4caf50;
+    border-top: 4px solid transparent;
+    animation: rotation 1s linear infinite;
 }
 
-@keyframes progress-animation {
+@keyframes rotation {
     to {
-        width: 100%;
+        transform: rotate(360deg);
     }
 }
 
-.loading-container span {
+.loading-container p {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #000000;
-}
-</style>
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    color: #000;
+}</style>
