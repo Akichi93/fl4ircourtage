@@ -228,7 +228,13 @@ class CompagnieController extends Controller
 
     public function getCompagnie()
     {
-        $compagnies = $this->compagnie->getCompagnie();
+
+        $user =  JWTAuth::parseToken()->authenticate();
+        $compagnies = Compagnie::where('id_entreprise', $user->id_entreprise)
+            ->where('supprimer_compagnie', '=', '0')
+            ->get();
+
+        // $compagnies = $this->compagnie->getCompagnie();
 
         return response()->json($compagnies);
     }

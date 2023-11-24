@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branche;
+use App\Models\Localisation;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Repositories\FormRepository;
 use App\Http\Requests\BrancheRequest;
 use Symfony\Component\HttpFoundation\Response;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 
 class FormController extends Controller
@@ -62,7 +63,8 @@ class FormController extends Controller
 
     public function getLocalisations()
     {
-        $localisations = $this->localisation->getLocalisations();
+        $localisations = Localisation::orderBy('nom_ville', 'ASC')->get();
+        // $this->localisation->getLocalisations();
 
         return response()->json($localisations);
     }
@@ -262,14 +264,33 @@ class FormController extends Controller
         // Récupération des données
         $data = $request->all();
 
-        // Insertion dans la bdd
-        $Data = $this->localisation->postLocalisations($data);
+        $adresse = $data['ajout_adresse'];
+        if (Localisation::where('nom_ville', '=', $adresse)->count() > 0) {
+            return response()->json(['message' => 'Adresse existante'], 422);
+        }
+        $min = strtoupper($data['ajout_adresse']);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Localisation enregistré avec succès',
-            'localisation' => $Data
-        ], Response::HTTP_OK);
+        $localisations = new Localisation();
+        $localisations->nom_ville = $min;
+        $localisations->save();
+
+        if ($localisations) {
+            $localisations = Localisation::orderBy('nom_ville', 'ASC')->get();
+
+            return response()->json($localisations);
+        }
+
+
+        // return $localisations;
+
+        // Insertion dans la bdd
+        // $Data = $this->localisation->postLocalisations($data);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'Localisation enregistré avec succès',
+        //     'localisation' => $Data
+        // ], Response::HTTP_OK);
     }
 
     public function postProfessions(Request $request)

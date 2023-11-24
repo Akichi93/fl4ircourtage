@@ -250,10 +250,8 @@ export default {
           id_entreprise: entrepriseId,
         })
         .then((response) => {
-          this.$emit('client-added', response.data);
-          this.$emit('client-add', response);
-
-          console.log("Emitted client-added event with data:",  response.data);
+          this.$emit('client-added', response);
+          this.$emit('client-add', response.data);
           // this.civilite =
           //   this.nom_client =
           //   this.prenom_client =

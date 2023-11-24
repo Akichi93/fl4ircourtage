@@ -40,7 +40,10 @@
           <div class="col-row">
             <searchbranche :placeholder="'Rechercher un client'" v-model="q" @keyup="searchtask"></searchbranche>
           </div>
-          <button @click="exportToCSV">Export to CSV</button>
+          <div class="col-md-12" style="display: flex;justify-content: end;">
+            <clientexport></clientexport>
+          </div>
+
           <div class="col-md-12">
             <div class="table-responsive">
               <table class="table table-striped custom-table mb-0">
@@ -71,7 +74,7 @@
                 </tbody>
               </table>
             </div>
-            <addclient @client-add="refresh"></addclient>
+            <addclient @client-added="refresh"></addclient>
             <editclient v-bind:clientoedit="clientoedit" @client-updated="refresh"></editclient>
 
             <pagination align="center" :data="clients" :limit="5" :current_page="clients.current_page"
@@ -91,6 +94,7 @@ import { getClientsList } from "../../services/clientservice";
 import editclient from "./editclient.vue";
 import searchbranche from "../../components/search/searchbranche.vue";
 import pagination from "laravel-vue-pagination";
+import clientexport from "../../components/export/clientexport.vue"
 export default {
   name: "prospect",
   components: {
@@ -100,6 +104,7 @@ export default {
     editclient,
     searchbranche,
     pagination,
+    clientexport
   },
   data() {
     return {
@@ -121,18 +126,6 @@ export default {
       });
     },
 
-    exportToCSV() {
-      const header = Object.keys(this.clients.data[0]).join(',');
-      const rows = this.clients.data.map(row => Object.values(row).join(','));
-
-      const csvContent = `${header}\n${rows.join('\n')}`;
-
-      const blob = new Blob([csvContent], { type: 'text/csv' });
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      link.download = 'data.csv';
-      link.click();
-    },
     editClient(id_client) {
       axios
         .get("/api/auth/editClient/" + id_client)
@@ -140,68 +133,6 @@ export default {
           this.clientoedit = response.data;
         })
         .catch((error) => console.log(error));
-    },
-
-    storeAdresse() {
-      axios
-        .post("/postLocalisations", {
-          ajout_adresse: this.ajout_adresse,
-        })
-        .then((response) => {
-          this.fetchTask();
-          if (response.status === 200) {
-            toaster.success(`Adresse ajouté avec succès`, {
-              position: "top-right",
-            });
-            this.adresses = response.data;
-            this.ajout_adresse = "";
-          }
-        })
-        .catch((error) => {
-          // console.log(error.response.headers);
-
-          if (error.response.status === 422) {
-            this.errors = error.response.data.errors;
-            // console.log("Message non enregisté")
-          } else if (error.request) {
-            // The request was made but no response was received
-            console.log(error.request);
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            console.log("Error", error.message);
-          }
-        });
-    },
-
-    storeProfession() {
-      axios
-        .post("/postProfessions", {
-          ajout_profession: this.ajout_profession,
-        })
-        .then((response) => {
-          this.fetchTask();
-          if (response.status === 200) {
-            toaster.success(`Profession ajouté avec succès`, {
-              position: "top-right",
-            });
-            this.professions = response.data;
-            this.ajout_profession = "";
-          }
-        })
-        .catch((error) => {
-          // console.log(error.response.headers);
-
-          if (error.response.status === 422) {
-            this.errors = error.response.data.errors;
-            // console.log("Message non enregisté")
-          } else if (error.request) {
-            // The request was made but no response was received
-            console.log(error.request);
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            console.log("Error", error.message);
-          }
-        });
     },
 
     searchtask(page = 1) {
@@ -226,7 +157,7 @@ export default {
         axios
           .get("/api/auth/clientList/?page=" + page, { headers })
           .then(
-            (response) => (
+            (response) => (.3
               (this.clients = response.data)
             )
           )

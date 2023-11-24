@@ -271,7 +271,14 @@ class ApporteurController extends Controller
 
     public function getApporteur()
     {
-        $apporteurs = $this->apporteur->getApporteur();
+        $user =  JWTAuth::parseToken()->authenticate();
+
+        $apporteurs = Apporteur::orderBy('id_apporteur', 'DESC')
+            ->where('id_entreprise', $user->id_entreprise)
+            ->where('supprimer_apporteur', 0)
+            ->get();
+
+        // $apporteurs = $this->apporteur->getApporteur();
 
         return response()->json($apporteurs);
     }

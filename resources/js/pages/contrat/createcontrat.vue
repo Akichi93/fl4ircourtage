@@ -102,8 +102,10 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Client:</label>
-                            <clientcomponent :placeholder="'selectionnez un client'" v-model="client_id" :updateClients="updateClients">
-                            </clientcomponent>
+                            <Multiselect v-model="client_id" :options="clients" :custom-label="({ id_client, nom_client }) => `${id_client} - [${nom_client}]`
+                              " valueProp="id_client" :placeholder="placeholder" label="nom_client"
+                              track-by="nom_client" :searchable="true">
+                            </Multiselect>
                             <p style="color: red" class="text-red" v-if="errors.id_compagnie"
                               v-text="errors.id_client[0]"></p>
                           </div>
@@ -210,8 +212,12 @@
                             <div class="col-md-9">
                               <div class="form-group">
                                 <label>Zone de circulation:</label>
-                                <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="zone">
-                                </adressecomponent>
+                                <Multiselect v-model="zone" :options="localisations" :custom-label="({ id_localisation, nom_ville }) =>
+                                  `${id_localisation} - [${nom_ville}]`
+                                  " valueProp="nom_ville" placeholder="Selectionnez zone" label="nom_ville"
+                                  track-by="nom_ville" :searchable="true">
+                                </Multiselect>
+
                               </div>
                             </div>
                             <div class="col-md-3">
@@ -746,13 +752,13 @@
 
 
 
-        <addadresse></addadresse>
+        <addadresse @adresse-add="handleClientsChange"></addadresse>
         <addcategorie></addcategorie>
         <addenergie></addenergie>
         <addcouleur></addcouleur>
         <addgenre></addgenre>
         <addmarque></addmarque>
-        <addclient @client-added="handleClientAdded"></addclient>
+        <addclient @client-add="refresh"></addclient>
       </div>
     </div>
   </div>
@@ -763,9 +769,7 @@ import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import compagniecomponent from "../../components/select/compagniecomponent.vue";
 import apporteurcomponent from "../../components/select/apporteurcomponent.vue";
-import clientcomponent from "../../components/select/clientcomponent.vue";
 import branchecomponent from "../../components/select/branchecomponent.vue";
-import adressecomponent from "../../components/select/adressecomponent.vue";
 import genrecomponent from "../../components/select/genrecomponent.vue";
 import energiecomponent from "../../components/select/energiecomponent.vue";
 import marquecomponent from "../../components/select/marquecomponent.vue";
@@ -781,8 +785,8 @@ import addmarque from '../../pages/form/addmarque.vue';
 import addclient from '../../pages/clients/addclient.vue'
 
 
-import { getBrancheList } from "../../services/formservice";
-import { getClientsList } from "../../services/clientservice";
+import { getBrancheList, getAdresseList } from "../../services/formservice";
+import { getClientSelect } from "../../services/clientservice";
 
 import { createToaster } from "@meforma/vue-toaster";
 // import $ from "jquery";
@@ -797,7 +801,6 @@ export default {
     Sidebar,
     compagniecomponent,
     apporteurcomponent,
-    clientcomponent,
     branchecomponent,
     addadresse,
     addcategorie,
@@ -805,7 +808,6 @@ export default {
     addgenre,
     addcouleur,
     addmarque,
-    adressecomponent,
     genrecomponent,
     energiecomponent,
     marquecomponent,
@@ -876,7 +878,8 @@ export default {
   },
   created() {
     this.getBranche();
-    this.getClientList()
+    this.getClients();
+    this.getAdresse()
   },
   methods: {
     getBranche: function () {
@@ -885,24 +888,16 @@ export default {
       });
     },
 
-    getClientList() {
-      getClientsList().then((resultat) => {
-        this.clients = resultat;
+    getClients() {
+      getClientSelect().then((result) => {
+        this.clients = result;
       });
     },
 
-    handleClientAdded(clientData) {
-      console.log("Handling client-added event with data:", clientData);
-      this.clients.push(clientData);
-
-      this.clients = [...this.clients];
-      toaster.success(`Client ajouté avec succès`, {
-        position: "top-right",
+    getAdresse() {
+      getAdresseList().then((result) => {
+        this.localisations = result;
       });
-    },
-
-    updateClients(clientData) {
-      this.clients = clientData;
     },
 
     onChange(event) {
@@ -1035,6 +1030,16 @@ export default {
     calculttc: function (event) {
       alert(this.event.target.value);
     },
+
+    refresh(clients) {
+      this.clients = clients.data;
+     
+    },
+
+    handleClientsChange(localisations){
+      this.localisations = localisations.data;
+    }
+
   },
 };
 </script>

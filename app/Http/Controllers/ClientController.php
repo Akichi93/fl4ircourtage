@@ -134,7 +134,7 @@ class ClientController extends Controller
     public function getClient()
     {
         $user =  JWTAuth::parseToken()->authenticate();
-        $clients = Client::where('id_entreprise', $user->id_entreprise)->get();
+        $clients = Client::where('id_entreprise', $user->id_entreprise)->latest()->get();
 
         return response()->json($clients);
     }

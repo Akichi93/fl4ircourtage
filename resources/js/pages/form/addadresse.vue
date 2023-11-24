@@ -34,6 +34,11 @@
   </div>
 </template>
 <script>
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   methods: {
     data() {
@@ -43,16 +48,15 @@ export default {
     },
     storeAdresse() {
       axios
-        .post("/postLocalisations", {
+        .post("/api/auth/postLocalisations", {
           ajout_adresse: this.ajout_adresse,
         })
         .then((response) => {
+          this.$emit('adresse-add', response.data)
           if (response.status === 200) {
             toaster.success(`Adresse ajouté avec succès`, {
               position: "top-right",
             });
-            this.adresses = response.data;
-            this.ajout_adresse = "";
           }
         })
         .catch((error) => {

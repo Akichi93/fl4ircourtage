@@ -16,6 +16,21 @@ export async function getClientsList(page = 1) {
 
 }
 
+export async function getClientSelect() {
+
+    const token = localStorage.getItem("token");
+
+    // Configurez les en-têtes de la requête
+    const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+    };
+
+    const response = await axios.get("/api/auth/getClient", { headers })
+    return response.data;
+
+}
+
 
 
 

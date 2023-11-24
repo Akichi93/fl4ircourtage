@@ -36,6 +36,7 @@ export default {
         this.apporteurs = result;
       });
     },
+    
   },
   components: { Multiselect },
 };
