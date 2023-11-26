@@ -39,6 +39,9 @@
           <div class="col-row">
             <input type="text" class="form-control" placeholder="Rechercher un contrat" v-model="q" @keyup="searchtask" />
           </div>
+          <div class="col-md-12" style="display: flex; justify-content: end">
+            <contratexport></contratexport>
+          </div>
           <div class="col-md-12">
             <div class="table-responsive">
               <table class="table table-striped custom-table mb-0">
@@ -93,9 +96,9 @@
 
             <deletecontrat v-bind:contrattoedit="contrattoedit"></deletecontrat>
 
-            <!-- <pagination align="center" :data="contrats" :limit="5" :current_page="contrats.current_page"
-              :last_page="contrats.last_page" @pagination-change-page="listcontrat">
-            </pagination> -->
+            <pagination align="center" :data="contrats" :limit="5" :current_page="contrats.current_page"
+              :last_page="contrats.last_page" @pagination-change-page="getContrat">
+            </pagination>
           </div>
         </div>
       </div>
@@ -106,12 +109,16 @@
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import { getContratsList } from "../../services/contratservice";
-import deletecontrat from "../contrat/deletecontrat.vue"
+import deletecontrat from "../contrat/deletecontrat.vue";
+import pagination from "laravel-vue-pagination";
+import contratexport from '../../components/export/contratexport.vue';
 export default {
   components: {
     Header,
     Sidebar,
-    deletecontrat
+    deletecontrat,
+    pagination,
+    contratexport
   },
   data() {
     return {
@@ -135,8 +142,8 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    getContrat: function () {
-      getContratsList().then((result) => {
+    getContrat (page) {
+      getContratsList(page).then((result) => {
         this.contrats = result;
       });
     },

@@ -917,4 +917,22 @@ class ContratController extends Controller
 
         return response()->json($factures);
     }
+
+
+    public function getContrat()
+    {
+
+        $user =  JWTAuth::parseToken()->authenticate();
+        $contrats = Contrat::join("clients", 'contrats.id_client', '=', 'clients.id_client')
+            ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
+            ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
+            ->where('contrats.id_entreprise', $user->id_entreprise)
+            ->where('supprimer_contrat', '=', '0')
+            ->latest('contrats.created_at')
+            ->get();
+
+        // $compagnies = $this->compagnie->getCompagnie();
+
+        return response()->json($contrats);
+    }
 }

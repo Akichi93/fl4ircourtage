@@ -49,6 +49,9 @@
               @keyup="searchtask"
             />
           </div>
+          <div class="col-md-12" style="display: flex; justify-content: end">
+            <prospectexport></prospectexport>
+          </div>
           <div class="col-md-12">
             <div class="table-responsive">
               <table class="table table-striped custom-table mb-0">
@@ -144,6 +147,10 @@
               v-bind:prospectoedit="prospectoedit"
               @prospect-deleted="refresh"
             ></deleteProspect>
+
+            <pagination align="center" :data="prospects" :limit="5" :current_page="prospects.current_page"
+              :last_page="prospects.last_page" @pagination-change-page="getProspects">
+            </pagination>
           </div>
         </div>
       </div>
@@ -159,6 +166,7 @@ import admettreProspect from "./admettreProspect.vue";
 import deleteProspect from "./deleteProspect.vue";
 import editProspect from "./editProspect.vue";
 import changeProspect from "./changeProspect.vue";
+import prospectexport from "../../components/export/prospectexport.vue";
 export default {
   name: "search",
   components: {
@@ -168,7 +176,8 @@ export default {
     admettreProspect,
     deleteProspect,
     editProspect,
-    changeProspect
+    changeProspect,
+    prospectexport
   },
   data() {
     return {

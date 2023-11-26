@@ -17,4 +17,20 @@ export async function getProspectsList(page = 1) {
 }
 
 
+export async function getProspectsExport() {
+
+    const token = localStorage.getItem("token");
+
+    // Configurez les en-têtes de la requête
+    const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+    };
+
+    const response = await axios.get("/api/auth/getProspect", { headers })
+    return response.data;
+
+}
+
+
 

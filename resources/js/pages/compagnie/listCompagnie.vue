@@ -38,6 +38,9 @@
           <div class="col-row">
             <searchbranche :placeholder="'Rechercher une compagnie'" v-model="q" @keyup="searchtask"></searchbranche>
           </div>
+          <div class="col-md-12" style="display: flex;justify-content: end;">
+            <compagniexport></compagniexport>
+          </div>
           <div class="col-md-12">
             <div class="table-responsive">
               <table class="table table-striped custom-table mb-0" cellspacing="0" cellpadding="1" border="1" width="300">
@@ -51,7 +54,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="(compagnie, i) in compagnies" :key="i">
+                  <template v-for="(compagnie, i) in compagnies.data" :key="i">
                     <tr>
                       <td v-text="compagnie.nom_compagnie"></td>
                       <td v-text="compagnie.email_compagnie"></td>
@@ -80,6 +83,10 @@
             </div>
             <editCompagnie v-bind:compagnietoedit="compagnietoedit" @compagnie-updated="refresh"></editCompagnie>
             <deleteCompagnie v-bind:compagnietoedit="compagnietoedit" @compagnie-delete="refresh"></deleteCompagnie>
+
+            <pagination align="center" :data="compagnies" :limit="5" :current_page="compagnies.current_page"
+              :last_page="compagnies.last_page" @pagination-change-page="getCompagnies">
+            </pagination>
           </div>
         </div>
       </div>
@@ -89,20 +96,22 @@
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import LaravelVuePagination from "laravel-vue-pagination";
 import { getCompagniesList } from "../../services/compagnieservice";
 import searchbranche from "../../components/search/searchbranche.vue";
 import editCompagnie from "./editCompagnie.vue";
 import deleteCompagnie from "./deleteCompagnie.vue";
+import pagination from "laravel-vue-pagination";
+import compagniexport from "../../components/export/compagniexport.vue";
 export default {
   name: "compagnie",
   components: {
     Header,
     Sidebar,
     searchbranche,
-    Pagination: LaravelVuePagination,
     editCompagnie,
-    deleteCompagnie
+    deleteCompagnie,
+    pagination,
+    compagniexport
   },
   data() {
     return {
@@ -123,8 +132,8 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    getCompagnies: function () {
-      getCompagniesList().then((result) => {
+    getCompagnies(page) {
+      getCompagniesList(page).then((result) => {
         this.compagnies = result;
       });
     },

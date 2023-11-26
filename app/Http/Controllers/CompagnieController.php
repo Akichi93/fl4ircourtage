@@ -45,7 +45,7 @@ class CompagnieController extends Controller
             return response()->json($compagnies);
         } else {
             $compagnies = Compagnie::where('id_entreprise', $user->id_entreprise)
-                ->where('supprimer_compagnie', '=', '0')->latest()->get();
+                ->where('supprimer_compagnie', '=', '0')->latest()->paginate(10);
             return response()->json($compagnies);
         }
     }

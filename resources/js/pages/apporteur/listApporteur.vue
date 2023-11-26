@@ -27,7 +27,11 @@
           <div class="col-md-8"></div>
           <div class="col-md-4">
             <div class="add-emp-section">
-              <router-link to="/createapporteur" class="btn btn-success btn-add-emp" style="width: auto">
+              <router-link
+                to="/createapporteur"
+                class="btn btn-success btn-add-emp"
+                style="width: auto"
+              >
                 Ajouter apporteur
               </router-link>
             </div>
@@ -35,10 +39,20 @@
         </div>
 
         <div class="row">
-          <searchbranche :placeholder="'Rechercher un apporteur'" v-model="q" @keyup="searchtask"></searchbranche>
+          <searchbranche
+            :placeholder="'Rechercher un apporteur'"
+            v-model="q"
+            @keyup="searchtask"
+          ></searchbranche>
+          <div class="col-md-12" style="display: flex; justify-content: end">
+            <apporteurexport></apporteurexport>
+          </div>
           <div class="col-md-12">
             <div class="table-responsive">
-              <table id="tbl_exporttable_to_xls" class="table table-striped custom-table mb-0">
+              <table
+                id="tbl_exporttable_to_xls"
+                class="table table-striped custom-table mb-0"
+              >
                 <thead>
                   <tr>
                     <th>Code</th>
@@ -51,7 +65,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="(apporteur, i) in apporteurs" :key="i">
+                  <template v-for="(apporteur, i) in apporteurs.data" :key="i">
                     <tr>
                       <td v-text="apporteur.code_apporteur"></td>
                       <td v-text="apporteur.nom_apporteur"></td>
@@ -60,18 +74,29 @@
                       <td v-text="apporteur.contact_apporteur"></td>
                       <td v-text="apporteur.email_apporteur"></td>
                       <td class="text-end ico-sec d-flex justify-content-end">
-                        <router-link :to="{
-                          name: 'tauxapporteur',
-                          params: { id_apporteur: apporteur.id_apporteur },
-                        }">
+                        <router-link
+                          :to="{
+                            name: 'tauxapporteur',
+                            params: { id_apporteur: apporteur.id_apporteur },
+                          }"
+                        >
                           <i class="fa fa-pen-fancy"></i>
                         </router-link>
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#edit_department"
-                          @click="editApporteur(apporteur.id_apporteur)" title="Modifier"><i class="fas fa-pen"></i>
+                        <a
+                          href="#"
+                          data-bs-toggle="modal"
+                          data-bs-target="#edit_department"
+                          @click="editApporteur(apporteur.id_apporteur)"
+                          title="Modifier"
+                          ><i class="fas fa-pen"></i>
                         </a>
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#delete_apporteur"
-                          @click="editApporteur(apporteur.id_apporteur)" title="supprimer"><i
-                            class="fas fa-trash-alt"></i>
+                        <a
+                          href="#"
+                          data-bs-toggle="modal"
+                          data-bs-target="#delete_apporteur"
+                          @click="editApporteur(apporteur.id_apporteur)"
+                          title="supprimer"
+                          ><i class="fas fa-trash-alt"></i>
                         </a>
                       </td>
                     </tr>
@@ -79,8 +104,24 @@
                 </tbody>
               </table>
             </div>
-            <editApporteur v-bind:apporteurtoedit="apporteurtoedit" @apporteur-updated="refresh"></editApporteur>
-            <deleteApporteur v-bind:apporteurtoedit="apporteurtoedit" @apporteur-delete="refresh"></deleteApporteur>
+            <editApporteur
+              v-bind:apporteurtoedit="apporteurtoedit"
+              @apporteur-updated="refresh"
+            ></editApporteur>
+            <deleteApporteur
+              v-bind:apporteurtoedit="apporteurtoedit"
+              @apporteur-delete="refresh"
+            ></deleteApporteur>
+
+            <pagination
+              align="center"
+              :data="apporteurs"
+              :limit="5"
+              :current_page="apporteurs.current_page"
+              :last_page="apporteurs.last_page"
+              @pagination-change-page="getCompagnies"
+            >
+            </pagination>
           </div>
         </div>
       </div>
@@ -88,22 +129,23 @@
   </div>
 </template>
 <script>
-import LaravelVuePagination from "laravel-vue-pagination";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import searchbranche from "../../components/search/searchbranche.vue";
 import { getApporteursList } from "../../services/apporteurservice";
 import editApporteur from "./editApporteur.vue";
 import deleteApporteur from "./deleteApporteur.vue";
-
+import pagination from "laravel-vue-pagination";
+import apporteurexport from "../../components/export/apporteurexport.vue";
 export default {
   components: {
-    Pagination: LaravelVuePagination,
     Header,
     Sidebar,
     searchbranche,
     editApporteur,
-    deleteApporteur
+    deleteApporteur,
+    pagination,
+    apporteurexport
   },
   data() {
     return {
@@ -111,15 +153,14 @@ export default {
       apporteurs: [],
       apporteurtoedit: "",
       q: "",
-
     };
   },
   created() {
-    this.getApporteurs()
+    this.getApporteurs();
   },
   methods: {
-    getApporteurs: function () {
-      getApporteursList().then((result) => {
+    getApporteurs(page) {
+      getApporteursList(page).then((result) => {
         this.apporteurs = result;
       });
     },
@@ -143,27 +184,19 @@ export default {
       if (this.q.length > 0) {
         axios
           .get("/api/auth/apporteurList/" + this.q, { headers })
-          .then(
-            (response) => (
-              (this.apporteurs = response.data.data)
-            )
-          )
+          .then((response) => (this.apporteurs = response.data.data))
           .catch((error) => console.log(error));
       } else {
         axios
           .get("/api/auth/apporteurList/", { headers })
-          .then(
-            (response) => (
-              (this.apporteurs = response.data)
-            )
-          )
+          .then((response) => (this.apporteurs = response.data))
           .catch((error) => console.log(error));
       }
     },
 
     refresh(apporteurs) {
       this.apporteurs = apporteurs.data;
-    }
+    },
   },
 };
 </script>

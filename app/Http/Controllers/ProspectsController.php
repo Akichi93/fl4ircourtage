@@ -237,4 +237,17 @@ class ProspectsController extends Controller
             ->where('branche_prospects.id_prospect', $request->prospect)->get();
         return response()->json($prospects);
     }
+
+    public function getProspect()
+    {
+        $user =  JWTAuth::parseToken()->authenticate();
+
+        $prospects = Prospect::where('id_entreprise', $user->id_entreprise)
+            // ->where('supprimer_prospect', 0)
+            ->get();
+
+        // $prospects = $this->apporteur->getApporteur();
+
+        return response()->json($prospects);
+    }
 }

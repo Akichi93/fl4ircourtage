@@ -133,6 +133,7 @@ Route::group([
         Route::post('postBrancheProspect',  'postBrancheProspect');
         Route::get('getNameProspect',  'getNameProspect'); // Obtenir le nom de l'apporteur choisi
         Route::get('getBrancheProspect',  'getBrancheProspect');
+        Route::get('getProspect',  'getProspect'); // Obtenir les prospects
     });
 
 
@@ -148,15 +149,6 @@ Route::group([
         Route::get('getOneExpiration', 'getOneExpiration');
         Route::get('getTwoExpiration', 'getTwoExpiration');
     });
-
-    // // Contrats
-    // // Route::get('file/avenants/{id_avenant}', [ContratController::class, 'fileAvenant']);
-    // // Route::post('contrats/auto', [ContratController::class, 'auto']);
-    // // Route::get('get/automobiles', [ContratController::class, 'infoAutos']);
-    // // Route::post('edit/automobile', [ContratController::class, 'editAutomobile']);
-    // // Route::get('get/autos', [ContratController::class, 'getAutos']);
-
-
 
     // Contrat
     Route::controller(ContratController::class)->group(function () {
@@ -190,6 +182,7 @@ Route::group([
         Route::get('getViewContrat', 'getViewContrat');
         Route::patch('updateContrat/{id_contrat}', 'updateContrat'); // Update d'une compagnie
         Route::get('getFactures/{id_avenant}', 'getFactures');
+        Route::get('getContrat',  'getContrat'); // Obtenir les contrats
     });
 
     // Sinistres
