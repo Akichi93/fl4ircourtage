@@ -25,7 +25,8 @@ class StatController extends Controller
         $user =  JWTAuth::parseToken()->authenticate();
         $clients = Client::where('id_entreprise', $user->id_entreprise)
             ->where('supprimer_client', 0)
-            ->get();
+            ->latest()
+            ->paginate(10);
 
         return response()->json($clients);
     }
@@ -69,7 +70,7 @@ class StatController extends Controller
 
     public function expiredata(Request $request)
     {
-
+        $user =  JWTAuth::parseToken()->authenticate();
         $filtre = $request->filtre;
         $debut = $request->date_debut;
         $fin = $request->date_fin;
@@ -78,89 +79,93 @@ class StatController extends Controller
         $data = strlen($request->search);
 
         if ($data > 0) {
-            $contrats = Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-                ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
-                ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
-                ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
-                ->where('supprimer_contrat', '=', '0')
-                ->where('nom_branche', 'like', '%' . request('search') . '%')
-                ->orWhere('nom_client', 'like', '%' . request('search') . '%')
-                ->orWhere('adresse_client', 'like', '%' . request('search') . '%')
-                ->orWhere('profession_client', 'like', '%' . request('search') . '%')
-                ->orWhere('nom_apporteur', 'like', '%' . request('search') . '%')
-                ->orWhere('nom_compagnie', 'like', '%' . request('search') . '%')
+
+            $search = request('search');
+            $contrats = Contrat::nonSupprimes()
+                ->with('branche', 'client', 'apporteur', 'compagnie')
+                ->where(function ($query) use ($search, $user) {
+                    $query->whereHas('branche', function ($subquery) use ($search, $user) {
+                        $subquery->where('nom_branche', 'like', "%$search%")
+                            ->where('id_entreprise', '=', $user->id_entreprise);
+                    })
+                        ->orWhereHas('client', function ($subquery) use ($search) {
+                            $subquery->where('nom_client', 'like', "%$search%")
+                                ->orWhere('adresse_client', 'like', "%$search%")
+                                ->orWhere('profession_client', 'like', "%$search%");
+                        })
+                        ->orWhereHas('apporteur', function ($subquery) use ($search) {
+                            $subquery->where('nom_apporteur', 'like', "%$search%");
+                        })
+                        ->orWhereHas('compagnie', function ($subquery) use ($search) {
+                            $subquery->where('nom_compagnie', 'like', "%$search%");
+                        });
+                })
                 ->get();
+
+
             return response()->json($contrats);
         } else {
             if ($filtre == null) {
-                $contrats = Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-                    ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
-                    ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
-                    ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
-                    ->where('supprimer_contrat', '=', '0')
+                $contrats = Contrat::nonSupprimes()
+                    ->with('branche', 'client', 'apporteur', 'compagnie')
+                    ->whereHas('branche', function ($query) use ($user) {
+                        $query->where('id_entreprise', $user->id_entreprise);
+                    })
                     ->get();
+
 
                 return response()->json($contrats);
             } elseif ($filtre == "expire") {
                 $date = date('Y-m-d');
-                $user =  JWTAuth::parseToken()->authenticate();
-                $contrats =  Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-                    ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
-                    ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
-                    ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
-                    ->where('expire_le', '<', $date)
-                    ->where('supprimer_contrat', '=', '0')
-                    ->where('contrats.id_entreprise', $user->id_entreprise)
+
+                $contrats = Contrat::nonSupprimes()
+                    ->with('branche', 'client', 'apporteur', 'compagnie')
+                    ->whereHas('branche', function ($query) use ($user, $date) {
+                        $query->where('id_entreprise', $user->id_entreprise)
+                            ->where('expire_le', '<', $date);
+                    })
                     ->get();
 
                 return response()->json($contrats);
             } elseif ($filtre == "solde") {
-                $user =  JWTAuth::parseToken()->authenticate();
-                $contrats = Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-                    ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
-                    ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
-                    ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
-                    ->where('solde', '=', '1')
-                    ->where('supprimer_contrat', '=', '0')
-                    ->where('contrats.id_entreprise', $user->id_entreprise)
+                $contrats = Contrat::nonSupprimes()
+                    ->solde()
+                    ->with('branche', 'client', 'apporteur', 'compagnie')
+                    ->whereHas('branche', function ($query) use ($user) {
+                        $query->where('id_entreprise', $user->id_entreprise);
+                    })
                     ->get();
 
                 return response()->json($contrats);
             } elseif ($filtre == "nonsolde") {
-                $user =  JWTAuth::parseToken()->authenticate();
-                $contrats = Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-                    ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
-                    ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
-                    ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
-                    ->where('solde', '=', '0')
-                    ->where('supprimer_contrat', '=', '0')
-                    ->where('contrats.id_entreprise', $user->id_entreprise)
+
+                $contrats = Contrat::nonSupprimes()
+                    ->nonSolde()
+                    ->with('branche', 'client', 'apporteur', 'compagnie')
+                    ->whereHas('branche', function ($query) use ($user) {
+                        $query->where('id_entreprise', $user->id_entreprise);
+                    })
                     ->get();
 
                 return response()->json($contrats);
             } else if ($filtre == "reverse") {
-                $user =  JWTAuth::parseToken()->authenticate();
-                $contrats = Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-                    ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
-                    ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
-                    ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
-                    ->where('solde', '=', '1')
-                    ->where('reverse', 0)
-                    ->where('supprimer_contrat', '=', '0')
-                    ->where('contrats.id_entreprise', $user->id_entreprise)
+                $contrats = Contrat::nonSupprimes()
+                    ->reverse()
+                    ->with('branche', 'client', 'apporteur', 'compagnie')
+                    ->whereHas('branche', function ($query) use ($user) {
+                        $query->where('id_entreprise', $user->id_entreprise);
+                    })
                     ->get();
 
                 return response()->json($contrats);
             } elseif ($fin != null) {
-                $user =  JWTAuth::parseToken()->authenticate();
 
-                $contrats =  Contrat::join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-                    ->join("clients", 'contrats.id_client', '=', 'clients.id_client')
-                    ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
-                    ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
+                $contrats = Contrat::nonSupprimes()
+                    ->with('branche', 'client', 'apporteur', 'compagnie')
+                    ->whereHas('branche', function ($query) use ($user) {
+                        $query->where('id_entreprise', $user->id_entreprise);
+                    })
                     ->whereBetween('expire_le', [$debut, $fin])
-                    ->where('supprimer_contrat', '=', '0')
-                    ->where('contrats.id_entreprise', $user->id_entreprise)
                     ->get();
 
                 return response()->json($contrats);
@@ -213,7 +218,7 @@ class StatController extends Controller
         $sinistres = Sinistre::join("contrats", 'sinistres.id_contrat', '=', 'contrats.id_contrat')
             ->where('supprimer_sinistre', 1)
             ->get();
-            
+
         return response()->json(["clients" => $clients, "prospects" => $prospects, "branches" => $branches, "apporteurs" => $apporteurs, "compagnies" => $compagnies, "contrats" => $contrats, "sinistres" => $sinistres]);
     }
 

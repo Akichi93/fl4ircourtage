@@ -11,7 +11,11 @@
         <div class="row">
           <div class="col-xl-3 col-md-6">
             <select class="form-select mb-3" v-model="year">
-              <option v-for="data in getYear" :value="data.id_avenant" :key="data.id_avenant">
+              <option
+                v-for="data in getYear"
+                :value="data.id_avenant"
+                :key="data.id_avenant"
+              >
                 {{ data.annee }}
               </option>
             </select>
@@ -19,7 +23,11 @@
           <div class="col-xl-3 col-md-6" v-if="year != 0" @change="getData()">
             <select class="form-select mb-3" v-model="branch">
               <option value="tous">Toutes les branches</option>
-              <option v-for="branche in branches" :value="branche.id_branche" :key="branche.id_branche">
+              <option
+                v-for="branche in branches"
+                :value="branche.id_branche"
+                :key="branche.id_branche"
+              >
                 {{ branche.nom_branche }}
               </option>
             </select>
@@ -110,8 +118,12 @@
           <Bar :data="chartDonnees" />
         </div>
       </div>
-
-
+      <div class="row">
+        <div class="col-md-6">
+          <Bar :data="chartGraphs" />
+        </div>
+        
+      </div>
     </div>
   </div>
 </template>
@@ -120,14 +132,28 @@ import Header from "../layout/Header";
 import Sidebar from "../layout/Sidebar";
 // import barchart from "../components/graph/barchart.vue"
 
-import { Bar } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import { Bar } from "vue-chartjs";
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+} from "chart.js";
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale
+);
 export default {
   data() {
     return {
-
       year: "",
       branch: "",
       contrat: "",
@@ -137,32 +163,41 @@ export default {
       comissionapporteur: "",
       echeance: "",
       countemission: "",
+      compagnies:[],
       getYear: {},
       branches: {},
       chartData: {
-        labels: [''],
+        labels: [""],
         datasets: [
           {
-            label: "Chiffre d\'affaire par mois dans l\'année",
-            backgroundColor: '#f87979',
-            data: [0]
-          }
-        ]
+            label: "Chiffre d'affaire par mois dans l'année",
+            backgroundColor: "#f87979",
+            data: [0],
+          },
+        ],
       },
       chartDonnees: {
-        labels: [''],
+        labels: [""],
         datasets: [
           {
-            label: "Chiffres d\'affaires par branche",
-            backgroundColor: '#f87979',
-            data: [0]
-          }
-        ]
-      }
+            label: "Chiffres d'affaires par branche",
+            backgroundColor: "#f87979",
+            data: [0],
+          },
+        ],
+      },
+
+      chartGraphs: {
+        labels: [""],
+        datasets: [
+          {
+            label: "Chiffres d'affaires par compagnie",
+            backgroundColor: "#f87979",
+            data: [0],
+          },
+        ],
+      },
     };
-
-
-
   },
   created() {
     if (!User.loggedIn()) {
@@ -172,7 +207,7 @@ export default {
     this.getCategory();
     this.getTypes();
     this.getData();
-    this.getgraph()
+    // this.getgraph();
   },
   name: "dashboard",
   components: { Header, Sidebar, Bar },
@@ -253,9 +288,9 @@ export default {
         .get("/api/auth/stat/", {
           params: params,
           headers: headers,
-        }
-        )
+        })
         .then((response) => {
+          console.log(response.data.compagnies)
           this.contrat = response.data.contrat;
           this.prospect = response.data.prospect;
           this.sinistre = response.data.sinistre;
@@ -263,57 +298,115 @@ export default {
           this.comissionapporteur = response.data.comissionapporteur;
           this.echeance = response.data.echeance;
           this.countemission = response.data.countemission;
-        })
-        .catch((error) => console.log(error));
-    },
+          this.compagnies = response.data.compagnies;
+          const labels = response.data.primes.map((prime) => prime.name);
+          const data = response.data.primes.map((prime) => prime.y);
 
-    getgraph() {
-      const token = localStorage.getItem("token");
+          const label = response.data.accesoires.map(
+            (accesoire) => accesoire.name
+          );
 
-      // Configurez les en-têtes de la requête
-      const headers = {
-        Authorization: "Bearer " + token,
-        "x-access-token": token,
-      };
+          const donnees = response.data.accesoires.map(
+            (accesoire) => accesoire.y
+          );
 
-      axios
-        .get("/api/auth/graph", { headers })
-        .then((response) => {
-          const labels = response.data.primes.map(prime => prime.name);
-          const data = response.data.primes.map(prime => prime.y);
-          // this.graph = response.data.primes.map(prime => prime.y);
+          const titre = response.data.compagnies.map(
+            (compagnie) => compagnie.name
+          );
 
-          const label = response.data.accesoires.map(accesoire => accesoire.name);
-          const donnees = response.data.accesoires.map(accesoire => accesoire.y);
+          const graphs = response.data.compagnies.map(
+            (compagnie) => compagnie.y
+          );
+
           this.chartData = {
             labels: labels,
             datasets: [
               {
-                label: "Chiffre d\'affaire par mois dans l\'année",
-                backgroundColor: '#2980B9',
-                data: data
-              }
-            ]
+                label: "Chiffre d'affaire par mois dans l'année",
+                backgroundColor: "#2980B9",
+                data: data,
+              },
+            ],
           };
 
           this.chartDonnees = {
             labels: label,
             datasets: [
               {
-                label: "Chiffres d\'affaires par branche",
-                backgroundColor: '#2980B9',
-                data: donnees
-              }
-            ]
+                label: "Chiffres d'affaires par branche",
+                backgroundColor: "#2980B9",
+                data: donnees,
+              },
+            ],
           };
 
-          console.log(response.data.accesoires.map(accesoire => accesoire.name))
+          this.chartGraphs = {
+            labels: titre,
+            datasets: [
+              {
+                label: "Chiffres d'affaires par compagnie",
+                backgroundColor: "#2980B9",
+                data: graphs,
+              },
+            ],
+          };
         })
-        .catch((error) => {
-          this.loading = false;
-          this.error = error.response.data.message || error.message;
-        });
-    }
+        .catch((error) => console.log(error));
+    },
+
+    // getgraph() {
+    //   const token = localStorage.getItem("token");
+
+    //   // Configurez les en-têtes de la requête
+    //   const headers = {
+    //     Authorization: "Bearer " + token,
+    //     "x-access-token": token,
+    //   };
+
+    //   axios
+    //     .get("/api/auth/graph", { headers })
+    //     .then((response) => {
+    //       const labels = response.data.primes.map((prime) => prime.name);
+    //       const data = response.data.primes.map((prime) => prime.y);
+    //       // this.graph = response.data.primes.map(prime => prime.y);
+
+    //       const label = response.data.accesoires.map(
+    //         (accesoire) => accesoire.name
+    //       );
+    //       const donnees = response.data.accesoires.map(
+    //         (accesoire) => accesoire.y
+    //       );
+    //       this.chartData = {
+    //         labels: labels,
+    //         datasets: [
+    //           {
+    //             label: "Chiffre d'affaire par mois dans l'année",
+    //             backgroundColor: "#2980B9",
+    //             data: data,
+    //           },
+    //         ],
+    //       };
+
+    //       this.chartDonnees = {
+    //         labels: label,
+    //         datasets: [
+    //           {
+    //             label: "Chiffres d'affaires par branche",
+    //             backgroundColor: "#2980B9",
+    //             data: donnees,
+    //           },
+    //         ],
+    //       };
+
+    //       console.log(
+    //         response.data.accesoires.map((accesoire) => accesoire.name)
+    //       );
+    //     })
+    //     .catch((error) => {
+    //       this.loading = false;
+    //       this.error = error.response.data.message || error.message;
+    //     });
+    // },
   },
 };
 </script>

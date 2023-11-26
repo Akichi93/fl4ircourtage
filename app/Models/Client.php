@@ -29,4 +29,9 @@ class Client extends Model
     public function relances() {
         return $this->belongsToMany(Relance::class,'client_relance', 'id_relance','id_client');
     }
+
+    public function contrats()
+    {
+        return $this->hasMany(Contrat::class, 'id_client');
+    }
 }

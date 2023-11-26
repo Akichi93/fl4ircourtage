@@ -94,6 +94,7 @@
           <router-link class="dropdown-item" to="">Statistiques salariés</router-link>
           <router-link class="dropdown-item" to="/statapporteur">Statistiques apporteurs</router-link>
           <router-link class="dropdown-item" to="/statsupprime">Supprimes</router-link>
+          <router-link class="dropdown-item" to="/statsupprime">Reporting</router-link>
         </div>
       </li>
     </ul>

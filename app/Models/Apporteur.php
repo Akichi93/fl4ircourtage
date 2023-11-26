@@ -21,4 +21,10 @@ class Apporteur extends Model
         'id_entreprise',
         'user_id',
     ];
+
+
+    public function contrats()
+    {
+        return $this->hasMany(Contrat::class, 'id_apporteur');
+    }
 }

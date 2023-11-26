@@ -39,7 +39,7 @@
                 </thead>
                 <tbody>
                   <template
-                    v-for="(client, index) in clients"
+                    v-for="(client, index) in clients.data"
                     :key="index"
                   >
                     <tr>
@@ -59,6 +59,10 @@
                 </tbody>
               </table>
             </div>
+
+            <pagination align="center" :data="clients" :limit="5" :current_page="clients.current_page"
+              :last_page="clients.last_page" @pagination-change-page="fetchData">
+            </pagination>
           </div>
         </div>
       </div>
@@ -68,11 +72,13 @@
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
+import pagination from "laravel-vue-pagination";
 export default {
   name: "statclient",
   components: {
     Header,
     Sidebar,
+    pagination
   },
   data() {
     return {
@@ -83,7 +89,7 @@ export default {
     this.fetchData();
   },
   methods: {
-    fetchData() {
+    fetchData(page =1) {
       const token = localStorage.getItem("token");
 
       // Configurez les en-têtes de la requête
@@ -92,10 +98,9 @@ export default {
         "x-access-token": token,
       };
       axios
-        .get("/api/auth/synthese", { headers })
+        .get("/api/auth/synthese?page=" + page, { headers })
         .then((response) => {
           this.clients = response.data;
-          console.log(response.data);
         })
         .catch((error) => {
           this.error = error.response.data.message || error.message;

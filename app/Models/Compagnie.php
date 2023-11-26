@@ -21,4 +21,9 @@ class Compagnie extends Model
         'user_id',       
         'code_compagnie',       
     ];
+
+    public function contrats()
+    {
+        return $this->hasMany(Contrat::class, 'id_compagnie');
+    }
 }

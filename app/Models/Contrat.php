@@ -48,19 +48,47 @@ class Contrat extends Model
         return $this->belongsToMany(Automobile::class,'automobile_contrats', 'id_automobile','id_contrat');
     }
 
-    public function branches() {
-        return $this->belongsTo(Branche::class);
+    public function branche()
+    {
+        return $this->belongsTo(Branche::class, 'id_branche');
     }
 
-    public function clients() {
-        return $this->belongsTo(Client::class);
+    public function client()
+    {
+        return $this->belongsTo(Client::class, 'id_client');
     }
 
-    public function compagnies() {
-        return $this->belongsTo(Compagnie::class);
+    public function apporteur()
+    {
+        return $this->belongsTo(Apporteur::class, 'id_apporteur');
     }
 
-    public function apporteurs() {
-        return $this->belongsTo(Apporteur::class);
+    public function compagnie()
+    {
+        return $this->belongsTo(Compagnie::class, 'id_compagnie');
+    }
+    public function scopeNonSupprimes($query)
+    {
+        return $query->where('supprimer_contrat', '=', '0');
+    }
+
+    public function scopeSolde($query)
+    {
+        return $query->where('solde', '=', '1');
+    }
+
+    public function scopeNonSolde($query)
+    {
+        return $query->where('solde', '=', '0');
+    }
+
+    public function scopeReverse($query)
+    {
+        return $query->where('reverse', '=', '1');
+    }
+
+    public function scopeNonReverse($query)
+    {
+        return $query->where('reverse', '=', '0');
     }
 }

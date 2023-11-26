@@ -55,24 +55,15 @@
                     />
                   </div>
 
-                  <!-- <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                  <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
                     <div class="add-emp-section">
                       <input type="text" v-model="name" />
-                      <button
-                        @click="ExportToExcel('xls')"
-                        class="list-icon active"
-                      >
-                        <i class="fas fa-file-csv"></i>
-                      </button>
-                      <button
-                        @click="ExportToExcel('xlsx')"
-                        class="list-icon active"
-                      >
-                        <i class="fas fa-file-excel"></i>
+                      <button @click="exportToCSV" class="list-icon active">
+                        <i class="fas fa-file-csv"></i> Exporter en CSV
                       </button>
                     </div>
                     <label>Exportation de données</label>
-                  </div> -->
+                  </div>
                 </div>
               </div>
               <div class="card-body">
@@ -120,23 +111,23 @@
                         :key="contrat.id_contrat"
                       >
                         <tr>
-                          <td v-text="contrat.nom_branche"></td>
+                          <td v-text="contrat.branche.nom_branche"></td>
                           <td v-text="contrat.numero_police"></td>
-                          <td v-text="contrat.nom_client"></td>
-                          <td v-text="contrat.email_client"></td>
-                          <td v-text="contrat.tel_client"></td>
-                          <td v-text="contrat.adresse_client"></td>
-                          <td v-text="contrat.postal_client"></td>
-                          <td v-text="contrat.profession_client"></td>
-                          <td v-text="contrat.fax_client"></td>
-                          <td v-text="contrat.nom_apporteur"></td>
-                          <td v-text="contrat.contact_apporteur"></td>
-                          <td v-text="contrat.email_apporteur"></td>
-                          <td v-text="contrat.adresse_apporteur"></td>
-                          <td v-text="contrat.nom_compagnie"></td>
-                          <td v-text="contrat.adresse_compagnie"></td>
-                          <td v-text="contrat.email_compagnie"></td>
-                          <td v-text="contrat.contact_compagnie"></td>
+                          <td v-text="contrat.client.nom_client"></td>
+                          <td v-text="contrat.client.email_client"></td>
+                          <td v-text="contrat.client.tel_client"></td>
+                          <td v-text="contrat.client.adresse_client"></td>
+                          <td v-text="contrat.client.postal_client"></td>
+                          <td v-text="contrat.client.profession_client"></td>
+                          <td v-text="contrat.client.fax_client"></td>
+                          <td v-text="contrat.apporteur.nom_apporteur"></td>
+                          <td v-text="contrat.apporteur.contact_apporteur"></td>
+                          <td v-text="contrat.apporteur.email_apporteur"></td>
+                          <td v-text="contrat.apporteur.adresse_apporteur"></td>
+                          <td v-text="contrat.compagnie.nom_compagnie"></td>
+                          <td v-text="contrat.compagnie.adresse_compagnie"></td>
+                          <td v-text="contrat.compagnie.email_compagnie"></td>
+                          <td v-text="contrat.compagnie.contact_compagnie"></td>
                           <td v-text="contrat.expire_le"></td>
                           <td v-text="contrat.effet_police"></td>
                           <td v-text="contrat.heure_police"></td>
@@ -176,17 +167,6 @@ export default {
     this.fetchData();
   },
   methods: {
-    // ExportToExcel(type, fn, dl) {
-    //   var elt = document.getElementById("tbl_exporttable_to_xls");
-    //   var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
-    //   return dl
-    //     ? XLSX.write(wb, { bookType: type, bookSST: true, type: "base64" })
-    //     : XLSX.writeFile(
-    //         wb,
-    //         fn || (this.name + "." || "Export.") + (type || "xlsx")
-    //       );
-    // },
-
     fetchData() {
       const token = localStorage.getItem("token");
       // Configurez les en-têtes de la requête
@@ -199,7 +179,6 @@ export default {
         .get("/api/auth/expiredata", { headers })
         .then((response) => {
           this.contrats = response.data;
-          console.log(response.data);
         })
         .catch((error) => {
           this.error = error.response.data.message || error.message;
@@ -224,7 +203,6 @@ export default {
         })
         .then((response) => {
           this.contrats = response.data;
-          console.log(response.data);
         })
         .catch((error) => console.log(error));
     },
@@ -252,10 +230,72 @@ export default {
     },
 
     searchcontrat() {
+      const token = localStorage.getItem("token");
+      const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+      };
+
+      const params = {
+        search: this.search,
+      };
+
       axios
-        .get("/api/auth/expiredata/" + this.search)
+        .get("/api/auth/expiredata/", {
+          params: params,
+          headers: headers,
+        })
         .then((response) => (this.contrats = response.data))
         .catch((error) => console.log(error));
+    },
+
+    exportToCSV() {
+      // Prepare data for CSV
+      let csvContent =
+        "data:text/csv;charset=utf-8," +
+        "Branche,Numéro de police,Nom du client,Email du client,Contact du client,Adresse du client,Postal du client,Profession du client,Fax du client,Nom de l'apporteur,Contact de l'apporteur,Email de l'apporteur,Adresse de l'apporteur,Nom de la compagnie,Adresse de la compagnie,Email de la compagnie,Contact de l'apporteur,Expire le,Effet de police,Heure de police\n";
+
+      // Iterate through contrats and add rows to CSV content
+      this.contrats.forEach((contrat) => {
+        csvContent +=
+          [
+            contrat.branche.nom_branche,
+            contrat.numero_police,
+            contrat.client.nom_client,
+            contrat.client.email_client,
+            contrat.client.tel_client,
+            contrat.client.adresse_client,
+            contrat.client.postal_client,
+            contrat.client.profession_client,
+            contrat.client.fax_client,
+            contrat.apporteur.nom_apporteur,
+            contrat.apporteur.contact_apporteur,
+            contrat.apporteur.email_apporteur,
+            contrat.apporteur.adresse_apporteur,
+            contrat.compagnie.nom_compagnie,
+            contrat.compagnie.adresse_compagnie,
+            contrat.compagnie.email_compagnie,
+            contrat.compagnie.contact_compagnie,
+            contrat.expire_le,
+            contrat.effet_police,
+            contrat.heure_police,
+          ].join(",") + "\n";
+      });
+
+      // Create a data URI for the CSV content
+      const encodedURI = encodeURI(csvContent);
+
+      // Create an anchor element to trigger the download
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedURI);
+      link.setAttribute("download", this.name + ".csv");
+      document.body.appendChild(link);
+
+      // Trigger the download
+      link.click();
+
+      // Remove the link from the DOM
+      document.body.removeChild(link);
     },
   },
 };
