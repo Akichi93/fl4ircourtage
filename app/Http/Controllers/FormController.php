@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
+use App\Models\User;
 use App\Models\Genre;
 use App\Models\Marque;
 use App\Models\Branche;
@@ -237,9 +239,20 @@ class FormController extends Controller
 
     public function getRoles()
     {
-        $roles = $this->role->getRoles();
+        $roles = Role::where('statut', 1)->get();
+        // $roles = $this->role->getRoles();
 
         return response()->json($roles);
+    }
+
+    public function getRolesActif()
+    {
+        $user =  JWTAuth::parseToken()->authenticate();
+        $roleactif = User::join("roles", 'users.id_role', '=', 'roles.id_role')->where('id', $user->id)->value('nom_role');
+        // dd($roles);
+        // $roles = $this->role->getRoles();
+
+        return response()->json($roleactif);
     }
 
     /*

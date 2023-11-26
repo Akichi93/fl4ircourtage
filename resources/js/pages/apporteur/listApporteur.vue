@@ -92,6 +92,7 @@
                         </a>
                         <a
                           href="#"
+                          v-if="roleactif == 'ADMIN'"
                           data-bs-toggle="modal"
                           data-bs-target="#delete_apporteur"
                           @click="editApporteur(apporteur.id_apporteur)"
@@ -133,6 +134,7 @@ import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import searchbranche from "../../components/search/searchbranche.vue";
 import { getApporteursList } from "../../services/apporteurservice";
+import { getRoleActif } from "../../services/roleservice";
 import editApporteur from "./editApporteur.vue";
 import deleteApporteur from "./deleteApporteur.vue";
 import pagination from "laravel-vue-pagination";
@@ -153,10 +155,12 @@ export default {
       apporteurs: [],
       apporteurtoedit: "",
       q: "",
+      roleactif:""
     };
   },
   created() {
     this.getApporteurs();
+    this.getRoleconnect();
   },
   methods: {
     getApporteurs(page) {
@@ -164,6 +168,13 @@ export default {
         this.apporteurs = result;
       });
     },
+
+    getRoleconnect() {
+      getRoleActif().then((result) => {
+        this.roleactif = result;
+      });
+    },
+
 
     editApporteur(id_apporteur) {
       axios

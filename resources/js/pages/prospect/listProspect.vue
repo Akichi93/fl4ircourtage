@@ -119,6 +119,7 @@
                     
                         <a
                           href="#"
+                          v-if="roleactif == 'ADMIN'"
                           data-bs-toggle="modal"
                           data-bs-target="#delete_prospect"
                           @click="editProspect(prospect.id_prospect)"
@@ -162,6 +163,7 @@ import pagination from "laravel-vue-pagination";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import { getProspectsList } from "../../services/prospectservice";
+import { getRoleActif } from "../../services/roleservice";
 import admettreProspect from "./admettreProspect.vue";
 import deleteProspect from "./deleteProspect.vue";
 import editProspect from "./editProspect.vue";
@@ -185,16 +187,23 @@ export default {
       prospects: {},
       prospectoedit: "",
       q: "",
+      roleactif:""
     };
   },
   created() {
     this.getProspects();
+    this.getRoleconnect();
   },
 
   methods: {
-    getProspects: function () {
-      getProspectsList().then((result) => {
+    getProspects(page) {
+      getProspectsList(page).then((result) => {
         this.prospects = result;
+      });
+    },
+    getRoleconnect() {
+      getRoleActif().then((result) => {
+        this.roleactif = result;
       });
     },
     editProspect(id_prospect) {

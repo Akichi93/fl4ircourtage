@@ -73,6 +73,7 @@ Route::group([
         Route::get('getBranches', 'getBranches');
         Route::get('getSecteurs', 'getSecteurs');
         Route::get('getRoles', 'getRoles');
+        Route::get('getRolesActif', 'getRolesActif');
 
         // Form post
         Route::post('postLocalisations', 'postLocalisations');

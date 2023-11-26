@@ -27,17 +27,25 @@
           <div class="col-md-8"></div>
           <div class="col-md-4">
             <div class="add-emp-section">
-              <router-link to="/createcontrat" class="btn btn-success btn-add-emp" style="width: auto"><i
-                  class="fas fa-plus"></i>
-                Ajouter contrat</router-link>
-
+              <router-link
+                to="/createcontrat"
+                class="btn btn-success btn-add-emp"
+                style="width: auto"
+                ><i class="fas fa-plus"></i> Ajouter contrat</router-link
+              >
             </div>
           </div>
         </div>
 
         <div class="row">
           <div class="col-row">
-            <input type="text" class="form-control" placeholder="Rechercher un contrat" v-model="q" @keyup="searchtask" />
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Rechercher un contrat"
+              v-model="q"
+              @keyup="searchtask"
+            />
           </div>
           <div class="col-md-12" style="display: flex; justify-content: end">
             <contratexport></contratexport>
@@ -57,7 +65,10 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="contrat in contrats.data" :key="contrat.id_contrat">
+                  <template
+                    v-for="contrat in contrats.data"
+                    :key="contrat.id_contrat"
+                  >
                     <tr>
                       <td v-text="contrat.numero_client"></td>
                       <td v-text="contrat.nom_client"></td>
@@ -66,26 +77,38 @@
                       <td v-text="contrat.effet_police"></td>
                       <td v-text="contrat.expire_le"></td>
                       <td class="text-end ico-sec d-flex justify-content-end">
-                        <router-link :to="{
-                          name: 'detailscontrat',
-                          params: { id_contrat: contrat.id_contrat },
+                        <router-link
+                          :to="{
+                            name: 'detailscontrat',
+                            params: { id_contrat: contrat.id_contrat },
+                          }"
+                          ><i class="fas fa-info"></i
+                        ></router-link>
 
-                        }"><i class="fas fa-info"></i></router-link>
+                        <router-link
+                          :to="{
+                            name: 'avenants',
+                            params: { id_contrat: contrat.id_contrat },
+                          }"
+                          ><i class="fas fa-paper-plane"></i
+                        ></router-link>
 
-                        <router-link :to="{
-                          name: 'avenants',
-                          params: { id_contrat: contrat.id_contrat },
+                        <router-link
+                          :to="{
+                            name: 'editcontrat',
+                            params: { id_contrat: contrat.id_contrat },
+                          }"
+                          ><i class="fas fa-pen"></i
+                        ></router-link>
 
-                        }"><i class="fas fa-paper-plane"></i></router-link>
-
-                        <router-link :to="{
-                          name: 'editcontrat',
-                          params: { id_contrat: contrat.id_contrat },
-
-                        }"><i class="fas fa-pen"></i></router-link>
-
-                        <a href="#" @click="editContrat(contrat.id_contrat)" data-bs-toggle="modal"
-                          data-bs-target="#delete_contrat" title="Supprimer"><i class="fas fa-trash-alt"></i>
+                        <a
+                          href="#"
+                          v-if="roleactif == 'ADMIN'" 
+                          @click="editContrat(contrat.id_contrat)"
+                          data-bs-toggle="modal"
+                          data-bs-target="#delete_contrat"
+                          title="Supprimer"
+                          ><i class="fas fa-trash-alt"></i>
                         </a>
                       </td>
                     </tr>
@@ -96,8 +119,14 @@
 
             <deletecontrat v-bind:contrattoedit="contrattoedit"></deletecontrat>
 
-            <pagination align="center" :data="contrats" :limit="5" :current_page="contrats.current_page"
-              :last_page="contrats.last_page" @pagination-change-page="getContrat">
+            <pagination
+              align="center"
+              :data="contrats"
+              :limit="5"
+              :current_page="contrats.current_page"
+              :last_page="contrats.last_page"
+              @pagination-change-page="getContrat"
+            >
             </pagination>
           </div>
         </div>
@@ -109,16 +138,17 @@
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import { getContratsList } from "../../services/contratservice";
+import { getRoleActif } from "../../services/roleservice";
 import deletecontrat from "../contrat/deletecontrat.vue";
 import pagination from "laravel-vue-pagination";
-import contratexport from '../../components/export/contratexport.vue';
+import contratexport from "../../components/export/contratexport.vue";
 export default {
   components: {
     Header,
     Sidebar,
     deletecontrat,
     pagination,
-    contratexport
+    contratexport,
   },
   data() {
     return {
@@ -126,10 +156,12 @@ export default {
       contrats: [],
       contrattoedit: "",
       q: "",
+      roleactif:""
     };
   },
   created() {
     this.getContrat();
+    this.getRoleconnect();
   },
   methods: {
     editContrat(id_contrat) {
@@ -142,9 +174,14 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    getContrat (page) {
+    getContrat(page) {
       getContratsList(page).then((result) => {
         this.contrats = result;
+      });
+    },
+    getRoleconnect() {
+      getRoleActif().then((result) => {
+        this.roleactif = result;
       });
     },
 
@@ -154,8 +191,6 @@ export default {
         .then((response) => (this.contrats = response.data))
         .catch((error) => console.log(error));
     },
-
-  
   },
 };
 </script>

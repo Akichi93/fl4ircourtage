@@ -72,6 +72,7 @@
                       ></a>
                       <a
                         href="#"
+                        v-if="roleactif == 'ADMIN'"
                         data-bs-toggle="modal"
                         data-bs-target="#delete_branche"
                         @click="editbranche(branche.id_branche)"
@@ -111,6 +112,7 @@
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import { getBranchesList } from "../../services/brancheservice";
+import { getRoleActif } from "../../services/roleservice";
 import editbranche from "./editbranche.vue";
 import deletebranche from "./deletebranche.vue";
 import searchbranche from "../../components/search/searchbranche.vue";
@@ -122,15 +124,23 @@ export default {
       branches: [],
       branchetoedit: "",
       q: "",
+      roleactif:""
     };
   },
   created() {
     this.getBranches();
+    this.getRoleconnect();
   },
   methods: {
     getBranches(page) {
       getBranchesList(page).then((result) => {
         this.branches = result;
+      });
+    },
+
+    getRoleconnect() {
+      getRoleActif().then((result) => {
+        this.roleactif = result;
       });
     },
 

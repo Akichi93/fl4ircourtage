@@ -8,6 +8,12 @@
         aria-orientation="vertical"
       >
         <router-link
+        v-if="
+           roleactif == 'ADMIN' ||
+           roleactif == 'SUPERADMIN' ||
+           roleactif == 'COURTIER' ||
+           roleactif == 'COMMERCIAL'
+          "
           class="nav-link menu"
           to="/home"
           title="Accueil"
@@ -20,6 +26,12 @@
         </router-link>
 
         <router-link
+        v-if="
+           roleactif == 'ADMIN' ||
+           roleactif == 'SUPERADMIN' ||
+           roleactif == 'COURTIER' ||
+           roleactif == 'COMMERCIAL'
+          "
           to="/courtage"
           class="nav-link menu"
           title="Courtage"
@@ -32,6 +44,11 @@
         </router-link>
 
         <router-link
+        v-if="
+           roleactif == 'ADMIN' ||
+           roleactif == 'SUPERADMIN' ||
+           roleactif == 'RH'
+          "
           to="/rh"
           class="nav-link menu"
           title="RH"
@@ -57,6 +74,9 @@
         </router-link>
 
         <router-link
+        v-if="
+           roleactif == 'SUPERADMIN'
+          "
           to="entreprise"
           class="nav-link menu"
           title="Settings"
@@ -72,12 +92,24 @@
   </div>
 </template>
 <script>
+import { getRoleActif } from "../services/roleservice";
 export default {
   data() {
     return {
       isHovered: false,
+      roleactif:""
     };
   },
+  created(){
+    this.getRoleconnect();
+  },
+  methods:{
+    getRoleconnect() {
+      getRoleActif().then((result) => {
+        this.roleactif = result;
+      });
+    },
+  }
 };
 </script>
 
