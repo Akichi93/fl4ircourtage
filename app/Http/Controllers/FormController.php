@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Genre;
+use App\Models\Marque;
 use App\Models\Branche;
+use App\Models\Couleur;
+use App\Models\Energie;
+use App\Models\Categorie;
 use App\Models\Localisation;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -98,7 +103,8 @@ class FormController extends Controller
 
     public function getMarques()
     {
-        $marques = $this->marque->getMarques();
+        $marques = Marque::orderBy('marque', 'ASC')->get();
+        // $marques = $this->marque->getMarques();
 
         return response()->json($marques);
     }
@@ -116,7 +122,8 @@ class FormController extends Controller
     public function getEnergies()
     {
 
-        $energies = $this->energie->getEnergies();
+        $energies = Energie::orderBy('energie', 'ASC')->get();
+        // $energies = $this->energie->getEnergies();
 
         return response()->json($energies);
     }
@@ -133,7 +140,9 @@ class FormController extends Controller
 
     public function getCouleurs()
     {
-        $couleurs = $this->couleur->getCouleurs();
+
+        $couleurs = Couleur::orderBy('couleur', 'ASC')->get();
+        // $couleurs = $this->couleur->getCouleurs();
 
         return response()->json($couleurs);
     }
@@ -150,7 +159,9 @@ class FormController extends Controller
 
     public function getCategories()
     {
-        $categories = $this->categorie->getCategories();
+
+        $categories = Categorie::all();
+        // $categories = $this->categorie->getCategories();
 
         return response()->json($categories);
     }
@@ -313,14 +324,33 @@ class FormController extends Controller
         // Récupération des données
         $data = $request->all();
 
-        // Insertion dans la bdd
-        $Data = $this->marque->postMarques($data);
+        $marque = $data['ajout_marque'];
+        if (Marque::where('marque', '=', $marque)->count() > 0) {
+            return response()->json(['message' => 'Marque existante'], 422);
+        }
+        $min = strtoupper($data['ajout_marque']);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Marque enregistré avec succès',
-            'marque' => $Data
-        ], Response::HTTP_OK);
+        $marques = new Marque();
+        $marques->marque = $min;
+        $marques->save();
+
+        if ($marques) {
+            $marques = Marque::orderBy('marque', 'ASC')->get();
+
+
+            return response()->json($marques);
+        }
+
+
+
+        // Insertion dans la bdd
+        // $Data = $this->marque->postMarques($data);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'Marque enregistré avec succès',
+        //     'marque' => $Data
+        // ], Response::HTTP_OK);
     }
 
     public function postEnergies(Request $request)
@@ -328,14 +358,32 @@ class FormController extends Controller
         // Récupération des données
         $data = $request->all();
 
-        // Insertion dans la bdd
-        $Data = $this->energie->postEnergies($data);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Energie enregistré avec succès',
-            'energie' => $Data
-        ], Response::HTTP_OK);
+        $energie = $data['ajout_energie'];
+        if (Energie::where('energie', '=', $energie)->count() > 0) {
+            return response()->json(['message' => 'Energie existante'], 422);
+        }
+        $min = strtoupper($data['ajout_energie']);
+
+        $energies = new Energie();
+        $energies->energie = $min;
+        $energies->save();
+
+        if ($energies) {
+            $energies = Energie::orderBy('energie', 'ASC')->get();
+
+            return response()->json($energies);
+        }
+
+
+        // Insertion dans la bdd
+        // $Data = $this->energie->postEnergies($data);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'Energie enregistré avec succès',
+        //     'energie' => $Data
+        // ], Response::HTTP_OK);
     }
 
     public function postCouleurs(Request $request)
@@ -343,14 +391,34 @@ class FormController extends Controller
         // Récupération des données
         $data = $request->all();
 
-        // Insertion dans la bdd
-        $Data = $this->couleur->postCouleurs($data);
+        $couleur = $data['ajout_couleur'];
+        if (Couleur::where('couleur', '=', $couleur)->count() > 0) {
+            return response()->json(['message' => 'Couleur existante'], 422);
+        }
+        $min = strtoupper($data['ajout_couleur']);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Couleur enregistré avec succès',
-            'couleur' => $Data
-        ], Response::HTTP_OK);
+        $couleurs = new Couleur();
+        $couleurs->couleur = $min;
+        $couleurs->save();
+
+        if ($couleurs) {
+            $couleurs = Couleur::orderBy('couleur', 'ASC')->get();
+            // $couleurs = $this->couleur->getCouleurs();
+
+            return response()->json($couleurs);
+        }
+
+
+
+
+        // Insertion dans la bdd
+        // $Data = $this->couleur->postCouleurs($data);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'Couleur enregistré avec succès',
+        //     'couleur' => $Data
+        // ], Response::HTTP_OK);
     }
 
     public function postCategories(Request $request)
@@ -358,14 +426,30 @@ class FormController extends Controller
         // Récupération des données
         $data = $request->all();
 
-        // Insertion dans la bdd
-        $Data = $this->categorie->postCategories($data);
+        $categorie = $data['ajout_cat'];
+        if (Categorie::where('categorie', '=', $categorie)->count() > 0) {
+            return response()->json(['message' => 'Categorie existante'], 422);
+        }
+        $min = strtoupper($data['ajout_cat']);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Categorie enregistré avec succès',
-            'categorie' => $Data
-        ], Response::HTTP_OK);
+        $categories = new Categorie();
+        $categories->categorie = $min;
+        $categories->save();
+
+        if ($categories) {
+            $categories = Categorie::all();
+
+            return response()->json($categories);
+        }
+
+        // Insertion dans la bdd
+        // $Data = $this->categorie->postCategories($data);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'Categorie enregistré avec succès',
+        //     'categorie' => $Data
+        // ], Response::HTTP_OK);
     }
 
     public function postGenres(Request $request)
@@ -373,14 +457,31 @@ class FormController extends Controller
         // Récupération des données
         $data = $request->all();
 
-        // Insertion dans la bdd
-        $Data = $this->genre->postGenres($data);
+        $genre = $data['ajout_genre'];
+        if (Genre::where('genre', '=', $genre)->count() > 0) {
+            return response()->json(['message' => 'Genre existant'], 422);
+        }
+        $min = strtoupper($data['ajout_genre']);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Genre enregistré avec succès',
-            'genre' => $Data
-        ], Response::HTTP_OK);
+        $genres = new Genre();
+        $genres->genre = $min;
+        $genres->save();
+
+        if ($genres) {
+            $genres = Genre::all();
+
+            return response()->json($genres);
+        }
+
+
+        // Insertion dans la bdd
+        // $Data = $this->genre->postGenres($data);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'Genre enregistré avec succès',
+        //     'genre' => $Data
+        // ], Response::HTTP_OK);
     }
 
     public function postBranches(BrancheRequest $request)

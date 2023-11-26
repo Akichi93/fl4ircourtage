@@ -34,6 +34,11 @@
   </div>
 </template>
 <script>
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   methods: {
     data() {
@@ -43,31 +48,31 @@ export default {
     },
     storeMarque() {
       axios
-        .post("/postMarques", {
+        .post("/api/auth/postMarques", {
           ajout_marque: this.ajout_marque,
         })
         .then((response) => {
-          this.fetchTask();
+          this.$emit('marque-add', response.data)
+
           if (response.status === 200) {
             toaster.success(`Marque ajouté avec succès`, {
               position: "top-right",
             });
-            this.ajout_marque = "";
           }
         })
         .catch((error) => {
           // console.log(error.response.headers);
 
-          if (error.response.status === 422) {
-            this.errors = error.response.data.errors;
-            // console.log("Message non enregisté")
-          } else if (error.request) {
-            // The request was made but no response was received
-            console.log(error.request);
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            console.log("Error", error.message);
-          }
+          // if (error.response.status === 422) {
+          //   this.errors = error.response.data.errors;
+          //   // console.log("Message non enregisté")
+          // } else if (error.request) {
+          //   // The request was made but no response was received
+          //   console.log(error.request);
+          // } else {
+          //   // Something happened in setting up the request that triggered an Error
+          //   console.log("Error", error.message);
+          // }
         });
     },
 

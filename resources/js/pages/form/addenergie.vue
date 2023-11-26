@@ -34,6 +34,11 @@
   </div>
 </template>
 <script>
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   methods: {
     data() {
@@ -43,12 +48,12 @@ export default {
     },
     storeEnergie() {
       axios
-        .post("/postEnergies", {
+        .post("/api/auth/postEnergies", {
           ajout_energie: this.ajout_energie,
         })
         .then((response) => {
-          this.fetchTask();
-          this.ajout_energie = "";
+          this.$emit("energie-add", response.data);
+
           if (response.status === 200) {
             toaster.success(`Energie ajouté avec succès`, {
               position: "top-right",
@@ -58,16 +63,16 @@ export default {
         .catch((error) => {
           // console.log(error.response.headers);
 
-          if (error.response.status === 422) {
-            this.errors = error.response.data.errors;
-            // console.log("Message non enregisté")
-          } else if (error.request) {
-            // The request was made but no response was received
-            console.log(error.request);
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            console.log("Error", error.message);
-          }
+          // if (error.response.status === 422) {
+          //   this.errors = error.response.data.errors;
+          //   // console.log("Message non enregisté")
+          // } else if (error.request) {
+          //   // The request was made but no response was received
+          //   console.log(error.request);
+          // } else {
+          //   // Something happened in setting up the request that triggered an Error
+          //   console.log("Error", error.message);
+          // }
         });
     },
   }

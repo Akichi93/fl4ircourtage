@@ -169,7 +169,7 @@ export async function getEnergiesList() {
         "x-access-token": token,
     };
 
-    const response = await axios.get("/api/auth/getCategories", { headers })
+    const response = await axios.get("/api/auth/getEnergies", { headers })
     return response.data;
 
 }

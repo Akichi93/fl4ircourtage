@@ -27,7 +27,11 @@
           <div class="col-md-8"></div>
           <div class="col-md-4">
             <div class="add-emp-section">
-              <router-link to="/createbranche" class="btn btn-success btn-add-emp" style="width: auto">
+              <router-link
+                to="/createbranche"
+                class="btn btn-success btn-add-emp"
+                style="width: auto"
+              >
                 Ajouter branche
               </router-link>
             </div>
@@ -35,7 +39,14 @@
         </div>
 
         <div class="row">
-          <searchbranche :placeholder="'Rechercher une branche'" v-model="q" @keyup="searchtask"></searchbranche>
+          <searchbranche
+            :placeholder="'Rechercher une branche'"
+            v-model="q"
+            @keyup="searchtask"
+          ></searchbranche>
+          <div class="col-md-12" style="display: flex;justify-content: end;">
+            <brancheexport></brancheexport>
+          </div>
 
           <div class="col-md-12">
             <div>
@@ -48,29 +59,51 @@
                   </tr>
                 </thead>
                 <tbody>
-
-                  <tr v-for="(branche, i) in branches" :key="i">
+                  <tr v-for="(branche, i) in branches.data" :key="i">
                     <td v-text="branche.id_branche"></td>
                     <td v-text="branche.nom_branche"></td>
                     <td class="text-end ico-sec d-flex justify-content-end">
-                      <a href="#" data-bs-toggle="modal" data-bs-target="#edit_branche"
-                        @click="editbranche(branche.id_branche)"><i class="fas fa-pen"></i></a>
-                      <a href="#" data-bs-toggle="modal" data-bs-target="#delete_branche"
-                        @click="editbranche(branche.id_branche)"><i class="far fa-trash-alt"></i></a>
+                      <a
+                        href="#"
+                        data-bs-toggle="modal"
+                        data-bs-target="#edit_branche"
+                        @click="editbranche(branche.id_branche)"
+                        ><i class="fas fa-pen"></i
+                      ></a>
+                      <a
+                        href="#"
+                        data-bs-toggle="modal"
+                        data-bs-target="#delete_branche"
+                        @click="editbranche(branche.id_branche)"
+                        ><i class="far fa-trash-alt"></i
+                      ></a>
                     </td>
                   </tr>
-
                 </tbody>
               </table>
             </div>
 
-            <!-- <paginationbranche></paginationbranche> -->
+            <pagination
+              align="center"
+              :data="branches"
+              :limit="5"
+              :current_page="branches.current_page"
+              :last_page="branches.last_page"
+              @pagination-change-page="getBranches"
+            >
+            </pagination>
           </div>
         </div>
       </div>
 
-      <editbranche v-bind:branchetoedit="branchetoedit" @task-updated="refresh"></editbranche>
-      <deletebranche v-bind:branchetoedit="branchetoedit" @task-delete="refresh"></deletebranche>
+      <editbranche
+        v-bind:branchetoedit="branchetoedit"
+        @task-updated="refresh"
+      ></editbranche>
+      <deletebranche
+        v-bind:branchetoedit="branchetoedit"
+        @task-delete="refresh"
+      ></deletebranche>
     </div>
   </div>
 </template>
@@ -80,9 +113,9 @@ import Sidebar from "../../layout/Sidebar.vue";
 import { getBranchesList } from "../../services/brancheservice";
 import editbranche from "./editbranche.vue";
 import deletebranche from "./deletebranche.vue";
-// import paginationbranche from "../../components/pagination/paginationbranche.vue";
 import searchbranche from "../../components/search/searchbranche.vue";
-
+import pagination from "laravel-vue-pagination";
+import brancheexport from "../../components/export/brancheexport.vue"
 export default {
   data() {
     return {
@@ -95,8 +128,8 @@ export default {
     this.getBranches();
   },
   methods: {
-    getBranches: function () {
-      getBranchesList().then((result) => {
+    getBranches(page) {
+      getBranchesList(page).then((result) => {
         this.branches = result;
       });
     },
@@ -111,38 +144,38 @@ export default {
     },
 
     searchtask() {
+      const token = localStorage.getItem("token");
+
+      // Configurez les en-têtes de la requête
+      const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+      };
       if (this.q.length > 0) {
         axios
-          .get("/api/auth/branchesList/" + this.q)
-          .then(
-            (response) => (
-              (this.branches = response.data.data)
-            )
-          )
+          .get("/api/auth/branchesList/" + this.q, { headers })
+          .then((response) => (this.branches = response.data.data))
           .catch((error) => console.log(error));
       } else {
         axios
-          .get("/api/auth/branchesList/")
-          .then(
-            (response) => (
-              (this.branches = response.data)
-            )
-          )
+          .get("/api/auth/branchesList/", { headers })
+          .then((response) => (this.branches = response.data))
           .catch((error) => console.log(error));
       }
     },
 
     refresh(branches) {
       this.branches = branches.data;
-    }
+    },
   },
   components: {
     Header,
     Sidebar,
     editbranche,
     deletebranche,
-    // paginationbranche,
+    pagination,
     searchbranche,
+    brancheexport
   },
 };
 </script>

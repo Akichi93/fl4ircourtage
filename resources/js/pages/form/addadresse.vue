@@ -53,6 +53,7 @@ export default {
         })
         .then((response) => {
           this.$emit('adresse-add', response.data)
+        
           if (response.status === 200) {
             toaster.success(`Adresse ajouté avec succès`, {
               position: "top-right",
@@ -62,16 +63,16 @@ export default {
         .catch((error) => {
           // console.log(error.response.headers);
 
-          if (error.response.status === 422) {
-            this.errors = error.response.data.errors;
-            // console.log("Message non enregisté")
-          } else if (error.request) {
-            // The request was made but no response was received
-            console.log(error.request);
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            console.log("Error", error.message);
-          }
+          // if (error.response.status === 422) {
+          //   this.errors = error.response.data.errors;
+          //   // console.log("Message non enregisté")
+          // } else if (error.request) {
+          //   // The request was made but no response was received
+          //   console.log(error.request);
+          // } else {
+          //   // Something happened in setting up the request that triggered an Error
+          //   console.log("Error", error.message);
+          // }
         });
     },
 

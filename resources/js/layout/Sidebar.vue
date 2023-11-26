@@ -16,7 +16,7 @@
           aria-selected="false"
           :class="{ active: $route.path === '/home' }"
         >
-          <span class="material-icons-outlined"> home </span>
+          <span class="material-icons-outlined" :class="{ 'hovered': isHovered }" @mouseover="isHovered = true" @mouseout="isHovered = false"> home </span>
         </router-link>
 
         <router-link
@@ -71,3 +71,24 @@
     </div>
   </div>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      isHovered: false,
+    };
+  },
+};
+</script>
+
+<style scoped>
+/* Improved styles for the hovered class and animation */
+.material-icons-outlined {
+  transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.material-icons-outlined.hovered {
+  transform: scale(1.1);
+  color: #007bff; /* Change to your preferred color */
+}
+</style>

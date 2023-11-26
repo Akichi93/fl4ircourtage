@@ -35,6 +35,11 @@
 </template>
 
 <script>
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   methods: {
     data() {
@@ -48,29 +53,29 @@ export default {
           ajout_genre: this.ajout_genre,
         })
         .then((response) => {
-          this.fetchTask();
+          this.$emit('genre-add', response.data)
+
           if (response.status === 200) {
             toaster.success(`Genre ajouté avec succès`, {
               position: "top-right",
             });
-            this.genres = response.data;
-            this.ajout_genre = "";
+          
           }
         })
         .catch((error) => {
           // console.log(error.response.headers);
 
-          if (error.response.status === 422) {
-            this.errors = error.response.data.errors;
-            // console.log("Message non enregisté")
-          } else if (error.request) {
-            // The request was made but no response was received
-            console.log(error.request);
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            console.log("Error", error.message);
-          }
-        });
+        //   if (error.response.status === 422) {
+        //     this.errors = error.response.data.errors;
+        //     // console.log("Message non enregisté")
+        //   } else if (error.request) {
+        //     // The request was made but no response was received
+        //     console.log(error.request);
+        //   } else {
+        //     // Something happened in setting up the request that triggered an Error
+        //     console.log("Error", error.message);
+        //   }
+         });
     },
   }
 }

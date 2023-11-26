@@ -12,7 +12,9 @@ export async function getBranchesList(page = 1) {
     };
 
     const response = await axios.get("/api/auth/branchesList?page=" + page, { headers })
+
     return response.data;
+   
 
 }
 
