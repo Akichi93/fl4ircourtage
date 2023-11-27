@@ -13,7 +13,7 @@
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="/home">Tableau de bord</a>
+                    <router-link to="/home">Tableau de bord</router-link>
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Module Statistiques
@@ -126,7 +126,7 @@
               <div class="card-header">
                 <div class="text-center w-100 p-3">
                   <h2>
-                    <router-link to="">Supprimes</router-link>
+                    <router-link to="/statsupprime">Supprimes</router-link>
                   </h2>
                   <h2 class="bl-text mb-1"></h2>
                 </div>

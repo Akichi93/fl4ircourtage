@@ -63,6 +63,8 @@ class CompagnieController extends Controller
 
     public function postCompagnie(CompagnieRequest $request)
     {
+
+        // dd($request->all());
         // Validation du formulaire
         $validated = $request->validated();
 

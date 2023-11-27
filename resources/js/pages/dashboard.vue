@@ -161,7 +161,7 @@ export default {
       comissionapporteur: "",
       echeance: "",
       countemission: "",
-      compagnies:[],
+      // compagnies:[],
       getYear: {},
       branches: {},
       chartData: {
@@ -198,10 +198,7 @@ export default {
     };
   },
   created() {
-    // if (!User.loggedIn()) {
-    //   this.$router.push({ name: "welcome" });
-    // }
-    this.fetchData();
+    // this.fetchData();
     this.getCategory();
     this.getTypes();
     this.getData();
@@ -210,33 +207,33 @@ export default {
   name: "dashboard",
   components: { Header, Sidebar, Bar },
   methods: {
-    fetchData() {
-      const token = localStorage.getItem("token");
+    // fetchData() {
+    //   const token = localStorage.getItem("token");
 
-      // Configurez les en-têtes de la requête
-      const headers = {
-        Authorization: "Bearer " + token,
-        "x-access-token": token,
-      };
+    //   // Configurez les en-têtes de la requête
+    //   const headers = {
+    //     Authorization: "Bearer " + token,
+    //     "x-access-token": token,
+    //   };
 
-      this.error = this.branches = null;
-      this.loading = true;
-      axios
-        .get("/api/auth/stat", { headers })
-        .then((response) => {
-          this.contrat = response.data.contrat;
-          this.prospect = response.data.prospect;
-          this.sinistre = response.data.sinistre;
-          this.comissioncourtier = response.data.comissioncourtier;
-          this.comissionapporteur = response.data.comissionapporteur;
-          this.echeance = response.data.echeance;
-          this.countemission = response.data.countemission;
-        })
-        .catch((error) => {
-          this.loading = false;
-          this.error = error.response.data.message || error.message;
-        });
-    },
+    //   this.error = this.branches = null;
+    //   this.loading = true;
+    //   axios
+    //     .get("/api/auth/stat", { headers })
+    //     .then((response) => {
+    //       this.contrat = response.data.contrat;
+    //       this.prospect = response.data.prospect;
+    //       this.sinistre = response.data.sinistre;
+    //       this.comissioncourtier = response.data.comissioncourtier;
+    //       this.comissionapporteur = response.data.comissionapporteur;
+    //       this.echeance = response.data.echeance;
+    //       this.countemission = response.data.countemission;
+    //     })
+    //     .catch((error) => {
+    //       this.loading = false;
+    //       this.error = error.response.data.message || error.message;
+    //     });
+    // },
 
     getCategory: function () {
       const token = localStorage.getItem("token");
@@ -281,14 +278,13 @@ export default {
         year: this.year,
         branch: this.branch,
       };
-
-      axios
+      axios   
         .get("/api/auth/stat/", {
           params: params,
           headers: headers,
         })
         .then((response) => {
-          console.log(response.data.compagnies)
+          console.log(response.data)
           this.contrat = response.data.contrat;
           this.prospect = response.data.prospect;
           this.sinistre = response.data.sinistre;

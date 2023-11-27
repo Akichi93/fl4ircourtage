@@ -42,7 +42,8 @@ import rh from "../pages/module/rh";
 import listuser from "../pages/users/listuser";
 import profil from "../pages/users/profil";
 import entreprise from "../pages/parametre/entreprise";
-import upload from "../pages/uploads/upload"
+import upload from "../pages/uploads/upload";
+import reporting from "../pages/statistiques/reporting"
 
 const routes = [
   {
@@ -96,7 +97,8 @@ const routes = [
   {
     path: '/listapporteur',
     name: 'listapporteur',
-    component: listapporteur
+    component: listapporteur,
+    meta: { requiresAuth: true }, 
   },
   {
     path: '/createapporteur',
@@ -209,13 +211,15 @@ const routes = [
   {
     path: '/createsinistre',
     name: 'createsinistre',
-    component: createsinistre
+    component: createsinistre,
+    meta: { requiresAuth: true }
   },
   {
     path: '/editsinistre/:id_sinistre',
     name: 'editsinistre',
     component: editsinistre,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/voirsinistre/:id_sinistre',
@@ -316,6 +320,12 @@ const routes = [
     path: '/upload',
     name: 'upload',
     component: upload,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/reporting',
+    name: 'reporting',
+    component: reporting,
     meta: { requiresAuth: true }
   },
 ];

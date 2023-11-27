@@ -134,8 +134,8 @@
                   <div class="col-md-6" v-for="branche in branches" :key="branche.id_branche">
                     <div class="form-group">
                       <label>{{ branche.nom_branche }}</label>
-                      <input type="number" class="form-control" placeholder="Entrez le taux" :key="branche.id_branche"
-                        v-model="branche.value" min="0" max="100" />
+                      <input type="number" class="form-control" placeholder="Entrez le taux" :key="branche.id_branche" step="0.01" min="0" max="1000"
+                        v-model="branche.value" />
                     </div>
                   </div>
                 </div>

@@ -49,7 +49,8 @@ import rh from "../js/pages/module/rh";
 import listuser from "../js/pages/users/listuser";
 import profil from "../js/pages/users/profil";
 import entreprise from "../js/pages/parametre/entreprise";
-import upload from "../js/pages/uploads/upload"
+import upload from "../js/pages/uploads/upload";
+import reporting from "../js/pages/statistiques/reporting"
 
 const options = {
     name: '_blank',
@@ -115,7 +116,8 @@ createApp({
         listuser,
         profil,
         entreprise,
-        upload
+        upload,
+        reporting
     }
 }).use(router)
     .use(BootstrapVue3)

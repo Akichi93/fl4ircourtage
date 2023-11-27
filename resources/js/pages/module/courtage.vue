@@ -22,14 +22,15 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row" v-if="roleactif == 'ADMIN' || roleactif == 'COURTIER' || roleactif == 'SUPERADMIN'">
 
                     <div class="col-2 col-sm-6 col-md-6 col-lg-6 col-xl-4">
                         <div class="card flex-fill tickets-card">
                             <div class="card-header">
                                 <div class="text-center w-100 p-3">
                                     <h2>
-                                        <router-link to="/listcontrat">Contrats</router-link></h2>
+                                        <router-link to="/listcontrat">Contrats</router-link>
+                                    </h2>
                                     <h2 class="bl-text mb-1">Ce module permert d'ajouter les contrats des clients</h2>
                                 </div>
                             </div>
@@ -41,7 +42,8 @@
                             <div class="card-header">
                                 <div class="text-center w-100 p-3">
                                     <h2>
-                                        <router-link to="/listsinistre">Sinistres</router-link></h2>
+                                        <router-link to="/listsinistre">Sinistres</router-link>
+                                    </h2>
                                     <h2 class="bl-text mb-1"> Ce module permet de déclarer les sinistres</h2>
                                 </div>
                             </div>
@@ -53,7 +55,8 @@
                             <div class="card-header">
                                 <div class="text-center w-100 p-3">
                                     <h2>
-                                        <router-link to="/listrelance">Relances</router-link></h2>
+                                        <router-link to="/listrelance">Relances</router-link>
+                                    </h2>
                                     <h2 class="bl-text mb-1">Ce module permet la relance des clients</h2>
                                 </div>
                             </div>
@@ -63,7 +66,7 @@
 
                 </div>
 
-                <div class="row">
+                <div class="row" v-if="roleactif == 'ADMIN' || roleactif == 'SUPERADMIN'">
                     <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
                         <div class="card flex-fill tickets-card">
                             <div class="card-header">
@@ -97,53 +100,53 @@
                     </div>
 
                 </div>
-                
+
 
                 <div class="row">
-                  
-                    <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
-                        <div class="card flex-fill tickets-card">
-                            <div class="card-header">
-                                <div class="text-center w-100 p-3">
-                                    <h2><router-link to="/listprospect">Prospects</router-link></h2>
-                                    <h2 class="bl-text mb-1">Ce module permet l'ajoût des prospects</h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                
-                    <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
-                        <div class="card flex-fill tickets-card">
-                            <div class="card-header">
-                                <div class="text-center w-100 p-3">
-                                    <h2>
-                                        <router-link to="/listclient">Clients</router-link></h2>
-                                    <h2 class="bl-text mb-1">Ce module permet l'ajoût des clients</h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                 
-                    <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
-                        <div class="card flex-fill tickets-card">
-                            <div class="card-header">
-                                <div class="text-center w-100 p-3">
-                                    <h2>
-                                        <router-link to="/upload">Upload des bases</router-link></h2>
-                                    <h2 class="bl-text mb-1">Ce module permet l'ajoût des differntes données</h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                
 
+                    <template v-if="roleactif == 'COMMERCIAL' || roleactif == 'ADMIN' || roleactif == 'SUPERADMIN'">
+                        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
+                            <div class="card flex-fill tickets-card">
+                                <div class="card-header">
+                                    <div class="text-center w-100 p-3">
+                                        <h2><router-link to="/listprospect">Prospects</router-link></h2>
+                                        <h2 class="bl-text mb-1">Ce module permet l'ajoût des prospects</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
+                            <div class="card flex-fill tickets-card">
+                                <div class="card-header">
+                                    <div class="text-center w-100 p-3">
+                                        <h2>
+                                            <router-link to="/listclient">Clients</router-link>
+                                        </h2>
+                                        <h2 class="bl-text mb-1">Ce module permet l'ajoût des clients</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+
+
+                    <template v-if="roleactif == 'SUPERADMIN' || roleactif == 'ADMIN'">
+                        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
+                            <div class="card flex-fill tickets-card">
+                                <div class="card-header">
+                                    <div class="text-center w-100 p-3">
+                                        <h2>
+                                            <router-link to="/upload">Upload des bases</router-link>
+                                        </h2>
+                                        <h2 class="bl-text mb-1">Ce module permet l'ajoût des differntes données</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
-
-
-
-
-
-
             </div>
 
 
@@ -153,10 +156,25 @@
 <script>
 import Header from "../../layout/Header.vue"
 import Sidebar from "../../layout/Sidebar.vue";
-
+import { getRoleActif } from "../../services/roleservice";
 export default {
+    data() {
+        return {
+            roleactif: ""
+        };
+    },
     name: "Courtage",
     components: { Header, Sidebar },
+    created() {
+        this.getRoleconnect();
+    },
+    methods: {
+        getRoleconnect() {
+            getRoleActif().then((result) => {
+                this.roleactif = result;
+            });
+        },
+    }
 };
 </script>
 <style></style>

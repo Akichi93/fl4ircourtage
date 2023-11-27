@@ -84,6 +84,7 @@ class HomeController extends Controller
 
         return response()->json(["primes" => $primes, "accesoires" => $accesoires]);
     }
+
     public function stat(Request $request)
     {
         $year = Avenant::where('id_avenant', $request->year)->pluck('annee')->first();
@@ -91,8 +92,6 @@ class HomeController extends Controller
         $branch = $request->branch;
         $user =  JWTAuth::parseToken()->authenticate();
         $entreprise = $user->id_entreprise;
-
-
 
         if ($branch == null) {
             // Année actuelle
@@ -156,7 +155,7 @@ class HomeController extends Controller
 
             $primes = Avenant::select('mois as name', DB::raw('SUM(prime_nette + accessoires) as y'))
                 // ->where('annee', $Year)
-                ->where('id_entreprise', $user->id_entreprise)
+                ->where('id_entreprise', $entreprise)
                 ->where('supprimer_avenant', 0)
                 ->groupBy('mois')
                 ->get();
@@ -165,7 +164,7 @@ class HomeController extends Controller
                 ->join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
                 ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
                 // ->where('annee', $Year)
-                ->where('avenants.id_entreprise', $user->id_entreprise)
+                ->where('avenants.id_entreprise', $entreprise)
                 ->where('supprimer_avenant', 0)
                 ->groupBy('nom_branche')
                 ->get();
@@ -174,12 +173,12 @@ class HomeController extends Controller
             $compagnies = Avenant::select('nom_compagnie as name', DB::raw('SUM(avenants.prime_nette + avenants.accessoires) as y'))
                 ->join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
                 ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
-                ->where('avenants.id_entreprise', $user->entreprise)
+                ->where('avenants.id_entreprise', $entreprise)
                 ->where('supprimer_avenant', 0)
                 ->groupBy('nom_compagnie')
                 ->get();
 
-            return response()->json(["contrat" => $contrats, "prospect" => $prospects, "client" => $clients, "sinistre" => $sinistres, "comissioncourtier" => $comissioncourtier, "comissionapporteur" => $comissionapporteur, "echeance" => $echeance, "countemission" => $countemission, "primes" => $primes, "accesoires" => $accesoires,"compagnies" => $compagnies]);
+            return response()->json(["contrat" => $contrats, "prospect" => $prospects, "client" => $clients, "sinistre" => $sinistres, "comissioncourtier" => $comissioncourtier, "comissionapporteur" => $comissionapporteur, "echeance" => $echeance, "countemission" => $countemission, "primes" => $primes, "accesoires" => $accesoires, "compagnies" => $compagnies]);
         } elseif ($branch == "tous") {
             $year = Avenant::where('id_avenant', $request->year)->pluck('annee')->first();
             $Year = date("Y");
@@ -261,11 +260,13 @@ class HomeController extends Controller
 
             $compagnies = Avenant::select('nom_compagnie as name', DB::raw('SUM(avenants.prime_nette + avenants.accessoires) as y'))
                 ->join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
-                ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
-                ->where('avenants.id_entreprise', $user->entreprise)
-                ->where('supprimer_avenant', 0)
-                ->groupBy('nom_compagnie')
+                // ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
+                // ->where('avenants.id_entreprise', $user->entreprise)
+                // ->where('supprimer_avenant', 0)
+                // ->groupBy('nom_compagnie')
                 ->get();
+
+            dd($compagnies);
 
             return response()->json(["contrat" => $contrats, "prospect" => $prospects, "client" => $clients, "sinistre" => $sinistres, "comissioncourtier" => $comissioncourtier, "comissionapporteur" => $comissionapporteur, "echeance" => $echeance, "countemission" => $countemission, "primes" => $primes, "accesoires" => $accesoires, "compagnies" => $compagnies]);
         } else {
@@ -281,8 +282,6 @@ class HomeController extends Controller
                 ->where('supprimer_contrat', '=', 0)
                 ->where('id_branche',  $branch)
                 ->count();
-
-
 
             $prospects = Prospect::where('etat', 0)
                 ->whereYear('created_at', '=', $Year)
@@ -343,10 +342,35 @@ class HomeController extends Controller
 
             $countemission = $prime + $accesoire;
 
+            $primes = Avenant::select('mois as name', DB::raw('SUM(prime_nette + accessoires) as y'))
+                // ->where('annee', $Year)
+                ->where('id_entreprise', $entreprise)
+                ->where('supprimer_avenant', 0)
+                ->groupBy('mois')
+                ->get();
+
+            $accesoires = Avenant::select('nom_branche as name', DB::raw('SUM(avenants.prime_nette + avenants.accessoires) as y'))
+                ->join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
+                ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
+                // ->where('annee', $Year)
+                ->where('avenants.id_entreprise', $entreprise)
+                ->where('supprimer_avenant', 0)
+                ->groupBy('nom_branche')
+                ->get();
+
+
+            $compagnies = Avenant::select('nom_compagnie as name', DB::raw('SUM(avenants.prime_nette + avenants.accessoires) as y'))
+                ->join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
+                ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
+                ->where('avenants.id_entreprise', $entreprise)
+                ->where('supprimer_avenant', 0)
+                ->groupBy('nom_compagnie')
+                ->get();
+
             return response()->json([
                 "contrat" => $contrats, "prospect" => $prospects, "client" => $clients,
                 "sinistre" => $sinistres, "comissioncourtier" => $comissioncourtier, "comissionapporteur" => $comissionapporteur,
-                "echeance" => $echeance, "countemission" => $countemission
+                "echeance" => $echeance, "countemission" => $countemission, "primes" => $primes, "accesoires" => $accesoires, "compagnies" => $compagnies
             ]);
         }
     }
