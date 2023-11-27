@@ -48,42 +48,50 @@ const routes = [
   {
     path: '/',
     name: 'welcome',
-    component: login
+    component: login,
+    meta: { requiresAuth: false }, 
   },
   {
     path: '/register',
     name: 'register',
-    component: register
+    component: register,
+    meta: { requiresAuth: false }
   },
   {
     path: '/forgot',
     name: 'forgot',
-    component: forgot
+    component: forgot,
+    meta: { requiresAuth: false }
   },
   {
     path: '/home',
     name: 'dashboard',
-    component: dashboard
+    component: dashboard,
+    meta: { requiresAuth: true }, 
   },
   {
     path: '/logout',
     name: 'logout',
-    component: logout
+    component: logout,
+    meta: { requiresAuth: true }
   },
   {
     path: '/courtage',
     name: 'courtage',
-    component: courtage
+    component: courtage,
+    meta: { requiresAuth: true }
   },
   {
     path: '/listbranche',
     name: 'listbranche',
-    component: listbranche
+    component: listbranche,
+    meta: { requiresAuth: true }
   },
   {
     path: '/createbranche',
     name: 'createbranche',
-    component: createbranche
+    component: createbranche,
+    meta: { requiresAuth: true }
   },
   {
     path: '/listapporteur',
@@ -93,93 +101,110 @@ const routes = [
   {
     path: '/createapporteur',
     name: 'createapporteur',
-    component: createapporteur
+    component: createapporteur,
+    meta: { requiresAuth: true }
   },
   {
     path: '/tauxapporteur/:id_apporteur',
     name: 'tauxapporteur',
     component: tauxapporteur,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/listcompagnie',
     name: 'listcompagnie',
-    component: listcompagnie
+    component: listcompagnie,
+    meta: { requiresAuth: true }
   },
   {
     path: '/createcompagnie',
     name: 'createcompagnie',
-    component: createcompagnie
+    component: createcompagnie,
+    meta: { requiresAuth: true }
   },
   {
     path: '/tauxcompagnie/:id_compagnie',
     name: 'tauxcompagnie',
     component: tauxcompagnie,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/listprospect',
     name: 'listprospect',
-    component: listprospect
+    component: listprospect,
+    meta: { requiresAuth: true }
   },
   {
     path: '/createprospect',
     name: 'createprospect',
-    component: createprospect
+    component: createprospect,
+    meta: { requiresAuth: true }
   },
   {
     path: '/detailsprospect/:id_prospect',
     name: 'detailsprospect',
     component: detailsprospect,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/listclient',
     name: 'listclient',
-    component: listclient
+    component: listclient,
+    meta: { requiresAuth: true }
   },
   {
     path: '/listrelance',
     name: 'listrelance',
-    component: listrelance
+    component: listrelance,
+    meta: { requiresAuth: true }
   },
   {
     path: '/createrelance',
     name: 'createrelance',
-    component: createrelance
+    component: createrelance,
+    meta: { requiresAuth: true }
   },
   {
     path: '/listcontrat',
     name: 'listcontrat',
-    component: listcontrat
+    component: listcontrat,
+    meta: { requiresAuth: true }
   },
   {
     path: '/createcontrat',
     name: 'createcontrat',
-    component: createcontrat
+    component: createcontrat,
+    meta: { requiresAuth: true }
   },
   {
     path: '/detailscontrat/:id_contrat',
     name: 'detailscontrat',
     component: detailscontrat,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/avenants/:id_contrat',
     name: 'avenants',
     component: avenants,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/editcontrat/:id_contrat',
     name: 'editcontrat',
     component: editcontrat,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/listsinistre',
     name: 'listsinistre',
-    component: listsinistre
+    component: listsinistre,
+    meta: { requiresAuth: true }
   },
   {
     path: '/createsinistre',
@@ -196,88 +221,105 @@ const routes = [
     path: '/voirsinistre/:id_sinistre',
     name: 'voirsinistre',
     component: voirsinistre,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/reglement/:id_sinistre',
     name: 'reglement',
     component: reglement,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/statistique',
     name: 'statistique',
-    component: statistique
+    component: statistique,
+    meta: { requiresAuth: true }
   },
   {
     path: '/statcontrat',
     name: 'statcontrat',
-    component: statcontrat
+    component: statcontrat,
+    meta: { requiresAuth: true }
   },
   {
     path: '/statsinistre',
     name: 'statsinistre',
-    component: statsinistre
+    component: statsinistre,
+    meta: { requiresAuth: true }
   },
   {
     path: '/statclient',
     name: 'statclient',
-    component: statclient
+    component: statclient,
+    meta: { requiresAuth: true }
   },
   {
     path: '/statclient/details/:id_client',
     name: 'infoclient',
     component: infoclient,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/statclient/detailcontrats/:id_contrat',
     name: 'infocontrat',
     component: infocontrat,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/statapporteur',
     name: 'statapporteur',
-    component: statapporteur
+    component: statapporteur,
+    meta: { requiresAuth: true }
   },
   {
     path: '/statapporteur/details/:id_apporteur',
     name: 'infoapporteur',
     component: infoapporteur,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/statsupprime',
     name: 'statsupprime',
-    component: statsupprime
+    component: statsupprime,
+    meta: { requiresAuth: true }
   },
   {
     path: '/rh',
     name: 'rh',
-    component: rh
+    component: rh,
+    meta: { requiresAuth: true }
   },
   {
     path: '/listuser',
     name: 'listuser',
-    component: listuser
+    component: listuser,
+    meta: { requiresAuth: true }
   },
   {
     path: '/profil',
     name: 'profil',
-    component: profil
+    component: profil,
+    meta: { requiresAuth: true }
   },
   {
     path: '/entreprise',
     name: 'entreprise',
-    component: entreprise
+    component: entreprise,
+    meta: { requiresAuth: true }
   },
   {
     path: '/upload',
     name: 'upload',
-    component: upload
+    component: upload,
+    meta: { requiresAuth: true }
   },
 ];
+
 
 
 
@@ -286,5 +328,18 @@ const router = createRouter({
   history: createWebHistory(),
   routes
 });
+
+// Navigation guard
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth && !User.loggedIn()) {
+    next({ name: 'welcome' }); // Redirect to welcome page if not logged in
+  } else if (!to.meta.requiresAuth && User.loggedIn()) {
+    next({ name: 'dashboard' }); // Redirect to dashboard if logged in and trying to access a non-authenticated route
+  } else {
+    next(); // Proceed with the navigation
+  }
+});
+
+
 
 export default router;

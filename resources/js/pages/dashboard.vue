@@ -130,8 +130,6 @@
 <script>
 import Header from "../layout/Header";
 import Sidebar from "../layout/Sidebar";
-// import barchart from "../components/graph/barchart.vue"
-
 import { Bar } from "vue-chartjs";
 import {
   Chart as ChartJS,
@@ -200,9 +198,9 @@ export default {
     };
   },
   created() {
-    if (!User.loggedIn()) {
-      this.$router.push({ name: "welcome" });
-    }
+    // if (!User.loggedIn()) {
+    //   this.$router.push({ name: "welcome" });
+    // }
     this.fetchData();
     this.getCategory();
     this.getTypes();
@@ -334,7 +332,7 @@ export default {
             datasets: [
               {
                 label: "Chiffres d'affaires par branche",
-                backgroundColor: "#2980B9",
+                backgroundColor: ['#123E6B', '#97B0C4', '#A5C8ED'],
                 data: donnees,
               },
             ],

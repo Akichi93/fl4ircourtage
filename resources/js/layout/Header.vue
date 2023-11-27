@@ -67,7 +67,7 @@
           >RH</a
         >
         <div class="dropdown-menu">
-          <router-link class="dropdown-item" to="">Utilisateurs</router-link>
+          <router-link class="dropdown-item" to="/listuser">Utilisateurs</router-link>
           <router-link class="dropdown-item" to="">Salaires</router-link>
           <router-link class="dropdown-item" to="">Dépenses</router-link>
           <router-link class="dropdown-item" to="">Catégories dépenses</router-link>
