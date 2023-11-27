@@ -12,7 +12,7 @@
                     <div class="col-xl-3 col-md-6">
                         <select class="form-select" title="Choose one of the following..." aria-label="Default select example" v-model="type">
                             <option selected>Open this select menu</option>
-                            <option>CLIENT</option>
+                            <option value="1">CLIENT</option>
                             <option>PROSPECT</option>
                             <option>APPORTEUR</option>
                             <option>COMPAGNIE</option>
