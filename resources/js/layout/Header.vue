@@ -1,9 +1,9 @@
 <template>
   <div class="header">
     <div class="header-left">
-      <a href="/home" class="logo">
+      <router-link to="/home" class="logo">
         <img src="" width="100" height="80" alt="" />
-      </a>
+      </router-link>
     </div>
 
     <div class="header-center">
