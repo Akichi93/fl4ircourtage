@@ -1,51 +1,63 @@
-class AppStorage  {
+class AppStorage {
 
-    storeToken(token){
-        localStorage.setItem('token',token) 
-     }
+    constructor() {}
 
-     storeUser(user){
+    storeToken(token) {
+        localStorage.setItem('token', token);
+    }
+
+    storeUser(user) {
         localStorage.setItem('user', user);
     }
 
-    storeId(id){
+    storeId(id) {
         localStorage.setItem('id', id);
     }
 
-    storeEntreprise(entreprise){
+    storeEntreprise(entreprise) {
         localStorage.setItem('entreprise', entreprise);
     }
 
-    store(token,user,id,entreprise){
-        this.storeToken(token)
-        this.storeUser(user)
-        this.storeId(id)
-        this.storeEntreprise(entreprise)
+    // storeClients(clients) {
+    //     localStorage.setItem('clients', JSON.stringify(clients));
+    // }
+
+    store(token, user, id, entreprise) {
+        this.storeToken(token);
+        this.storeUser(user);
+        this.storeId(id);
+        this.storeEntreprise(entreprise);
+        // this.storeClients(clients);  // Ajoutez cette ligne pour stocker les clients
     }
 
-    clear(){
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
-        localStorage.removeItem('id')
-        localStorage.removeItem('entreprise')
+    clear() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('id');
+        localStorage.removeItem('entreprise');
+        // localStorage.removeItem('clients');  // Ajoutez cette ligne pour supprimer les clients
     }
 
-    getToken () {
-         localStorage.getItem(token)
+    getToken() {
+        return localStorage.getItem('token');
     }
 
-    getUser () {
-        localStorage.getItem(user)
+    getUser() {
+        return localStorage.getItem('user');
     }
 
-    getId () {
-        localStorage.getItem(id)
+    getId() {
+        return localStorage.getItem('id');
     }
 
-    getEntreprise () {
-        localStorage.getItem(entreprise)
+    getEntreprise() {
+        return localStorage.getItem('entreprise');
     }
 
+    getClients() {
+        const clients = localStorage.getItem('clients');
+        return clients ? JSON.parse(clients) : [];
+    }
 }
 
-export default AppStorage = new AppStorage();
+export default AppStorage;

@@ -11,11 +11,7 @@
         <div class="row">
           <div class="col-xl-3 col-md-6">
             <select class="form-select mb-3" v-model="year">
-              <option
-                v-for="data in getYear"
-                :value="data.id_avenant"
-                :key="data.id_avenant"
-              >
+              <option v-for="data in getYear" :value="data.id_avenant" :key="data.id_avenant">
                 {{ data.annee }}
               </option>
             </select>
@@ -23,11 +19,7 @@
           <div class="col-xl-3 col-md-6" v-if="year != 0" @change="getData()">
             <select class="form-select mb-3" v-model="branch">
               <option value="tous">Toutes les branches</option>
-              <option
-                v-for="branche in branches"
-                :value="branche.id_branche"
-                :key="branche.id_branche"
-              >
+              <option v-for="branche in branches" :value="branche.id_branche" :key="branche.id_branche">
                 {{ branche.nom_branche }}
               </option>
             </select>
@@ -122,7 +114,7 @@
         <div class="col-md-6">
           <Bar :data="chartGraphs" />
         </div>
-        
+
       </div>
     </div>
   </div>
@@ -131,6 +123,10 @@
 import Header from "../layout/Header";
 import Sidebar from "../layout/Sidebar";
 import { Bar } from "vue-chartjs";
+import { createToaster } from "@meforma/vue-toaster";
+const toaster = createToaster({
+  /* options */
+});
 import {
   Chart as ChartJS,
   Title,
@@ -202,6 +198,7 @@ export default {
     this.getCategory();
     this.getTypes();
     this.getData();
+    // this.informerUtilisateur()
     // this.getgraph();
   },
   name: "dashboard",
@@ -235,6 +232,17 @@ export default {
     //     });
     // },
 
+    // informerUtilisateur() {
+    //   // Vérifiez la logique de la connexion ici
+    //   const isConnected = false; // Mettez votre logique de connexion
+
+    //   if (isConnected) {
+    //     toaster.success('Connexion réussie!')
+        
+    //   } else {
+    //     toaster.error("Pas de connexion. Veuillez vous connecter.")
+    //   }
+    // },
     getCategory: function () {
       const token = localStorage.getItem("token");
 
@@ -278,7 +286,7 @@ export default {
         year: this.year,
         branch: this.branch,
       };
-      axios   
+      axios
         .get("/api/auth/stat/", {
           params: params,
           headers: headers,

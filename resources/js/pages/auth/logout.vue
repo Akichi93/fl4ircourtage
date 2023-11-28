@@ -4,10 +4,7 @@
 <script>
 export default {
     created() {
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
-        localStorage.removeItem('id')
-        localStorage.removeItem('entreprise')
+        localStorage.clear()
         this.$router.push({ name: 'welcome' })
     },
 

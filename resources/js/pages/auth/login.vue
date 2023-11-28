@@ -50,12 +50,9 @@
     </div>
 </template>
 <script>
+import User from "../../utils/helpers/User";
 export default {
-    //  created() {
-    //     if (User.loggedIn()) {
-    //         this.$router.push({ name: 'dashboard' })
-    //     }
-    // },
+  
     data() {
         return {
             form: {
@@ -69,10 +66,11 @@ export default {
         login() {
             axios.post('/api/auth/login', this.form)
                 .then(res => {
+                    //const user = new User()
                     User.responseAfterLogin(res)
                     this.$router.push({ name: 'dashboard' })
                 })
-                .catch(error => console.log(error.response.data))
+                .catch(error => console.log(error.message))
         }
     }
 
