@@ -7,37 +7,32 @@
         <div class="page-wrapper">
             <div class="content container-fluid pb-0"></div>
 
-            <form method="get">
-                <div class="row">
-                    <div class="col-xl-3 col-md-6">
-                        <select class="form-select" title="Choose one of the following..." aria-label="Default select example" v-model="type">
-                            <option selected>Open this select menu</option>
-                            <option value="1">CLIENT</option>
-                            <option>PROSPECT</option>
-                            <option>APPORTEUR</option>
-                            <option>COMPAGNIE</option>
-                            <option>CONTRAT</option>
-                            <option>SINISTRE</option>
-                        </select>
-                        <label class="focus-label">Status</label>
-                    </div>
 
-                    <div class="col-xl-3 col-md-6">
-                        <select class="form-select mb-3" v-model="branch">
-                            <option value="tous">Toutes les branches</option>
+            <div class="row">
+                <div class="col-xl-3 col-md-6">
+                    <select class="form-select" id="exampleSelect" aria-label="Default select example">
+                        <option selected>Sélectionnez une option :</option>
+                        <option value="CLIENT">CLIENT</option>
+                        <option value="PROSPECT">PROSPECT</option>
+                        <option value="APPORTEUR">APPORTEUR</option>
+                        <option value="COMPAGNIE">COMPAGNIE</option>
+                        <option value="CONTRAT">CONTRAT</option>
+                        <option value="SINISTRE">SINISTRE</option>
+                    </select>
 
-                        </select>
-                    </div>
-                    <div>
-                        <select class="form-select" aria-label="Default select example">
-                            <option selected>Open this select menu</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
-                        </select>
-                    </div>
                 </div>
-            </form>
+
+
+                <div class="col-xl-3 col-md-6">
+                    <select class="form-select mb-3" v-model="branch">
+                        <option value="tous">Toutes les branches</option>
+
+                    </select>
+                </div>
+
+
+            </div>
+
 
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">

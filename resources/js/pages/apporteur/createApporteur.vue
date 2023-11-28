@@ -93,28 +93,7 @@
                                   v-text="errors.adresse_apporteur[0]"></p>
                               </div>
                             </div>
-                            <div class="col-md-3 ajout">
-                              <div class="form-group">
-                                <button type="button" style="margin-top: 25px" class="btn btn-primary">
-                                  Ajouter
-                                </button>
-                              </div>
-                            </div>
-                            <div class="col-md-4 form1" style="display: none">
-                              <div>
-                                <label>Adresse</label>
-                                <input type="text" class="form-control" placeholder="Entrez une nouvelle adresse"
-                                  v-model="ajout_adresse" />
-                              </div>
-                            </div>
-                            <div class="col-md-2 form2" style="display: none">
-                              <div>
-                                <button type="button" class="btn btn-primary" style="margin-top: 25px"
-                                  @click="storeAdresse">
-                                  Ajouter
-                                </button>
-                              </div>
-                            </div>
+                           
                           </div>
                         </div>
                       </div>
@@ -150,6 +129,7 @@
         </div>
       </div>
     </div>
+    <addadrese></addadrese>
   </div>
 </template>
 <script>
@@ -158,8 +138,8 @@ import Sidebar from "../../layout/Sidebar.vue";
 import inputText from "../../components/input/inputText.vue";
 import adressecomponent from "../../components/select/adressecomponent.vue";
 import { getBrancheList } from "../../services/formservice";
+import addadresse from "../../pages/form/addadresse.vue";
 import { createToaster } from "@meforma/vue-toaster";
-// import $ from "jquery";
 const toaster = createToaster({
   /* options */
 });
@@ -249,44 +229,14 @@ export default {
           // }
         });
     },
-    storeAdresse() {
-      axios
-        .post("/postLocalisations", {
-          ajout_adresse: this.ajout_adresse,
-        })
-        .then((response) => {
-          this.fetchTask();
-          if (response.status === 200) {
-            toaster.success(`Adresse ajouté avec succès`, {
-              position: "top-right",
-            });
-            // this.adresses = response.data;
-            this.ajout_adresse = "";
-          }
-        })
-        .catch((error) => {
-          // console.log(error.response.headers);
-
-          if (error.response.status === 422) {
-            this.errors = error.response.data.errors;
-            // console.log("Message non enregisté")
-          } else if (error.request) {
-            // The request was made but no response was received
-            console.log(error.request);
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            console.log("Error", error.message);
-          }
-        });
-    },
     getBranche: function () {
       getBrancheList().then((result) => {
         this.branches = result;
-        console.log(result);
+  
       });
     },
   },
-  components: { Header, Sidebar, inputText, adressecomponent },
+  components: { Header, Sidebar, inputText, adressecomponent, addadresse },
 };
 </script>
   

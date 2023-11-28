@@ -34,7 +34,6 @@
   <![endif]-->
 
 
-
 </head>
 
 <body>
@@ -51,20 +50,14 @@
 
     <script src="{{ asset('assets/js/jquery.slimscroll.min.js') }}"></script>
 
-    {{-- <script src="assets/plugins/morris/morris.min.js"></script> --}}
     <script src="{{ asset('assets/plugins/raphael/raphael.min.js') }}"></script>
-    {{-- <script src="assets/js/chart.js"></script> --}}
 
-    {{-- <script src="assets/plugins/apexcharts/apexcharts.min.js"></script> --}}
-
-    {{-- <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script> --}}
 
     @stack('graph')
 
-   
 
-    
+
+
 
     <!-- Hide and show-->
     <script>
