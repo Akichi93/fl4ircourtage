@@ -63,10 +63,10 @@ export default {
         }
     },
     methods: {
+        
         login() {
             axios.post('/api/auth/login', this.form)
                 .then(res => {
-                    //const user = new User()
                     User.responseAfterLogin(res)
                     this.$router.push({ name: 'dashboard' })
                 })

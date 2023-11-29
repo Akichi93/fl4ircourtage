@@ -1,60 +1,59 @@
 class AppStorage {
 
-    constructor() {}
+    constructor() { }
 
-    storeToken(token) {
+    static storeToken(token) {
         localStorage.setItem('token', token);
     }
 
-    storeUser(user) {
+    static storeUser(user) {
         localStorage.setItem('user', user);
     }
 
-    storeId(id) {
+    static storeId(id) {
         localStorage.setItem('id', id);
     }
 
-    storeEntreprise(entreprise) {
+    static storeEntreprise(entreprise) {
         localStorage.setItem('entreprise', entreprise);
     }
 
-    // storeClients(clients) {
-    //     localStorage.setItem('clients', JSON.stringify(clients));
-    // }
+    static storeClients(clients) {
+        localStorage.setItem('clients', JSON.stringify(clients));
+    }
 
-    store(token, user, id, entreprise) {
+    static store(token, user, id, entreprise) {
         this.storeToken(token);
         this.storeUser(user);
         this.storeId(id);
         this.storeEntreprise(entreprise);
-        // this.storeClients(clients);  // Ajoutez cette ligne pour stocker les clients
     }
 
-    clear() {
+    static clear() {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('id');
         localStorage.removeItem('entreprise');
-        // localStorage.removeItem('clients');  // Ajoutez cette ligne pour supprimer les clients
+        localStorage.removeItem('clients');  // Ajoutez cette ligne pour supprimer les clients
     }
 
-    getToken() {
+    static getToken() {
         return localStorage.getItem('token');
     }
 
-    getUser() {
+    static getUser() {
         return localStorage.getItem('user');
     }
 
-    getId() {
+    static getId() {
         return localStorage.getItem('id');
     }
 
-    getEntreprise() {
+    static getEntreprise() {
         return localStorage.getItem('entreprise');
     }
 
-    getClients() {
+    static getClients() {
         const clients = localStorage.getItem('clients');
         return clients ? JSON.parse(clients) : [];
     }

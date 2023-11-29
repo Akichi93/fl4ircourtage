@@ -5,24 +5,20 @@ class User {
     constructor() {
     }
     static responseAfterLogin(res) {
-        const access_token = res.data.access_token
-        const username = res.data.name
-        const id = res.data.user_id
-        const entreprise = res.data.id_entreprise
-        if (Token.isValid(access_token)) {
-            const appStorage = new AppStorage()
-            appStorage.store(access_token, username, id, entreprise)
+        const {access_token, name, user_id, id_entreprise} = res.data;
+        console.log(res.data)
+        
+            AppStorage.store(access_token, name, user_id, id_entreprise)
 
             // Récupérer les clients de l'utilisateur après la connexion
-            // axios.get('/api/auth/getClient', { headers: { Authorization: `Bearer ${access_token}` } })
-            //     .then(response => {
-            //         // Stocker les projets dans le localStorage ou où vous le souhaitez
-            //         AppStorage.storeClients(response.data);
-            //     })
-            //     .catch(error => {
-            //         console.error(error);
-            //     });
-        }
+            axios.get('/api/auth/getClient', { headers: { Authorization: `Bearer ${access_token}` } })
+                .then(response => {
+                    // Stocker les projets dans le localStorage ou où vous le souhaitez
+                    AppStorage.storeClients(response.data);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
     }
 
     static hasToken() {

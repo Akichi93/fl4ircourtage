@@ -194,55 +194,15 @@ export default {
     };
   },
   created() {
-    // this.fetchData();
     this.getCategory();
     this.getTypes();
     this.getData();
-    // this.informerUtilisateur()
-    // this.getgraph();
+    this.informerUtilisateur()
+
   },
   name: "dashboard",
   components: { Header, Sidebar, Bar },
   methods: {
-    // fetchData() {
-    //   const token = localStorage.getItem("token");
-
-    //   // Configurez les en-têtes de la requête
-    //   const headers = {
-    //     Authorization: "Bearer " + token,
-    //     "x-access-token": token,
-    //   };
-
-    //   this.error = this.branches = null;
-    //   this.loading = true;
-    //   axios
-    //     .get("/api/auth/stat", { headers })
-    //     .then((response) => {
-    //       this.contrat = response.data.contrat;
-    //       this.prospect = response.data.prospect;
-    //       this.sinistre = response.data.sinistre;
-    //       this.comissioncourtier = response.data.comissioncourtier;
-    //       this.comissionapporteur = response.data.comissionapporteur;
-    //       this.echeance = response.data.echeance;
-    //       this.countemission = response.data.countemission;
-    //     })
-    //     .catch((error) => {
-    //       this.loading = false;
-    //       this.error = error.response.data.message || error.message;
-    //     });
-    // },
-
-    // informerUtilisateur() {
-    //   // Vérifiez la logique de la connexion ici
-    //   const isConnected = false; // Mettez votre logique de connexion
-
-    //   if (isConnected) {
-    //     toaster.success('Connexion réussie!')
-        
-    //   } else {
-    //     toaster.error("Pas de connexion. Veuillez vous connecter.")
-    //   }
-    // },
     getCategory: function () {
       const token = localStorage.getItem("token");
 
@@ -292,7 +252,6 @@ export default {
           headers: headers,
         })
         .then((response) => {
-          console.log(response.data)
           this.contrat = response.data.contrat;
           this.prospect = response.data.prospect;
           this.sinistre = response.data.sinistre;
@@ -356,59 +315,7 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    // getgraph() {
-    //   const token = localStorage.getItem("token");
-
-    //   // Configurez les en-têtes de la requête
-    //   const headers = {
-    //     Authorization: "Bearer " + token,
-    //     "x-access-token": token,
-    //   };
-
-    //   axios
-    //     .get("/api/auth/graph", { headers })
-    //     .then((response) => {
-    //       const labels = response.data.primes.map((prime) => prime.name);
-    //       const data = response.data.primes.map((prime) => prime.y);
-    //       // this.graph = response.data.primes.map(prime => prime.y);
-
-    //       const label = response.data.accesoires.map(
-    //         (accesoire) => accesoire.name
-    //       );
-    //       const donnees = response.data.accesoires.map(
-    //         (accesoire) => accesoire.y
-    //       );
-    //       this.chartData = {
-    //         labels: labels,
-    //         datasets: [
-    //           {
-    //             label: "Chiffre d'affaire par mois dans l'année",
-    //             backgroundColor: "#2980B9",
-    //             data: data,
-    //           },
-    //         ],
-    //       };
-
-    //       this.chartDonnees = {
-    //         labels: label,
-    //         datasets: [
-    //           {
-    //             label: "Chiffres d'affaires par branche",
-    //             backgroundColor: "#2980B9",
-    //             data: donnees,
-    //           },
-    //         ],
-    //       };
-
-    //       console.log(
-    //         response.data.accesoires.map((accesoire) => accesoire.name)
-    //       );
-    //     })
-    //     .catch((error) => {
-    //       this.loading = false;
-    //       this.error = error.response.data.message || error.message;
-    //     });
-    // },
+    
   },
 };
 </script>
