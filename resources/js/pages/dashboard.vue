@@ -197,11 +197,22 @@ export default {
     this.getCategory();
     this.getTypes();
     this.getData();
-    // this.informerUtilisateur()
+    this.informerUtilisateur()
   },
   name: "dashboard",
   components: { Header, Sidebar, Bar },
   methods: {
+
+    informerUtilisateur() {
+      // Vérifiez la logique de la connexion ici
+      const isConnected = false; // Mettez votre logique de connexion
+
+      if (isConnected) {
+        toaster.success('Connexion réussie!')
+      } else {
+        toaster.error("Pas de connexion. Veuillez vous connecter.")
+      }
+    },
     getCategory: function () {
       const token = localStorage.getItem("token");
 
@@ -314,7 +325,7 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    
+
   },
 };
 </script>
