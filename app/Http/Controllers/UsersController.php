@@ -188,4 +188,33 @@ class UsersController extends Controller
 
         return response()->json($roles);
     }
+
+    public function changepassword(Request $request)
+    {
+        $this->validate($request, [
+            'oldpassword' => 'required',
+            'newpassword' => 'required',
+        ]);
+
+        $user =  JWTAuth::parseToken()->authenticate();
+
+        $hashedPassword = $user->password;
+
+        if (Hash::check($request->oldpassword, $hashedPassword)) {
+
+            if (!Hash::check($request->newpassword, $hashedPassword)) {
+
+                $users = User::find($user->id);
+                $users->password = bcrypt($request->newpassword);
+                User::where('id', $user->id)->update(array('password' => $users->password));
+
+                return response()->json(['message' => 'Adresse existante'], 200);
+            } else {
+                return response()->json(['message' => 'Le nouveau mot de passe ne peut pas être l\'ancien mot de passe !'], 422);
+            }
+        } else {
+
+            return response()->json(['message' => 'L\'ancien mot de passe ne correspond pas'], 401);
+        }
+    }
 }

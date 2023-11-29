@@ -239,12 +239,40 @@ Route::group([
     Route::resource('roles', RoleController::class);
 
 
-
-    // // Users
+    // Users
     Route::resource('utilisateurs', UsersController::class);
-    Route::get('utilisateurs/edit/{id}', [UsersController::class, 'edit']);
-    Route::get('get/logs', [UsersController::class, 'getLogs']);
-    Route::get('getrole', [UsersController::class, 'getRole']);
+    Route::controller(UsersController::class)->group(function () {
+        Route::get('utilisateurs/edit/{id}', 'edit');
+        Route::get('get/logs', 'getLogs');
+        Route::get('getrole', 'getRole');
+        Route::post('changepassword', 'changepassword');
+    });
+
+
+    // Salaires
+    Route::resource('salaires', SalaryController::class);
+    Route::controller(SalaryController::class)->group(function () {
+        Route::get('salairemoyen', 'salairemoyen');
+        Route::get('nbresalaire', 'nbresalaire');
+        Route::get('massesalariale', 'massesalariale');
+    });
+
+
+    // Secteurs
+    Route::resource('secteurs', SecteurController::class);
+
+    // Categorie dépenses
+    Route::resource('catdepenses', CatdepenseController::class);
+    Route::post('catdepenses/assoc', [CatdepenseController::class, 'assoc']);
+    Route::post('/get-depense', [CatdepenseController::class, 'getdepense']);
+    Route::get('/getresult', [CatdepenseController::class, 'getresult']);
+
+    // Type dépenses
+    Route::resource('typexpenses', TypedepenseController::class);
+
+    // Dépenses
+    Route::resource('expenditures', DepenseController::class);
+    Route::get('/depenseslist/{q?}', [DepenseController::class, 'depenseslist']);
 
     // Route::get('get/expires', [HomeController::class, 'getexpires'])->name('contrats/getexpires');
     // Route::get('get/nonsoldes', [HomeController::class, 'getnonsoldes']);
@@ -256,8 +284,8 @@ Route::group([
     // Route::post('searchnonreverses', [HomeController::class, 'searchnonreverses']);
 
 
-      // Import de fichier
-      Route::controller(UploadController::class)->group(function () { 
+    // Import de fichier
+    Route::controller(UploadController::class)->group(function () {
         Route::post('importclient', 'importclient');
         Route::post('importprospect', 'importprospect');
         Route::post('importapporteur', 'importapporteur');
@@ -267,5 +295,5 @@ Route::group([
         Route::post('importcontrat', 'importcontrat');
         Route::post('importsinistre', 'importsinistre');
         Route::post('importautomobile', 'importautomobile');
-      });
+    });
 });

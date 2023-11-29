@@ -197,8 +197,7 @@ export default {
     this.getCategory();
     this.getTypes();
     this.getData();
-    this.informerUtilisateur()
-
+    // this.informerUtilisateur()
   },
   name: "dashboard",
   components: { Header, Sidebar, Bar },

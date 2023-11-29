@@ -132,6 +132,10 @@
 import Header from "../../layout/Header";
 import Sidebar from "../../layout/Sidebar";
 import AppStorage from "../../utils/helpers/AppStorage";
+import { createToaster } from "@meforma/vue-toaster";
+const toaster = createToaster({
+  /* options */
+});
 export default {
     components: { Header, Sidebar },
     data() {
@@ -168,25 +172,29 @@ export default {
             return true;
         },
 
-        storeClient() {
-            const appStorage = new AppStorage()
-            const userId = appStorage.getId();
-            const entrepriseId = appStorage.getEntreprise();
+        updatePassword() {
+            const token = AppStorage.getToken();
+
+            // Configurez les en-têtes de la requête
+            const headers = {
+                Authorization: "Bearer " + token,
+                "x-access-token": token,
+            };
+
             axios
-                .post("/api/auth/postClient", {
-                    oldpassword: this.oldoldpassword,
-                    nom_client: this.nom_client,
-                })
+                .post("/api/auth/changepassword", {
+                    oldpassword: this.oldpassword,
+                    newpassword: this.newpassword,
+                }, { headers })
                 .then((response) => {
 
-                    //   appStorage.storeClients(response.data)
-                    //   if (response.status === 200) {
+
                     toaster.success(`Mot de passe modifié avec succès`, {
                         position: "top-right",
                     });
-                    //   }
                 })
                 .catch((error) => {
+                    console.error('An error occurred:', error);
                     // console.log(error.response.headers);
 
                     // if (error.response.status === 422) {
