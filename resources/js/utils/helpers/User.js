@@ -38,6 +38,27 @@ class User {
             .catch(error => {
                 console.error(error);
             });
+
+        // Récupérer les compagnies de l'utilisateur après la connexion
+        axios.get('/api/auth/getCompagnie', { headers: { Authorization: `Bearer ${access_token}` } })
+            .then(response => {
+                // Stocker les compagnies dans le localStorage 
+                AppStorage.storeCompagnies(response.data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+
+        // Récupérer les apporteurs de l'utilisateur après la connexion
+        axios.get('/api/auth/getApporteur', { headers: { Authorization: `Bearer ${access_token}` } })
+            .then(response => {
+                // Stocker les apporteurs dans le localStorage 
+                AppStorage.storeApporteurs(response.data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
     }
 
     static hasToken() {

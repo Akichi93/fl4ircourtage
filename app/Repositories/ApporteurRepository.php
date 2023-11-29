@@ -37,23 +37,23 @@ class ApporteurRepository extends BaseRepository
         if (Apporteur::where('nom_apporteur', '=', $apporteur)->count() > 0) {
             return response()->json(['message' => 'Apporteur existant'], 422);
         } else {
-            // $lastID = Apporteur::max('id_apporteur');
-            // if ($lastID == null) {
-            //     $id = 1;
-            //     $day = date('d');
-            //     $month = date('m');
-            //     $year = date('Y');
-            //     $a = "AP";
-            //     $ref = $a . '-' . $id . '-' . intval($month) . intval($day) . $year;
-            // } else {
-            //     $id = intval($lastID) + 1;
-            //     $day = date('d');
-            //     $month = date('m');
-            //     $year = date('Y');
-            //     $a = "AP";
-            //     $ref = $a . '-' . $id . '-' . $month . $day . $year;
-            // }
-            $ref = "AB@#$";
+            $lastID = Apporteur::max('id_apporteur');
+            if ($lastID == null) {
+                $id = 1;
+                $day = date('d');
+                $month = date('m');
+                $year = date('Y');
+                $a = "AP";
+                $ref = $a . '-' . $id . '-' . intval($month) . intval($day) . $year;
+            } else {
+                $id = intval($lastID) + 1;
+                $day = date('d');
+                $month = date('m');
+                $year = date('Y');
+                $a = "AP";
+                $ref = $a . '-' . $id . '-' . $month . $day . $year;
+            }
+            // $ref = "AB@#$";
 
 
 

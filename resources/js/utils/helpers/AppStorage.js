@@ -30,6 +30,15 @@ class AppStorage {
         localStorage.setItem('contrats', JSON.stringify(contrats));
     }
 
+    static storeCompagnies(compagnies) {
+        localStorage.setItem('compagnies', JSON.stringify(compagnies));
+    }
+
+    static storeApporteurs(apporteurs) {
+        localStorage.setItem('apporteurs', JSON.stringify(apporteurs));
+    }
+
+
     static store(token, user, id, entreprise) {
         this.storeToken(token);
         this.storeUser(user);
@@ -42,9 +51,11 @@ class AppStorage {
         localStorage.removeItem('user');
         localStorage.removeItem('id');
         localStorage.removeItem('entreprise');
-        localStorage.removeItem('clients');  // Ajoutez cette ligne pour supprimer les clients
-        localStorage.removeItem('prospects');  // Ajoutez cette ligne pour supprimer les prospects
-        localStorage.removeItem('contrats');  // Ajoutez cette ligne pour supprimer les prospects
+        localStorage.removeItem('clients');   
+        localStorage.removeItem('prospects');  
+        localStorage.removeItem('contrats');   
+        localStorage.removeItem('compagnies');  
+        localStorage.removeItem('apporteurs');  
     }
 
     static getToken() {
@@ -76,6 +87,16 @@ class AppStorage {
     static getContrats() {
         const contrats = localStorage.getItem('contrats');
         return contrats ? JSON.parse(contrats) : [];
+    }
+
+    static getCompagnies() {
+        const compagnies = localStorage.getItem('compagnies');
+        return compagnies ? JSON.parse(compagnies) : [];
+    }
+
+    static getApporteurs() {
+        const apporteurs = localStorage.getItem('apporteurs');
+        return apporteurs ? JSON.parse(apporteurs) : [];
     }
 }
 

@@ -46,7 +46,7 @@ class CompagnieRepository extends BaseRepository
             $compagnies->adresse_compagnie = $data['adresse_compagnie'];
             $compagnies->code_compagnie = $token;
             $compagnies->id_entreprise =   $data['id_entreprise'];
-            $compagnies->id_entreprise =  1;
+            // $compagnies->id_entreprise =  1;
             $compagnies->user_id =  $data['id'];
             $compagnies->save();
 
