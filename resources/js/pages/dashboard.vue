@@ -149,6 +149,7 @@ export default {
   data() {
     return {
       year: "",
+      online: navigator.onLine,
       branch: "",
       contrat: "",
       prospect: "",
@@ -197,22 +198,30 @@ export default {
     this.getCategory();
     this.getTypes();
     this.getData();
-    this.informerUtilisateur()
+    // this.informerUtilisateur()
   },
   name: "dashboard",
   components: { Header, Sidebar, Bar },
+  mounted() {
+    window.addEventListener('online', this.updateOnlineStatus);
+    window.addEventListener('offline', this.updateOnlineStatus);
+    this.updateOnlineStatus();
+  },
+  beforeDestroy() {
+    window.removeEventListener('online', this.updateOnlineStatus);
+    window.removeEventListener('offline', this.updateOnlineStatus);
+  },
   methods: {
+    updateOnlineStatus() {
+      this.isOnline = navigator.onLine;
 
-    informerUtilisateur() {
-      // Vérifiez la logique de la connexion ici
-      const isConnected = false; // Mettez votre logique de connexion
-
-      if (isConnected) {
-        toaster.success('Connexion réussie!')
+      if (this.isOnline) {
+        toaster.success('Vous êtes connecté à Internet');
       } else {
-        toaster.error("Pas de connexion. Veuillez vous connecter.")
+        toaster.error('Vous n\'êtes pas connecté à Internet. Veuillez vous connecter.');
       }
     },
+
     getCategory: function () {
       const token = localStorage.getItem("token");
 

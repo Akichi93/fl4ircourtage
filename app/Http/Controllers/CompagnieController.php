@@ -74,11 +74,17 @@ class CompagnieController extends Controller
         // Insertion dans la bdd
         $Data = $this->compagnie->postCompagnie($data);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Compagnie enregistré avec succès',
-            'compagnie' => $Data
-        ], Response::HTTP_OK);
+        if($Data){
+            $compagnies = Compagnie::where('id_entreprise', $data['id_entreprise'])
+                ->where('supprimer_compagnie', '=', '0')->latest()->paginate(10);
+            return response()->json($compagnies);
+        }
+
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'Compagnie enregistré avec succès',
+        //     'compagnie' => $Data
+        // ], Response::HTTP_OK);
     }
 
     public function editCompagnie(int $id_compagnie)

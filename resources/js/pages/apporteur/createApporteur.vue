@@ -140,6 +140,7 @@ import adressecomponent from "../../components/select/adressecomponent.vue";
 import { getBrancheList } from "../../services/formservice";
 import addadresse from "../../pages/form/addadresse.vue";
 import { createToaster } from "@meforma/vue-toaster";
+import AppStorage from '../../utils/helpers/AppStorage';
 const toaster = createToaster({
   /* options */
 });
@@ -168,9 +169,9 @@ export default {
 
   methods: {
     storeApporteur() {
-      const token = localStorage.getItem("token");
-      const userId = localStorage.getItem("id");
-      const entrepriseId = localStorage.getItem("entreprise");
+      const token = AppStorage.getToken();
+      const userId = AppStorage.getId();
+      const entrepriseId = AppStorage.getEntreprise();
 
       // Configurez les en-têtes de la requête
       const headers = {
@@ -203,6 +204,7 @@ export default {
           id: userId,
         })
         .then((response) => {
+          AppStorage.storeApporteurs(response.data)
           this.$router.push("/listapporteur");
           if (response.status === 200) {
             toaster.success(`Apporteur ajouté avec succès`, {

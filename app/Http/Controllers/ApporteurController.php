@@ -69,12 +69,17 @@ class ApporteurController extends Controller
 
         // Insertion dans la bdd
         $Data = $this->apporteur->postApporteur($data);
+        
+        if($Data){
+            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->where('id_entreprise', $data['id_entreprise'])->latest()->paginate(10);
+            return response()->json($apporteurs);
+        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Apporteur enregistré avec succès',
-            'apporteur' => $Data
-        ], Response::HTTP_OK);
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'Apporteur enregistré avec succès',
+        //     'apporteur' => $Data
+        // ], Response::HTTP_OK);
     }
 
     /*

@@ -127,6 +127,7 @@ import Sidebar from "../../layout/Sidebar.vue";
 import inputText from "../../components/input/inputText.vue";
 import adressecomponent from "../../components/select/adressecomponent.vue";
 import { getBrancheList } from "../../services/formservice";
+import AppStorage from '../../utils/helpers/AppStorage';
 import { createToaster } from "@meforma/vue-toaster";
 // import $ from "jquery";
 const toaster = createToaster({
@@ -198,6 +199,7 @@ export default {
           id: userId,
         })
         .then((response) => {
+          AppStorage.storeCompagnies(response.data)
           // if (response.status === 200) {
           toaster.success(`Compagnie ajouté avec succès`, {
             position: "top-right",
