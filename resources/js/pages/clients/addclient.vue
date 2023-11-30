@@ -39,61 +39,24 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-sm-9 adresse">
+              <div class="col-sm-12">
                 <div class="form-group">
                   <label>Adresse</label>
                   <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="adresse_client"></adressecomponent>
                 </div>
               </div>
-              <div class="col-sm-3 ajout">
-                <div class="form-group">
-                  <button type="button" style="margin-top: 25px" class="btn btn-primary">
-                    Ajouter
-                  </button>
-                </div>
-              </div>
-              <div class="col-md-8 form1" style="display: none">
-                <div>
-                  <label>Adresse</label>
-                  <input type="text" class="form-control" placeholder="Entrez une nouvelle adresse"
-                    v-model="ajout_adresse" />
-                </div>
-              </div>
-              <div class="col-md-2 form2" style="display: none">
-                <div>
-                  <button type="button" class="btn btn-primary" style="margin-top: 25px" @click="storeAdresse">
-                    Ajouter
-                  </button>
-                </div>
-              </div>
+
+            
             </div>
             <div class="row">
-              <div class="col-sm-9 profession">
+              <div class="col-sm-12">
                 <div class="form-group">
                   <label>Profession</label>
                   <professioncomponent :placeholder="'selectionnez une profession'" v-model="profession_client">
                   </professioncomponent>
                 </div>
               </div>
-              <div class="col-sm-3 ajouter">
-                <div class="form-group">
-                  <button type="button" style="margin-top: 25px" class="btn btn-primary">
-                    Ajouter
-                  </button>
-                </div>
-              </div>
-              <div class="col-md-8 form3" style="display: none">
-                <label>Profession</label>
-                <input type="text" class="form-control" placeholder="Entrez une nouvelle profession"
-                  v-model="ajout_profession" />
-              </div>
-              <div class="col-md-2 form4" style="display: none">
-                <div>
-                  <button type="button" class="btn btn-primary" style="margin-top: 25px" @click="storeProfession">
-                    Ajouter
-                  </button>
-                </div>
-              </div>
+             
             </div>
             <div class="row">
               <div class="col-sm-12">
@@ -159,9 +122,8 @@ export default {
   },
   methods: {
     storeClient() {
-      const appStorage = new AppStorage()
-      const userId = appStorage.getId();
-      const entrepriseId = appStorage.getEntreprise();
+      const userId = AppStorage.getId();
+      const entrepriseId = AppStorage.getEntreprise();
       axios
         .post("/api/auth/postClient", {
           civilite: this.civilite,
@@ -179,7 +141,7 @@ export default {
         .then((response) => {
           this.$emit('client-added', response);
           this.$emit('client-add', response.data);
-          appStorage.storeClients(response.data)
+          AppStorage.storeClients(response.data)
           // this.civilite =
           //   this.nom_client =
           //   this.prenom_client =
