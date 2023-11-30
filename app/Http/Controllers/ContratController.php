@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AutomobileRequest;
 use Carbon\Carbon;
 use App\Models\Avenant;
 use App\Models\Branche;
@@ -15,7 +16,6 @@ use Illuminate\Http\Request;
 use App\Models\TauxApporteur;
 use App\Models\TauxCompagnie;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use App\Repositories\ContratRepository;
 use App\Http\Requests\StoreContratRequest;
 use Symfony\Component\HttpFoundation\Response;
@@ -673,76 +673,45 @@ class ContratController extends Controller
         return response()->json($automobiles);
     }
 
-    public function postAutomobile(Request $request)
+    public function postAutomobile(AutomobileRequest $request)
     {
-        $rules = [
-            'numero_immatriculation' => 'required',
-            'identification_proprietaire' => 'required',
-            'date_circulation' => 'required',
-            'adresse_proprietaire' => 'required',
-            'categorie_id' => 'required',
-            'zone' => 'required',
-            'energie_id' => 'required',
-            'place' => 'required',
-            'puissance' => 'required',
-            'charge' => 'required',
-            'valeur_neuf' => 'required',
-            'valeur_venale' => 'required',
-            'genre_id' => 'required',
-            'categorie_socio_pro' => 'required',
-        ];
+        // Validation du formulaire
+        $validated = $request->validated();
 
-        $customMessages = [
-            'numero_immatriculation.required' => 'Veuillez entrez  le numéro d immatriculation',
-            'identification_proprietaire.required' => 'Veuillez entrer l identification du proprietaire !',
-            'date_circulation.required' => 'Veuillez choisir la date  !',
-            'adresse_proprietaire.required' => 'Veuillez entrer l adresse du proprietaire !',
-            'categorie.required' => 'Veuillez selectionner la categorie !',
-            'zone.required' => 'Veuillez selectionnez la zone !',
-            'energie.required' => 'Veuillez selectionnez l energie !',
-            'place.required' => 'Veuillez entrer le nombre de place !',
-            'puissance.required' => 'Veuillez entrer la puissance !',
-            'valeur_neuf.required' => 'Veuillez entrer la valeur à neuf !',
-            'valeur_venale.required' => 'Veuillez entrer la valeur vénale !',
-            'genre.required' => 'Veuillez selectionnez le genre !',
-            'categorie_socio_pro.required' => 'Veuillez selectionnez le genre !',
-        ];
-        $this->validate($request, $rules, $customMessages);
-
-        $autos = new Automobile();
-        $autos->numero_immatriculation = $request->numero_immatriculation;
-        $autos->identification_proprietaire = $request->identification_proprietaire;
-        $autos->date_circulation = $request->date_circulation;
-        $autos->adresse_proprietaire = $request->adresse_proprietaire;
-        $autos->categorie = $request->categorie_id;
-        $autos->marque = $request->marque_id;
-        $autos->genre = $request->genre_id;
-        $autos->type = $request->type;
-        $autos->carosserie = $request->carosserie;
-        $autos->couleur = $request->couleur_id;
-        $autos->option = $request->option;
-        $autos->entree = $request->entree;
-        $autos->energie = $request->energie_id;
-        $autos->place = $request->place;
-        $autos->puissance = $request->puissance;
-        $autos->charge = $request->charge;
-        $autos->valeur_neuf = $request->valeur_neuf;
-        $autos->valeur_venale = $request->valeur_venale;
-        $autos->categorie_socio_pro = $request->categorie_socio_pro;
-        $autos->permis = $request->permis;
-        $autos->prime_nette = $request->prime_nette;
-        $autos->frais_courtier = $request->frais_courtier;
-        $autos->accessoires = $request->accessoires;
-        $autos->cfga = $request->cfga;
-        $autos->taxes_totales = $request->taxes_totales;
-        $autos->primes_ttc = $request->primes_ttc;
-        $autos->gestion = $request->gestion;
-        $autos->commission_apporteur = $request->commission_apporteur;
-        $autos->commission_courtier = $request->commission_courtier;
-        $autos->zone = $request->zone;
-        $autos->type_garantie = $request->type_garantie;
-        $autos->id_contrat = $request->id_contrat;
-        $autos->save();
+        $automobiles = new Automobile();
+        $automobiles->numero_immatriculation = $request->numero_immatriculation;
+        $automobiles->identification_proprietaire = $request->identification_proprietaire;
+        $automobiles->date_circulation = $request->date_circulation;
+        $automobiles->adresse_proprietaire = $request->adresse_proprietaire;
+        $automobiles->categorie = $request->categorie_id;
+        $automobiles->marque = $request->marque_id;
+        $automobiles->genre = $request->genre_id;
+        $automobiles->type = $request->type;
+        $automobiles->carosserie = $request->carosserie;
+        $automobiles->couleur = $request->couleur_id;
+        $automobiles->option = $request->option;
+        $automobiles->entree = $request->entree;
+        $automobiles->energie = $request->energie_id;
+        $automobiles->place = $request->place;
+        $automobiles->puissance = $request->puissance;
+        $automobiles->charge = $request->charge;
+        $automobiles->valeur_neuf = $request->valeur_neuf;
+        $automobiles->valeur_venale = $request->valeur_venale;
+        $automobiles->categorie_socio_pro = $request->categorie_socio_pro;
+        $automobiles->permis = $request->permis;
+        $automobiles->prime_nette = $request->prime_nette;
+        $automobiles->frais_courtier = $request->frais_courtier;
+        $automobiles->accessoires = $request->accessoires;
+        $automobiles->cfga = $request->cfga;
+        $automobiles->taxes_totales = $request->taxes_totales;
+        $automobiles->primes_ttc = $request->primes_ttc;
+        $automobiles->gestion = $request->gestion;
+        $automobiles->commission_apporteur = $request->commission_apporteur;
+        $automobiles->commission_courtier = $request->commission_courtier;
+        $automobiles->zone = $request->zone;
+        $automobiles->type_garantie = $request->type_garantie;
+        $automobiles->id_contrat = $request->id_contrat;
+        $automobiles->save();
 
 
         if ($request->tierce != null) {
@@ -769,6 +738,15 @@ class ContratController extends Controller
                 }
             }
         }
+
+
+        if ($automobiles) {
+            $automobiles = Contrat::join("automobiles", 'contrats.id_contrat', '=', 'automobiles.id_contrat')
+                ->where('contrats.id_contrat', '=', $request->id_contrat)
+                ->get();
+            return response()->json($automobiles);
+        }
+
 
 
         return ['message' => 'Insertion avec succes'];
@@ -835,9 +813,10 @@ class ContratController extends Controller
         return response()->json($contrats);
     }
 
-    public function updateContrat(Request $request, $id_contrat)
+    public function updateContrat(Request $request)
     {
 
+        $id_contrat = $request->id_contrat;
         $tauxcompagnie = TauxCompagnie::select('tauxcomp')->where('id_compagnie', $request->id_compagnie)
             ->where('id_branche', $request->id_branche)
             ->value('tauxcomp');
@@ -852,24 +831,43 @@ class ContratController extends Controller
 
         $prime = $request->prime_nette + $request->accessoires + $request->frais_courtier + $request->taxes_totales + $request->cfga;
 
-        $contrats = Contrat::find($id_contrat);
-        $contrats->numero_police = request('numero_police');
-        $contrats->souscrit_le = request('souscrit_le');
-        $contrats->effet_police = request('effet_police');
-        $contrats->heure_police = request('heure_police');
-        $contrats->expire_le = request('expire_le');
-        $contrats->reconduction = request('reconduction');
-        $contrats->id_compagnie = request('id_compagnie');
-        $contrats->id_apporteur = request('id_apporteur');
-        $contrats->prime_nette = request('prime_nette');
-        $contrats->frais_courtier = request('frais_courtier');
-        $contrats->accessoires = request('accessoires');
-        $contrats->taxes_totales = request('taxes_totales');
-        $contrats->primes_ttc = $prime;
-        $contrats->commission_courtier = $commissioncompagnie;
-        $contrats->gestion = request('gestion');
-        $contrats->commission_apporteur = $commissionapporteur;
-        $contrats->save();
+        $contrats = Contrat::where('id_contrat', $id_contrat)->update([
+            'numero_police' => request('numero_police'),
+            'souscrit_le' => request('souscrit_le'),
+            'effet_police' => request('effet_police'),
+            'heure_police' => request('heure_police'),
+            'expire_le' => request('expire_le'),
+            'reconduction' => request('reconduction'),
+            'id_compagnie' => request('id_compagnie'),
+            'id_apporteur' => request('id_apporteur'),
+            'prime_nette' => request('prime_nette'),
+            'frais_courtier' => request('frais_courtier'),
+            'accessoires' => request('accessoires'),
+            'taxes_totales' => request('taxes_totales'),
+            'primes_ttc' => $prime,
+            'commission_courtier' => $commissioncompagnie,
+            'gestion' => request('gestion'),
+            'commission_apporteur' => $commissionapporteur,
+        ]);
+
+        // $contrats = Contrat::find($id_contrat);
+        // $contrats->numero_police = request('numero_police');
+        // $contrats->souscrit_le = request('souscrit_le');
+        // $contrats->effet_police = request('effet_police');
+        // $contrats->heure_police = request('heure_police');
+        // $contrats->expire_le = request('expire_le');
+        // $contrats->reconduction = request('reconduction');
+        // $contrats->id_compagnie = request('id_compagnie');
+        // $contrats->id_apporteur = request('id_apporteur');
+        // $contrats->prime_nette = request('prime_nette');
+        // $contrats->frais_courtier = request('frais_courtier');
+        // $contrats->accessoires = request('accessoires');
+        // $contrats->taxes_totales = request('taxes_totales');
+        // $contrats->primes_ttc = $prime;
+        // $contrats->commission_courtier = $commissioncompagnie;
+        // $contrats->gestion = request('gestion');
+        // $contrats->commission_apporteur = $commissionapporteur;
+        // $contrats->save();
 
         // Récupérer l'id de l'avenant
 

@@ -204,9 +204,14 @@
               <div class="col-md-8"></div>
               <div class="col-md-4">
                 <div class="add-emp-section">
-                  <a href="#" data-bs-toggle="modal" data-bs-target="#create_project" class="btn btn-success btn-add-emp"
+                  <a href="#" data-bs-toggle="modal" data-bs-target="#add_flotte" class="btn btn-success btn-add-emp"
+                    style="width: auto"><i class="fas fa-plus"></i> Ajouter une flotte
+                  </a>
+                  <a href="#" data-bs-toggle="modal" data-bs-target="#add_auto" class="btn btn-success btn-add-emp"
                     style="width: auto"><i class="fas fa-plus"></i> Ajouter un véhicule
                   </a>
+
+                 
                 </div>
               </div>
             </div>
@@ -231,7 +236,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <template v-for="automobile in automobiles" :key="automobile.id8contrat">
+                      <template v-for="automobile in automobiles" :key="automobile.id_contrat">
                         <tr>
                           <td>{{ automobile.numero_immatriculation }}</td>
                           <td>{{ automobile.identification_proprietaire }}</td>
@@ -356,8 +361,9 @@
           </div>
 
 
-
-
+          <addautomobile  @automobile-add="refresh"></addautomobile>
+          <addgarantie></addgarantie>
+       
 
 
         </div>
@@ -368,10 +374,14 @@
 <script>
 import Sidebar from "../../layout/Sidebar.vue";
 import Header from "../../layout/Header.vue";
+import addautomobile from "./addAutomobile.vue";
+import addgarantie from "./addGarantie.vue"
 export default {
   components: {
     Header,
     Sidebar,
+    addautomobile,
+    addgarantie
   },
   data() {
     return {
@@ -522,6 +532,10 @@ export default {
           }
         });
     },
+
+    refresh(automobiles) {
+      this.automobiles = automobiles.data;
+    }
   },
 };
 </script>

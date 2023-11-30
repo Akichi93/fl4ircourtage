@@ -181,7 +181,7 @@ Route::group([
         Route::get('getTauxBrancheCompagnie', 'getTauxBrancheCompagnie');
         Route::get('getTauxBrancheApporteur', 'getTauxBrancheApporteur');
         Route::get('getViewContrat', 'getViewContrat');
-        Route::patch('updateContrat/{id_contrat}', 'updateContrat'); // Update d'une compagnie
+        Route::post('updateContrat', 'updateContrat'); // Update d'un contrat
         Route::get('getFactures/{id_avenant}', 'getFactures');
         Route::get('getContrat',  'getContrat'); // Obtenir les contrats
     });

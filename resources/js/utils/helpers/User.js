@@ -59,6 +59,8 @@ class User {
             .catch(error => {
                 console.error(error);
             });
+
+      
     }
 
     static hasToken() {

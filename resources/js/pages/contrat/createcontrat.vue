@@ -1222,7 +1222,6 @@ import {
 import { getClientSelect } from "../../services/clientservice";
 
 import { createToaster } from "@meforma/vue-toaster";
-// import $ from "jquery";
 const toaster = createToaster({
   /* options */
 });

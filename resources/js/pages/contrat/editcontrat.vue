@@ -44,10 +44,9 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Branche</label>
-                            <Multiselect :value="contrats.id_branche" disabled v-model="branche_id" :options="branches"
-                              :custom-label="({ id_branche, nom_branche }) =>
-                                  `${id_branche} - [${nom_branche}]`
-                                " valueProp="id_branche" label="nom_branche" track-by="nom_branche" :searchable="true">
+                            <Multiselect disabled :value="contrats.id_branche" :options="branches" :custom-label="({ id_branche, nom_branche }) =>
+                              `${id_branche} - [${nom_branche}]`
+                              " valueProp="id_branche" label="nom_branche" track-by="nom_branche" :searchable="true">
                             </Multiselect>
                           </div>
                         </div>
@@ -56,9 +55,9 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Compagnie:</label>
-                            <Multiselect @select="optionSelected" :value="contrats.id_compagnie" v-model="compagnie_id"
-                              :options="compagnies" :custom-label="({ id_compagnie, nom_compagnie }) =>
-                                  `${id_compagnie} - [${nom_compagnie}]`
+                            <Multiselect @select="optionSelected" :value="contrats.id_compagnie" :options="compagnies"
+                              :custom-label="({ id_compagnie, nom_compagnie }) =>
+                                `${id_compagnie} - [${nom_compagnie}]`
                                 " valueProp="id_compagnie" placeholder="Choisir une compagnie" label="nom_compagnie"
                               track-by="nom_compagnie" :searchable="true">
                             </Multiselect>
@@ -93,7 +92,7 @@
                           <div class="form-group">
                             <label>Client:</label>
                             <Multiselect v-model="client_id" :value="contrats.id_client" :options="clients" :custom-label="({ id_client, nom_client }) =>
-                                `${id_client} - [${nom_client}]`
+                              `${id_client} - [${nom_client}]`
                               " valueProp="id_client" placeholder="Choisir un client" label="nom_client"
                               track-by="nom_client" :searchable="true">
                             </Multiselect>
@@ -112,9 +111,9 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Apporteur:</label>
-                            <Multiselect @select="optionSelect" v-model="contrats.apporteur_id"
-                              :value="contrats.id_apporteur" :options="apporteurs" :custom-label="({ id_apporteur, nom_apporteur }) =>
-                                  `${id_apporteur} - [${nom_apporteur}]`
+                            <Multiselect @select="optionSelect" :value="contrats.id_apporteur" :options="apporteurs"
+                              :custom-label="({ id_apporteur, nom_apporteur }) =>
+                                `${id_apporteur} - [${nom_apporteur}]`
                                 " valueProp="id_apporteur" placeholder="Choisir un apporteur" label="nom_apporteur"
                               track-by="nom_apporteur" :searchable="true">
                             </Multiselect>
@@ -131,7 +130,7 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Reconduction</label>
-                            <Multiselect v-model="reconduction" :value="contrats.reconduction" :options="reconducts"
+                            <Multiselect :value="contrats.reconduction" :options="reconducts"
                               placeholder="Choisir la reconduction" :searchable="false" />
                           </div>
                         </div>
@@ -190,24 +189,25 @@
   </div>
 
   <!-- </div> -->
-  <!-- </div> -->
 </template>
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import Multiselect from "@vueform/multiselect";
 import axios from "axios";
-import Form from "vform";
-import { HasError } from "vform/src/components/bootstrap5";
+import { getClientSelect } from "../../services/clientservice";
+import { getApporteursExport } from "../../services/apporteurservice";
+import { getCompagniesExport } from "../../services/compagnieservice";
+import {
+  getBrancheList,
+} from "../../services/formservice";
 import { createToaster } from "@meforma/vue-toaster";
-// import $ from "jquery";
 const toaster = createToaster({
   /* options */
 });
 export default {
   components: {
     Multiselect,
-    HasError,
     Header,
     Sidebar
   },
@@ -215,55 +215,23 @@ export default {
     return {
       result: "",
       contrats: {},
-      infos: {},
-      sinistres: {},
-      filecontrats: {},
-      filesinistres: {},
-      automobiles: {},
-      count: "",
-      id_contrat: "",
+      clients: {},
+      branches: {},
+      apporteurs: {},
+      compagnies:{},
       value: null,
-
       typegarantie: [],
       localisations: {},
-      marques: {},
-      categories: {},
-      genres: {},
-      couleurs: {},
-      energies: {},
-
-      //Automobile
-      numero_immatriculation: "",
-      date_circulation: "",
-      identification_proprietaire: "",
-      adresse_proprietaire: "",
-      zone: "",
-      categorie_id: "",
-      marque_id: "",
-      genre_id: "",
-      type: "",
-      carosserie: "",
-      couleur_id: "",
-      energie_id: "",
-      //   branche_id: "",
-      place: "",
-      puissance: "",
-      charge: "",
-      valeur_neuf: "",
-      valeur_venale: "",
-      categorie_socio_pro: "",
-      permis: "",
-      option_garantie: "",
-      entree_le: "",
-      tierce: "",
-
       types: ["Technique", "Commercial"],
       reconducts: ["Oui", "Non"],
     };
   },
   created() {
     this.fetchData();
-    this.fetchTask();
+    this.getClients();
+    this.getBranche();
+    this.getApporteur();
+    this.getCompagnie()
   },
 
   methods: {
@@ -279,7 +247,7 @@ export default {
 
     editContrat() {
       axios
-        .patch("api/auth//updateContrat/" + this.$route.params.id_contrat, {
+        .post("/api/auth/updateContrat", {
           //Contrat
           id_branche: this.contrats.id_branche,
           id_client: this.contrats.id_client,
@@ -297,6 +265,7 @@ export default {
           cfga: this.contrats.cfga,
           taxes_totales: this.contrats.taxes_totales,
           gestion: this.contrats.gestion,
+          id_contrat :  this.$route.params.id_contrat
 
         })
         .then((response) => {
@@ -304,9 +273,8 @@ export default {
             toaster.success(`Contrat ajouté avec succès`, {
               position: "top-right",
             });
-            this.contrats = response.data;
           }
-          window.location.href = "/contrat";
+          this.$router.push("/listcontrat");
         })
         .catch((error) => {
           if (error.response.status === 422) {
@@ -325,50 +293,30 @@ export default {
         });
     },
 
-    fetchTask() {
-      var that = this;
-      axios
-        .all([
-          axios.get("/getCompagnie"),
-          axios.get("/getApporteur"),
-          axios.get("/getClient"),
-          axios.get("/getBranches"),
-          axios.get("/getLocalisations"),
-          axios.get("/getMarques"),
-          axios.get("/getCategories"),
-          axios.get("/getGenres"),
-          axios.get("/getCouleurs"),
-          axios.get("/getEnergies"),
-          axios.get("/getProfessions"),
-        ])
-        .then(
-          axios.spread(function (
-            compagnies,
-            apporteurs,
-            clients,
-            branches,
-            localisations,
-            marques,
-            categories,
-            genres,
-            couleurs,
-            energies,
-            professions
-          ) {
-            that.compagnies = compagnies.data;
-            that.apporteurs = apporteurs.data;
-            that.clients = clients.data;
-            that.branches = branches.data;
-            that.localisations = localisations.data;
-            that.marques = marques.data;
-            that.categories = categories.data;
-            that.genres = genres.data;
-            that.couleurs = couleurs.data;
-            that.energies = energies.data;
-            that.professions = professions.data;
-          })
-        );
+    getBranche() {
+      getBrancheList().then((result) => {
+        this.branches = result;
+      });
     },
+
+    getClients() {
+      getClientSelect().then((result) => {
+        this.clients = result;
+      });
+    },
+
+    getApporteur() {
+      getApporteursExport().then((result) => {
+        this.apporteurs = result;
+      });
+    },
+
+    getCompagnie() {
+      getCompagniesExport().then((result) => {
+        this.compagnies = result;
+      });
+    },
+
   },
 };
 </script>

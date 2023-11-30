@@ -39,10 +39,10 @@ class Contrat extends Model
         'commission_courtier',
     ];
 
-    protected $casts = [
-        'souscrit_le' => 'datetime:d/m/Y',
-        'expire_le' => 'datetime:d/m/Y',
-    ];
+    // protected $casts = [
+    //     'souscrit_le' => 'datetime:d/m/Y',
+    //     'expire_le' => 'datetime:d/m/Y',
+    // ];
 
     public function automobiles() {
         return $this->belongsToMany(Automobile::class,'automobile_contrats', 'id_automobile','id_contrat');

@@ -170,8 +170,8 @@ export default {
 
     storeCompagnie() {
       const token = localStorage.getItem("token");
-      const userId = localStorage.getItem("id");
-      const entrepriseId = localStorage.getItem("entreprise");
+      const userId = AppStorage.getId();
+      const entrepriseId = AppStorage.getEntreprise();
 
 
       let test = JSON.parse(JSON.stringify(this.branches));
