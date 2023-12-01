@@ -831,7 +831,7 @@ class ContratController extends Controller
 
         $prime = $request->prime_nette + $request->accessoires + $request->frais_courtier + $request->taxes_totales + $request->cfga;
 
-        $contrats = Contrat::where('id_contrat', $id_contrat)->update([
+        Contrat::where('id_contrat', $id_contrat)->update([
             'numero_police' => request('numero_police'),
             'souscrit_le' => request('souscrit_le'),
             'effet_police' => request('effet_police'),
@@ -849,25 +849,6 @@ class ContratController extends Controller
             'gestion' => request('gestion'),
             'commission_apporteur' => $commissionapporteur,
         ]);
-
-        // $contrats = Contrat::find($id_contrat);
-        // $contrats->numero_police = request('numero_police');
-        // $contrats->souscrit_le = request('souscrit_le');
-        // $contrats->effet_police = request('effet_police');
-        // $contrats->heure_police = request('heure_police');
-        // $contrats->expire_le = request('expire_le');
-        // $contrats->reconduction = request('reconduction');
-        // $contrats->id_compagnie = request('id_compagnie');
-        // $contrats->id_apporteur = request('id_apporteur');
-        // $contrats->prime_nette = request('prime_nette');
-        // $contrats->frais_courtier = request('frais_courtier');
-        // $contrats->accessoires = request('accessoires');
-        // $contrats->taxes_totales = request('taxes_totales');
-        // $contrats->primes_ttc = $prime;
-        // $contrats->commission_courtier = $commissioncompagnie;
-        // $contrats->gestion = request('gestion');
-        // $contrats->commission_apporteur = $commissionapporteur;
-        // $contrats->save();
 
         // Récupérer l'id de l'avenant
 
