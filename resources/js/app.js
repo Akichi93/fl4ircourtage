@@ -1,6 +1,7 @@
 require('./bootstrap');
 
 import { createApp } from "vue";
+import { createPinia } from 'pinia';
 import router from "./routers";
 import VueHtmlToPaper from 'vue-html-to-paper';
 
@@ -72,6 +73,8 @@ const options = {
 import User from '../js/utils/helpers/User';
 window.User = User
 
+const pinia = createPinia();
+
 
 createApp({
     components: {
@@ -122,4 +125,5 @@ createApp({
 }).use(router)
     .use(BootstrapVue3)
     .use(VueHtmlToPaper, options)
+    .use(pinia)
     .mount('#app');

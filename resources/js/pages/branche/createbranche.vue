@@ -66,6 +66,7 @@
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import { postBranche } from "../../services/brancheservice";
+import { useBranchesStore } from "../../store/branche"; // Importez le magasin Pinia
 import { createToaster } from "@meforma/vue-toaster";
 // import $ from "jquery";
 const toaster = createToaster({
@@ -81,15 +82,14 @@ export default {
       },
     };
   },
-  created() {
-    if (!User.loggedIn()) {
-      this.$router.push({ name: "/" });
-    }
-  },
   methods: {
-    storeBranche: function () {
+    storeBranche() {
+      const branchesStore = useBranchesStore();
       postBranche(this.form)
         .then((response) => {
+          // Utilisez le magasin Pinia pour ajouter la branche
+          useBranchesStore().addBranch(response);
+
           this.$router.push("/listbranche");
           toaster.success(`Branche ajouté avec succès`, {
             position: "top-right",
