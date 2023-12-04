@@ -8,6 +8,8 @@ import VueHtmlToPaper from 'vue-html-to-paper';
 import BootstrapVue3 from 'bootstrap-vue-3'
 // import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
+
+
 // import login
 import login from "../js/pages/auth/login";
 import register from "../js/pages/auth/register";
@@ -51,7 +53,7 @@ import listuser from "../js/pages/users/listuser";
 import profil from "../js/pages/users/profil";
 import entreprise from "../js/pages/parametre/entreprise";
 import upload from "../js/pages/uploads/upload";
-import reporting from "../js/pages/statistiques/reporting"
+import reporting from "../js/pages/statistiques/reporting";
 
 const options = {
     name: '_blank',

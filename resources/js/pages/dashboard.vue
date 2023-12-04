@@ -202,25 +202,25 @@ export default {
   },
   name: "dashboard",
   components: { Header, Sidebar, Bar },
-  mounted() {
-    window.addEventListener('online', this.updateOnlineStatus);
-    window.addEventListener('offline', this.updateOnlineStatus);
-    this.updateOnlineStatus();
-  },
-  beforeDestroy() {
-    window.removeEventListener('online', this.updateOnlineStatus);
-    window.removeEventListener('offline', this.updateOnlineStatus);
-  },
+  // mounted() {
+  //   window.addEventListener('online', this.updateOnlineStatus);
+  //   window.addEventListener('offline', this.updateOnlineStatus);
+  //   this.updateOnlineStatus();
+  // },
+  // beforeDestroy() {
+  //   window.removeEventListener('online', this.updateOnlineStatus);
+  //   window.removeEventListener('offline', this.updateOnlineStatus);
+  // },
   methods: {
-    updateOnlineStatus() {
-      this.isOnline = navigator.onLine;
+    // updateOnlineStatus() {
+    //   this.isOnline = navigator.onLine;
 
-      if (this.isOnline) {
-        toaster.success('Vous êtes connecté à Internet');
-      } else {
-        toaster.error('Vous n\'êtes pas connecté à Internet. Veuillez vous connecter.');
-      }
-    },
+    //   if (this.isOnline) {
+    //     toaster.success('Vous êtes connecté à Internet');
+    //   } else {
+    //     toaster.error('Vous n\'êtes pas connecté à Internet. Veuillez vous connecter.');
+    //   }
+    // },
 
     getCategory: function () {
       const token = localStorage.getItem("token");
