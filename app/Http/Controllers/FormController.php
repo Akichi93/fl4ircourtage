@@ -17,7 +17,6 @@ use App\Repositories\FormRepository;
 use App\Http\Requests\BrancheRequest;
 use Symfony\Component\HttpFoundation\Response;
 
-
 class FormController extends Controller
 {
     protected $localisation;
@@ -502,6 +501,8 @@ class FormController extends Controller
         // Validation du formulaire
         $validated = $request->validated();
 
+        $user =  JWTAuth::parseToken()->authenticate();
+
         // Récupération des données
         $data = $request->all();
 
@@ -509,7 +510,12 @@ class FormController extends Controller
         $Data = $this->branche->postBranches($data);
 
         if ($Data) {
-            $branches = Branche::where('supprimer_branche', '=', '0')->orderBy('id_branche', 'DESC')->get();
+            $branches = Branche::where('supprimer_branche', '=', '0')->where('id_entreprise', $user->id_entreprise)->orderBy('id_branche', 'DESC')->get();
+
+            // $veriforder = Order::where([
+            //     ['user_id', $data['user_id']],
+            //     ['cart_id', $data['cart_id']],
+            // ])->count();
 
             return response()->json([
                 'success' => true,

@@ -19,6 +19,7 @@ use App\Models\TauxApporteur;
 use App\Models\TauxCompagnie;
 use Illuminate\Support\Facades\Auth;
 use JasonGuru\LaravelMakeRepository\Repository\BaseRepository;
+use Tymon\JWTAuth\Facades\JWTAuth;
 //use Your Model
 
 /**
@@ -205,7 +206,7 @@ class FormRepository extends BaseRepository
             return response()->json(['message' => 'Couleur existante'], 422);
         } else {
             $min = strtoupper($data['ajout_couleur']);
-            
+
             $Couleurs = new Couleur();
             $Couleurs->couleur = $min;
             $Couleurs->save();
@@ -248,76 +249,78 @@ class FormRepository extends BaseRepository
 
     public function postBranches(array $data)
     {
+        $user =  JWTAuth::parseToken()->authenticate();
+
         $branche = $data['nom_branche'];
-        if (Branche::where('nom_branche', '=', $branche)->where('id_entreprise', '=', Auth::user()->id_entreprise)->count() > 0) {
+        if (Branche::where('nom_branche', '=', $branche)->where('id_entreprise', '=', $user->id_entreprise)->count() > 0) {
             return response()->json(['message' => 'Branche existante'], 422);
-        } else {
-            $min = strtoupper($data['nom_branche']);
-        
-            $branches = new Branche();
-            $branches->nom_branche = $min;
-            $branches->id_entreprise = Auth::user()->id_entreprise;
-            $branches->save();
+        }
+        $min = strtoupper($data['nom_branche']);
 
-            $id = $branches->id;
+        $branches = new Branche();
+        $branches->nom_branche = $min;
+        $branches->id_entreprise = Auth::user()->id_entreprise;
+        $branches->save();
 
-            $now = now();
+        $id = $branches->id;
 
-            $logs = new Log();
-            $logs->id_entreprise = Auth::user()->id_entreprise;
-            $logs->user_id = Auth::user()->id;
-            $logs->date_log = $now;
-            $logs->type = 'BRANCHE';
-            $logs->action = 'CREATION DE BRANCHE';
-            $logs->save();
+        $now = now();
 
-
-            // Verifier si des apporteurs et compagnies existent
-            $apporteurs = Apporteur::where('id_entreprise', Auth::user()->id_entreprise)->count();
-            if ($apporteurs > 0) {
-                //Recuperer les permissions du rôle
-                $idapporteur = Apporteur::select('id_apporteur')
-                    ->where('id_entreprise', Auth::user()->id_entreprise)
-                    ->get();
-
-                // dd($permissions);
-                foreach ($idapporteur as $get) {
-                    $qwerty[] = $get->id_apporteur;
-                }
+        $logs = new Log();
+        $logs->id_entreprise = $user->id_entreprise;
+        $logs->user_id = Auth::user()->id;
+        $logs->date_log = $now;
+        $logs->type = 'BRANCHE';
+        $logs->action = 'CREATION DE BRANCHE';
+        $logs->save();
 
 
-                $lastID = Branche::where('id_entreprise', Auth::user()->id_entreprise)->max('id_branche');
+        // Verifier si des apporteurs et compagnies existent
+        $apporteurs = Apporteur::where('id_entreprise', Auth::user()->id_entreprise)->count();
+        if ($apporteurs > 0) {
+            //Recuperer les permissions du rôle
+            $idapporteur = Apporteur::select('id_apporteur')
+                ->where('id_entreprise', Auth::user()->id_entreprise)
+                ->get();
 
-                // Ajout des permissions
-                for ($i = 0; $i < count($qwerty); $i++) {
-                    $assoc = new TauxApporteur();
-                    $assoc->id_branche = $lastID;
-                    $assoc->id_apporteur = $qwerty[$i];
-                    $assoc->taux = 0;
-                    $assoc->save();
-                }
+            // dd($permissions);
+            foreach ($idapporteur as $get) {
+                $qwerty[] = $get->id_apporteur;
             }
-            $compagnies = Compagnie::where('id_entreprise', Auth::user()->id_entreprise)->count();
 
-            if ($compagnies > 0) {
-                //Recuperer les compagnies de l'entreprise
-                $idcompagnie = Compagnie::select('id_compagnie')
-                    ->where('id_entreprise', Auth::user()->id_entreprise)
-                    ->get();
 
-                foreach ($idcompagnie as $get) {
-                    $azerty[] = $get->id_compagnie;
-                }
+            $lastID = Branche::where('id_entreprise', Auth::user()->id_entreprise)->max('id_branche');
 
-                // Ajout des taux compagnies
-                for ($i = 0; $i < count($azerty); $i++) {
-                    $assoc = new TauxCompagnie();
-                    $assoc->id_branche = $lastID;
-                    $assoc->id_compagnie = $azerty[$i];
-                    $assoc->tauxcomp = 0;
-                    $assoc->save();
-                }
+            // Ajout des permissions
+            for ($i = 0; $i < count($qwerty); $i++) {
+                $assoc = new TauxApporteur();
+                $assoc->id_branche = $lastID;
+                $assoc->id_apporteur = $qwerty[$i];
+                $assoc->taux = 0;
+                $assoc->save();
             }
+        }
+        $compagnies = Compagnie::where('id_entreprise', Auth::user()->id_entreprise)->count();
+
+        if ($compagnies > 0) {
+            //Recuperer les compagnies de l'entreprise
+            $idcompagnie = Compagnie::select('id_compagnie')
+                ->where('id_entreprise', Auth::user()->id_entreprise)
+                ->get();
+
+            foreach ($idcompagnie as $get) {
+                $azerty[] = $get->id_compagnie;
+            }
+
+            // Ajout des taux compagnies
+            for ($i = 0; $i < count($azerty); $i++) {
+                $assoc = new TauxCompagnie();
+                $assoc->id_branche = $lastID;
+                $assoc->id_compagnie = $azerty[$i];
+                $assoc->tauxcomp = 0;
+                $assoc->save();
+            }
+
             // dd($compagnies);
             return $branches;
         }
