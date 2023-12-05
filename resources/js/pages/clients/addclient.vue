@@ -9,77 +9,92 @@
           </button>
         </div>
         <div class="modal-body">
-       
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Civilité</label>
-                  <civilitecomponent :placeholder="'selectionnez une civilité'" v-model="civilite"></civilitecomponent>
-                </div>
-              </div>
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Nom complet du client</label>
-                  <input type="text" class="form-control" placeholder="Entrez le nom du client" v-model="nom_client" />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Boîte postal</label>
-                  <input type="text" class="form-control" placeholder="Entrez la boîte postale" v-model="postal_client" />
-                </div>
-              </div>
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Téléphone</label>
-                  <inputText :placeholder="'téléphone'" v-model="tel_client"></inputText>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Adresse</label>
-                  <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="adresse_client"></adressecomponent>
-                </div>
-              </div>
 
-            
-            </div>
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Profession</label>
-                  <professioncomponent :placeholder="'selectionnez une profession'" v-model="profession_client">
-                  </professioncomponent>
-                </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Civilité</label>
+                <civilitecomponent :placeholder="'selectionnez une civilité'" v-model="civilite"></civilitecomponent>
               </div>
-             
             </div>
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Email</label>
-                  <input type="text" class="form-control" placeholder="Email du client" v-model="email_client" />
-                </div>
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Nom complet du client</label>
+                <input type="text" class="form-control" placeholder="Entrez le nom du client" v-model="nom_client" />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Boîte postal</label>
+                <input type="text" class="form-control" placeholder="Entrez la boîte postale" v-model="postal_client" />
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Téléphone</label>
+                <inputText :placeholder="'téléphone'" v-model="tel_client"></inputText>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-9">
+              <div class="form-group">
+                <label>Adresse</label>
+                <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="adresse_client"></adressecomponent>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <button type="button" class="btn btn-primary" style="margin-top: 25px">
+                  Ajouter
+                </button>
               </div>
             </div>
 
-            <div class="form-group">
-              <label>Fax</label>
-              <input type="text" class="form-control" placeholder="fax du client" v-model="fax_client" />
+
+          </div>
+          <div class="row">
+            <div class="col-sm-9">
+              <div class="form-group">
+                <label>Profession</label>
+                <professioncomponent :placeholder="'selectionnez une profession'" v-model="profession_client">
+                </professioncomponent>
+              </div>
             </div>
-            <div class="submit-section">
-              <button type="button" class="btn btn-primary cancel-btn" data-bs-dismiss="modal" aria-label="Close">
-                Annuler
-              </button>
-              <button type="button" class="btn btn-primary submit-btn" @click="storeClient" data-bs-dismiss="modal">
-                Ajouter
-              </button>
+            <div class="col-md-3">
+              <div class="form-group">
+                <button type="button" class="btn btn-primary" style="margin-top: 25px">
+                  Ajouter
+                </button>
+              </div>
             </div>
+
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Email</label>
+                <input type="text" class="form-control" placeholder="Email du client" v-model="email_client" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Fax</label>
+            <input type="text" class="form-control" placeholder="fax du client" v-model="fax_client" />
+          </div>
+          <div class="submit-section">
+            <button type="button" class="btn btn-primary cancel-btn" data-bs-dismiss="modal" aria-label="Close">
+              Annuler
+            </button>
+            <button type="button" class="btn btn-primary submit-btn" @click="storeClient" data-bs-dismiss="modal">
+              Ajouter
+            </button>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
