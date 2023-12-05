@@ -104,10 +104,8 @@ export default {
     this.getRoleconnect();
   },
   methods:{
-    getRoleconnect() {
-      getRoleActif().then((result) => {
-        this.roleactif = result;
-      });
+   async getRoleconnect() {
+     this.roleactif = await getRoleActif();
     },
   }
 };

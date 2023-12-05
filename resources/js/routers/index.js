@@ -1,4 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useClientFileStore } from '../store/clientfile';
+import { createToaster } from "@meforma/vue-toaster";
+const toaster = createToaster({
+  /* options */
+});
 import login from "../pages/auth/login";
 import register from "../pages/auth/register";
 import forgot from "../pages/auth/forgot";
@@ -43,14 +48,14 @@ import listuser from "../pages/users/listuser";
 import profil from "../pages/users/profil";
 import entreprise from "../pages/parametre/entreprise";
 import upload from "../pages/uploads/upload";
-import reporting from "../pages/statistiques/reporting"
+import reporting from "../pages/statistiques/reporting";
 
 const routes = [
   {
     path: '/',
     name: 'welcome',
     component: login,
-    meta: { requiresAuth: false }, 
+    meta: { requiresAuth: false },
   },
   {
     path: '/register',
@@ -68,7 +73,7 @@ const routes = [
     path: '/home',
     name: 'dashboard',
     component: dashboard,
-    meta: { requiresAuth: true }, 
+    meta: { requiresAuth: true },
   },
   {
     path: '/logout',
@@ -98,7 +103,7 @@ const routes = [
     path: '/listapporteur',
     name: 'listapporteur',
     component: listapporteur,
-    meta: { requiresAuth: true }, 
+    meta: { requiresAuth: true },
   },
   {
     path: '/createapporteur',
@@ -331,21 +336,33 @@ const routes = [
 ];
 
 
-
-
-
 const router = createRouter({
   history: createWebHistory(),
   routes
 });
 
+
 // Navigation guard
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth && !User.loggedIn()) {
     next({ name: 'welcome' }); // Redirect to welcome page if not logged in
   } else if (!to.meta.requiresAuth && User.loggedIn()) {
     next({ name: 'dashboard' }); // Redirect to dashboard if logged in and trying to access a non-authenticated route
   } else {
+    const clientFileStore = useClientFileStore();
+
+    if (clientFileStore.isLoadingFile) {
+      // Si le fichier est en cours de chargement, empêcher la navigation
+      await toaster.warning("Fichier en cours de chargement. Veuillez patienter.", {
+        position: "top-right",
+      });
+      next(false);
+    } else {
+      // Sinon, permettre la navigation
+      next();
+    }
+
+    //else
     next(); // Proceed with the navigation
   }
 });

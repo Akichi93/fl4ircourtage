@@ -1,13 +1,15 @@
 require('./bootstrap');
 
 import { createApp } from "vue";
-// import { createPinia } from 'pinia';
+import { createPinia } from 'pinia';
 import router from "./routers";
 import VueHtmlToPaper from 'vue-html-to-paper';
 
 import BootstrapVue3 from 'bootstrap-vue-3'
 // import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
+
+
 
 
 // import login
@@ -55,6 +57,7 @@ import entreprise from "../js/pages/parametre/entreprise";
 import upload from "../js/pages/uploads/upload";
 import reporting from "../js/pages/statistiques/reporting";
 
+
 const options = {
     name: '_blank',
     specs: [
@@ -75,7 +78,7 @@ const options = {
 import User from '../js/utils/helpers/User';
 window.User = User
 
-// const pinia = createPinia();
+const pinia = createPinia();
 
 
 createApp({
@@ -127,5 +130,5 @@ createApp({
 }).use(router)
     .use(BootstrapVue3)
     .use(VueHtmlToPaper, options)
-    // .use(pinia)
+    .use(pinia)
     .mount('#app');

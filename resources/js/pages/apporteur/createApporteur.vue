@@ -84,16 +84,28 @@
                           </div>
 
                           <div class="row">
-                            <div class="col-md-9 adresse">
+                            <div class="col-md-9">
                               <div class="form-group">
                                 <label>Adresse</label>
-                                <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="adresse_apporteur">
-                                </adressecomponent>
+                                <Multiselect v-model="zone" :options="localisations" :custom-label="({ id_localisation, nom_ville }) =>
+                                  `${id_localisation} - [${nom_ville}]`
+                                  " valueProp="nom_ville" placeholder="Selectionnez zone" label="nom_ville"
+                                  track-by="nom_ville" :searchable="true">
+                                </Multiselect>
                                 <p style="color: red" class="text-red" v-if="errors.adresse_apporteur"
                                   v-text="errors.adresse_apporteur[0]"></p>
                               </div>
                             </div>
-                           
+
+                            <div class="col-md-3">
+                              <div class="form-group">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                  data-bs-target="#addProspect" style="margin-top: 25px">
+                                  Ajouter
+                                </button>
+                              </div>
+                            </div>
+
                           </div>
                         </div>
                       </div>
@@ -113,8 +125,8 @@
                   <div class="col-md-6" v-for="branche in branches" :key="branche.id_branche">
                     <div class="form-group">
                       <label>{{ branche.nom_branche }}</label>
-                      <input type="number" class="form-control" placeholder="Entrez le taux" :key="branche.id_branche" step="0.01" min="0" max="1000"
-                        v-model="branche.value" />
+                      <input type="number" class="form-control" placeholder="Entrez le taux" :key="branche.id_branche"
+                        step="0.01" min="0" max="1000" v-model="branche.value" />
                     </div>
                   </div>
                 </div>
@@ -129,17 +141,18 @@
         </div>
       </div>
     </div>
-    <addadrese></addadrese>
+    <addadresse @adresse-add="handleClientsChange"></addadresse>
   </div>
 </template>
 <script>
+import Multiselect from "@vueform/multiselect";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import inputText from "../../components/input/inputText.vue";
-import adressecomponent from "../../components/select/adressecomponent.vue";
-import { getBrancheList } from "../../services/formservice";
+import { getBrancheList, getAdresseList } from "../../services/formservice";
 import addadresse from "../../pages/form/addadresse.vue";
 import { createToaster } from "@meforma/vue-toaster";
+
 import AppStorage from '../../utils/helpers/AppStorage';
 const toaster = createToaster({
   /* options */
@@ -165,6 +178,7 @@ export default {
   },
   created() {
     this.getBranche();
+    this.getAdresse();
   },
 
   methods: {
@@ -231,14 +245,20 @@ export default {
           // }
         });
     },
+    getAdresse() {
+      getAdresseList().then((result) => {
+        this.localisations = result;
+      });
+    },
+
     getBranche: function () {
       getBrancheList().then((result) => {
         this.branches = result;
-  
+
       });
     },
   },
-  components: { Header, Sidebar, inputText, adressecomponent, addadresse },
+  components: { Header, Sidebar, inputText, addadresse, Multiselect },
 };
 </script>
   
