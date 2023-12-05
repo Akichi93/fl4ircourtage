@@ -353,7 +353,7 @@ router.beforeEach(async (to, from, next) => {
 
     if (clientFileStore.isLoadingFile) {
       // Si le fichier est en cours de chargement, empêcher la navigation
-      await toaster.warning("Fichier en cours de chargement. Veuillez patienter.", {
+      await toaster.warning("Base des clients en cours de chargement. Veuillez patienter.", {
         position: "top-right",
       });
       next(false);
