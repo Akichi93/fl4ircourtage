@@ -27,25 +27,15 @@
           <div class="col-md-8"></div>
           <div class="col-md-4">
             <div class="add-emp-section">
-              <router-link
-                to="/createcontrat"
-                class="btn btn-success btn-add-emp"
-                style="width: auto"
-                ><i class="fas fa-plus"></i> Ajouter contrat</router-link
-              >
+              <router-link to="/createcontrat" class="btn btn-success btn-add-emp" style="width: auto"><i
+                  class="fas fa-plus"></i> Ajouter contrat</router-link>
             </div>
           </div>
         </div>
 
         <div class="row">
           <div class="col-row">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Rechercher un contrat"
-              v-model="q"
-              @keyup="searchtask"
-            />
+            <input type="text" class="form-control" placeholder="Rechercher un contrat" v-model="q" @keyup="searchtask" />
           </div>
           <div class="col-md-12" style="display: flex; justify-content: end">
             <contratexport></contratexport>
@@ -65,10 +55,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template
-                    v-for="contrat in contrats.data"
-                    :key="contrat.id_contrat"
-                  >
+                  <template v-for="contrat in contrats.data" :key="contrat.id_contrat">
                     <tr>
                       <td v-text="contrat.numero_client"></td>
                       <td v-text="contrat.nom_client"></td>
@@ -77,38 +64,24 @@
                       <td v-text="contrat.effet_police"></td>
                       <td v-text="contrat.expire_le"></td>
                       <td class="text-end ico-sec d-flex justify-content-end">
-                        <router-link
-                          :to="{
-                            name: 'detailscontrat',
-                            params: { id_contrat: contrat.id_contrat },
-                          }"
-                          ><i class="fas fa-info"></i
-                        ></router-link>
+                        <router-link :to="{
+                          name: 'detailscontrat',
+                          params: { id_contrat: contrat.id_contrat },
+                        }"><i class="fas fa-info"></i></router-link>
 
-                        <router-link
-                          :to="{
-                            name: 'avenants',
-                            params: { id_contrat: contrat.id_contrat },
-                          }"
-                          ><i class="fas fa-paper-plane"></i
-                        ></router-link>
+                        <router-link :to="{
+                          name: 'avenants',
+                          params: { id_contrat: contrat.id_contrat },
+                        }"><i class="fas fa-paper-plane"></i></router-link>
 
-                        <router-link
-                          :to="{
-                            name: 'editcontrat',
-                            params: { id_contrat: contrat.id_contrat },
-                          }"
-                          ><i class="fas fa-pen"></i
-                        ></router-link>
+                        <router-link :to="{
+                          name: 'editcontrat',
+                          params: { id_contrat: contrat.id_contrat },
+                        }"><i class="fas fa-pen"></i></router-link>
 
-                        <a
-                          href="#"
-                          v-if="roleactif == 'ADMIN'" 
-                          @click="editContrat(contrat.id_contrat)"
-                          data-bs-toggle="modal"
-                          data-bs-target="#delete_contrat"
-                          title="Supprimer"
-                          ><i class="fas fa-trash-alt"></i>
+                        <a href="#" v-if="roleactif == 'ADMIN'" @click="editContrat(contrat.id_contrat)"
+                          data-bs-toggle="modal" data-bs-target="#delete_contrat" title="Supprimer"><i
+                            class="fas fa-trash-alt"></i>
                         </a>
                       </td>
                     </tr>
@@ -119,14 +92,8 @@
 
             <deletecontrat v-bind:contrattoedit="contrattoedit"></deletecontrat>
 
-            <pagination
-              align="center"
-              :data="contrats"
-              :limit="5"
-              :current_page="contrats.current_page"
-              :last_page="contrats.last_page"
-              @pagination-change-page="getContrat"
-            >
+            <pagination align="center" :data="contrats" :limit="5" :current_page="contrats.current_page"
+              :last_page="contrats.last_page" @pagination-change-page="getContrat">
             </pagination>
           </div>
         </div>
@@ -156,7 +123,7 @@ export default {
       contrats: [],
       contrattoedit: "",
       q: "",
-      roleactif:""
+      roleactif: ""
     };
   },
   created() {
@@ -186,10 +153,26 @@ export default {
     },
 
     searchtask() {
-      axios
-        .get("/api/auth/contratList/" + this.q)
-        .then((response) => (this.contrats = response.data))
-        .catch((error) => console.log(error));
+      const token = localStorage.getItem("token");
+
+      // Configurez les en-têtes de la requête
+      const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+      };
+      if (this.q.length > 0) {
+        axios
+          .get("/api/auth/contratList/" + this.q, { headers })
+          .then((response) => (
+            this.contrats = response.data.data
+          ))
+          .catch((error) => console.log(error));
+      } else {
+        axios
+          .get("/api/auth/contratList/", { headers })
+          .then((response) => (this.contrats = response.data))
+          .catch((error) => console.log(error));
+      }
     },
   },
 };

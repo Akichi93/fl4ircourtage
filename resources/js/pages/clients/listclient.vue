@@ -135,7 +135,7 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    searchtask(page = 1) {
+    searchtask() {
       const token = localStorage.getItem("token");
 
       // Configurez les en-têtes de la requête
@@ -143,24 +143,17 @@ export default {
         Authorization: "Bearer " + token,
         "x-access-token": token,
       };
-
       if (this.q.length > 0) {
         axios
-          .get("/api/auth/clientList/?page=" + page + this.q, { headers })
-          .then(
-            (response) => (
-              (this.clients = response.data)
-            )
-          )
+          .get("/api/auth/clientList/" + this.q, { headers })
+          .then((response) => (
+            this.clients = response.data.data
+          ))
           .catch((error) => console.log(error));
       } else {
         axios
-          .get("/api/auth/clientList/?page=" + page, { headers })
-          .then(
-            (response) => (.3
-              (this.clients = response.data)
-            )
-          )
+          .get("/api/auth/clientList/", { headers })
+          .then((response) => (this.clients = response.data))
           .catch((error) => console.log(error));
       }
     },

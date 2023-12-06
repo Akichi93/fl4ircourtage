@@ -58,6 +58,7 @@ Route::group([
         Route::get('editBranche/{id_branche}', 'editBranche');
         Route::patch('deleteBranche/{id_branche}', 'deleteBranche'); // Suppression d'une branche 
         Route::patch('updateBranche/{id_branche}', 'updateBranche'); // Update d'une branche
+        Route::get('getBranche', 'getBranche'); // Obtenir les branches
     });
 
     //Form

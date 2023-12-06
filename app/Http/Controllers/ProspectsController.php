@@ -15,13 +15,6 @@ class ProspectsController extends Controller
 {
     public function prospectList(Request $request)
     {
-
-        // Get the token from the "Authorization" header
-        // $token = $request->header('Authorization');
-
-        // if (Str::startsWith($token, 'Bearer ')) {
-        //     $token = Str::substr($token, 7);
-        // }
         $user =  JWTAuth::parseToken()->authenticate();
 
 

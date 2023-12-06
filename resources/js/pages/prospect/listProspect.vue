@@ -28,26 +28,16 @@
           <div class="col-md-8"></div>
           <div class="col-md-4">
             <div class="add-emp-section">
-              <router-link
-                to="/createprospect"
-                class="btn btn-success btn-add-emp"
-                style="width: auto"
-              >
-                <i class="fas fa-plus"></i>Ajouter prospect</router-link
-              >
+              <router-link to="/createprospect" class="btn btn-success btn-add-emp" style="width: auto">
+                <i class="fas fa-plus"></i>Ajouter prospect</router-link>
             </div>
           </div>
         </div>
 
         <div class="row">
           <div class="col-row">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Rechercher un prospect"
-              v-model="q"
-              @keyup="searchtask"
-            />
+            <input type="text" class="form-control" placeholder="Rechercher un prospect" v-model="q"
+              @keyup="searchtask" />
           </div>
           <div class="col-md-12" style="display: flex; justify-content: end">
             <prospectexport></prospectexport>
@@ -67,10 +57,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template
-                    v-for="(prospect, index) in prospects.data"
-                    :key="index"
-                  >
+                  <template v-for="(prospect, index) in prospects.data" :key="index">
                     <tr>
                       <td v-text="prospect.nom_prospect"></td>
                       <td v-text="prospect.adresse_prospect"></td>
@@ -85,30 +72,15 @@
                       <td v-text="prospect.profession_prospect"></td>
                       <td v-text="prospect.statut"></td>
                       <td class="text-end ico-sec d-flex justify-content-end">
-                        <a
-                          href="#"
-                          v-if="prospect.etat == 0"
-                          @click="editProspect(prospect.id_prospect)"
-                          data-bs-toggle="modal"
-                          data-bs-target="#delete_project"
-                          title="Admettre comme un client"
-                          ><i class="fas fa-check"></i>
+                        <a href="#" v-if="prospect.etat == 0" @click="editProspect(prospect.id_prospect)"
+                          data-bs-toggle="modal" data-bs-target="#delete_project" title="Admettre comme un client"><i
+                            class="fas fa-check"></i>
                         </a>
-                        <a
-                          href="#"
-                          data-bs-toggle="modal"
-                          data-bs-target="#edit_department"
-                          @click="editProspect(prospect.id_prospect)"
-                          title="Modifier"
-                          ><i class="fas fa-pen"></i>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#edit_department"
+                          @click="editProspect(prospect.id_prospect)" title="Modifier"><i class="fas fa-pen"></i>
                         </a>
-                        <a
-                          href="#"
-                          data-bs-toggle="modal"
-                          data-bs-target="#change_statut"
-                          @click="editProspect(prospect.id_prospect)"
-                          title="Changer d'etat"
-                          ><i class="fas fa-edit"></i>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#change_statut"
+                          @click="editProspect(prospect.id_prospect)" title="Changer d'etat"><i class="fas fa-edit"></i>
                         </a>
 
                         <router-link :to="{
@@ -116,15 +88,9 @@
                           params: { id_prospect: prospect.id_prospect },
 
                         }"><i class="fas fa-eye"></i></router-link>
-                    
-                        <a
-                          href="#"
-                          v-if="roleactif == 'ADMIN'"
-                          data-bs-toggle="modal"
-                          data-bs-target="#delete_prospect"
-                          @click="editProspect(prospect.id_prospect)"
-                          title="Modifier"
-                          ><i class="fas fa-trash-alt"></i>
+
+                        <a href="#" v-if="roleactif == 'ADMIN'" data-bs-toggle="modal" data-bs-target="#delete_prospect"
+                          @click="editProspect(prospect.id_prospect)" title="Modifier"><i class="fas fa-trash-alt"></i>
                         </a>
                       </td>
                     </tr>
@@ -132,22 +98,10 @@
                 </tbody>
               </table>
             </div>
-            <admettreProspect
-              v-bind:prospectoedit="prospectoedit"
-              @prospect-admettre="refresh"
-            ></admettreProspect>
-            <editProspect
-              v-bind:prospectoedit="prospectoedit"
-              @compagnie-updated="refresh"
-            ></editProspect>
-            <changeProspect
-              v-bind:prospectoedit="prospectoedit"
-              @prospect-change="refresh"
-            ></changeProspect>
-            <deleteProspect
-              v-bind:prospectoedit="prospectoedit"
-              @prospect-deleted="refresh"
-            ></deleteProspect>
+            <admettreProspect v-bind:prospectoedit="prospectoedit" @prospect-admettre="refresh"></admettreProspect>
+            <editProspect v-bind:prospectoedit="prospectoedit" @compagnie-updated="refresh"></editProspect>
+            <changeProspect v-bind:prospectoedit="prospectoedit" @prospect-change="refresh"></changeProspect>
+            <deleteProspect v-bind:prospectoedit="prospectoedit" @prospect-deleted="refresh"></deleteProspect>
 
             <pagination align="center" :data="prospects" :limit="5" :current_page="prospects.current_page"
               :last_page="prospects.last_page" @pagination-change-page="getProspects">
@@ -187,7 +141,7 @@ export default {
       prospects: {},
       prospectoedit: "",
       q: "",
-      roleactif:""
+      roleactif: ""
     };
   },
   created() {
@@ -216,10 +170,26 @@ export default {
     },
 
     searchtask() {
-      axios
-        .get("/api/auth/prospectList/" + this.q)
-        .then((response) => (this.prospects = response.data))
-        .catch((error) => console.log(error));
+      const token = localStorage.getItem("token");
+
+      // Configurez les en-têtes de la requête
+      const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+      };
+      if (this.q.length > 0) {
+        axios
+          .get("/api/auth/prospectList/" + this.q, { headers })
+          .then((response) => (
+            this.prospects = response.data.data
+          ))
+          .catch((error) => console.log(error));
+      } else {
+        axios
+          .get("/api/auth/prospectList/", { headers })
+          .then((response) => (this.prospects = response.data))
+          .catch((error) => console.log(error));
+      }
     },
 
     refresh(prospects) {

@@ -39,35 +39,22 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-sm-9 adresse">
+            <div class="col-sm-12">
               <div class="form-group">
                 <label>Adresse</label>
                 <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="adresse_client"></adressecomponent>
               </div>
             </div>
-            <div class="col-md-3 ajout">
-              <div class="form-group">
-                <button type="button" class="btn btn-primary" style="margin-top: 25px">
-                  Ajouter
-                </button>
-              </div>
-            </div>
+           
 
-
+           
           </div>
           <div class="row">
-            <div class="col-sm-9">
+            <div class="col-sm-12">
               <div class="form-group">
                 <label>Profession</label>
                 <professioncomponent :placeholder="'selectionnez une profession'" v-model="profession_client">
                 </professioncomponent>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="form-group">
-                <button type="button" class="btn btn-primary" style="margin-top: 25px">
-                  Ajouter
-                </button>
               </div>
             </div>
 
@@ -96,6 +83,8 @@
         </div>
 
       </div>
+
+     
     </div>
   </div>
 </template>

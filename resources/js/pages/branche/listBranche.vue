@@ -27,11 +27,7 @@
           <div class="col-md-8"></div>
           <div class="col-md-4">
             <div class="add-emp-section">
-              <router-link
-                to="/createbranche"
-                class="btn btn-success btn-add-emp"
-                style="width: auto"
-              >
+              <router-link to="/createbranche" class="btn btn-success btn-add-emp" style="width: auto">
                 Ajouter branche
               </router-link>
             </div>
@@ -39,11 +35,7 @@
         </div>
 
         <div class="row">
-          <searchbranche
-            :placeholder="'Rechercher une branche'"
-            v-model="q"
-            @keyup="searchtask"
-          ></searchbranche>
+          <searchbranche :placeholder="'Rechercher une branche'" v-model="q" @keyup="searchtask"></searchbranche>
           <div class="col-md-12" style="display: flex;justify-content: end;">
             <brancheexport></brancheexport>
           </div>
@@ -59,52 +51,29 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(branche, i) in branches.data" :key="i">
+                  <tr v-for="(branche, i) in branches" :key="i">
                     <td v-text="branche.id_branche"></td>
                     <td v-text="branche.nom_branche"></td>
                     <td class="text-end ico-sec d-flex justify-content-end">
-                      <a
-                        href="#"
-                        data-bs-toggle="modal"
-                        data-bs-target="#edit_branche"
-                        @click="editbranche(branche.id_branche)"
-                        ><i class="fas fa-pen"></i
-                      ></a>
-                      <a
-                        href="#"
-                        v-if="roleactif == 'ADMIN'"
-                        data-bs-toggle="modal"
-                        data-bs-target="#delete_branche"
-                        @click="editbranche(branche.id_branche)"
-                        ><i class="far fa-trash-alt"></i
-                      ></a>
+                      <a href="#" data-bs-toggle="modal" data-bs-target="#edit_branche"
+                        @click="editbranche(branche.id_branche)"><i class="fas fa-pen"></i></a>
+                      <a href="#" v-if="roleactif == 'ADMIN'" data-bs-toggle="modal" data-bs-target="#delete_branche"
+                        @click="editbranche(branche.id_branche)"><i class="far fa-trash-alt"></i></a>
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
-            <pagination
-              align="center"
-              :data="branches"
-              :limit="5"
-              :current_page="branches.current_page"
-              :last_page="branches.last_page"
-              @pagination-change-page="getBranches"
-            >
+            <pagination align="center" :data="branches" :limit="5" :current_page="branches.current_page"
+              :last_page="branches.last_page" @pagination-change-page="getBranches">
             </pagination>
           </div>
         </div>
       </div>
 
-      <editbranche
-        v-bind:branchetoedit="branchetoedit"
-        @task-updated="refresh"
-      ></editbranche>
-      <deletebranche
-        v-bind:branchetoedit="branchetoedit"
-        @task-delete="refresh"
-      ></deletebranche>
+      <editbranche v-bind:branchetoedit="branchetoedit" @task-updated="refresh"></editbranche>
+      <deletebranche v-bind:branchetoedit="branchetoedit" @task-delete="refresh"></deletebranche>
     </div>
   </div>
 </template>
@@ -124,7 +93,7 @@ export default {
       branches: [],
       branchetoedit: "",
       q: "",
-      roleactif:""
+      roleactif: ""
     };
   },
   created() {
@@ -134,7 +103,7 @@ export default {
   methods: {
     getBranches(page) {
       getBranchesList(page).then((result) => {
-        this.branches = result;
+        this.branches = result.data;
       });
     },
 
@@ -149,6 +118,7 @@ export default {
         .get("api/auth/editBranche/" + id_branche)
         .then((response) => {
           this.branchetoedit = response.data;
+
         })
         .catch((error) => console.log(error));
     },
@@ -164,7 +134,9 @@ export default {
       if (this.q.length > 0) {
         axios
           .get("/api/auth/branchesList/" + this.q, { headers })
-          .then((response) => (this.branches = response.data.data))
+          .then((response) => (
+            this.branches = response.data.data
+          ))
           .catch((error) => console.log(error));
       } else {
         axios

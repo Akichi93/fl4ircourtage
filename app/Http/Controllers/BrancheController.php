@@ -19,6 +19,7 @@ class BrancheController extends Controller
                 ->where('supprimer_branche', '=', '0')
                 ->where('nom_branche', 'like', '%' . request('q') . '%')
                 ->get();
+
             return response()->json($branches);
         } else {
             $branches = Branche::where('id_entreprise', $user->id_entreprise)
@@ -60,6 +61,18 @@ class BrancheController extends Controller
 
             return response()->json($branches);
         }
+    }
+
+    public function getBranche()
+    {
+        $user =  JWTAuth::parseToken()->authenticate();
+
+        $branches = Branche::where('id_entreprise', $user->id_entreprise)
+            ->where('supprimer_branche', 0)
+            ->where('id_entreprise', $user->id_entreprise)
+            ->get();
+
+        return response()->json($branches);
     }
 
     private function refresh()

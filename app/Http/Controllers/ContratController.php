@@ -38,7 +38,7 @@ class ContratController extends Controller
             $contrats['data'] =  Contrat::join("clients", 'contrats.id_client', '=', 'clients.id_client')
                 ->join("compagnies", 'contrats.id_compagnie', '=', 'compagnies.id_compagnie')
                 ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-                ->where('contratsid_entreprise', $user->id_entreprise)
+                ->where('contrats.id_entreprise', $user->id_entreprise)
                 ->where('supprimer_contrat', '=', '0')
                 ->where('numero_police', 'like', '%' . request('q') . '%')
                 ->orWhere('nom_client', 'like', '%' . request('q') . '%')

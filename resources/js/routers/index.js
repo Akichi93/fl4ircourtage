@@ -349,18 +349,18 @@ router.beforeEach(async (to, from, next) => {
   } else if (!to.meta.requiresAuth && User.loggedIn()) {
     next({ name: 'dashboard' }); // Redirect to dashboard if logged in and trying to access a non-authenticated route
   } else {
-    const clientFileStore = useClientFileStore();
+    // const clientFileStore = useClientFileStore();
 
-    if (clientFileStore.isLoadingFile) {
-      // Si le fichier est en cours de chargement, empêcher la navigation
-      await toaster.warning("Base des clients en cours de chargement. Veuillez patienter.", {
-        position: "top-right",
-      });
-      next(false);
-    } else {
-      // Sinon, permettre la navigation
-      next();
-    }
+    // if (clientFileStore.isLoadingFile) {
+    //   // Si le fichier est en cours de chargement, empêcher la navigation
+    //   await toaster.warning("Base des clients en cours de chargement. Veuillez patienter.", {
+    //     position: "top-right",
+    //   });
+    //   next(false);
+    // } else {
+    //   // Sinon, permettre la navigation
+    //   next();
+    // }
 
     //else
     next(); // Proceed with the navigation
