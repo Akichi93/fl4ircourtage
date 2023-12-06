@@ -49,6 +49,7 @@ import profil from "../pages/users/profil";
 import entreprise from "../pages/parametre/entreprise";
 import upload from "../pages/uploads/upload";
 import reporting from "../pages/statistiques/reporting";
+import listsalaire from "../pages/salaires/listsalaires"
 
 const routes = [
   {
@@ -331,6 +332,12 @@ const routes = [
     path: '/reporting',
     name: 'reporting',
     component: reporting,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/listsalaire',
+    name: 'listsalaire',
+    component: listsalaire,
     meta: { requiresAuth: true }
   },
 ];

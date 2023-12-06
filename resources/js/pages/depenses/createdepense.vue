@@ -100,10 +100,7 @@
 <script>
 import Multiselect from "@vueform/multiselect";
 import { createToaster } from "@meforma/vue-toaster";
-// import $ from "jquery";
-const toaster = createToaster({
-    /* options */
-});
+const toaster = createToaster({/* options */});
 
 export default {
     components: {
@@ -125,13 +122,10 @@ export default {
     created() {
         this.getCategory();
     },
-    mounted() {
-        this.getCategory();
-    },
     methods: {
         storeDepense() {
             axios
-                .post("/expenditures", {
+                .post("/api/auth/expenditures", {
                     id_catdep: this.category,
                     type_id: this.type_id,
                     date_operation: this.date_operation,
@@ -163,7 +157,7 @@ export default {
         },
 
         getCategory: function () {
-            axios.get("/catdepenses").then(
+            axios.get("/api/auth/catdepenses").then(
                 function (response) {
                     this.categories = response.data;
                 }.bind(this)
@@ -173,7 +167,7 @@ export default {
 
         getTypes: function () {
             axios
-                .post("/get-depense", {
+                .post("/api/auth/get-depense", {
                     id_catdep: this.category,
                 })
                 .then(

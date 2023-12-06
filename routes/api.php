@@ -13,13 +13,12 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\BrancheController;
 use App\Http\Controllers\ContratController;
-use App\Http\Controllers\ProspectController;
 use App\Http\Controllers\SinistreController;
 use App\Http\Controllers\ApporteurController;
 use App\Http\Controllers\CompagnieController;
 use App\Http\Controllers\ProspectsController;
 use App\Http\Controllers\EntrepriseController;
-
+use App\Http\Controllers\RhController;
 
 /*
 |--------------------------------------------------------------------------
@@ -249,13 +248,18 @@ Route::group([
         Route::post('changepassword', 'changepassword');
     });
 
-
-    // Salaires
-    Route::resource('salaires', SalaryController::class);
-    Route::controller(SalaryController::class)->group(function () {
+    // RH
+    Route::controller(RhController::class)->group(function () {
+        Route::get('listeSalaire', 'listeSalaire');
+        Route::post('postSalaire', 'postSalaire');
         Route::get('salairemoyen', 'salairemoyen');
         Route::get('nbresalaire', 'nbresalaire');
         Route::get('massesalariale', 'massesalariale');
+        Route::get('listeDepenses', 'listeDepenses');
+        Route::post('postDepense', 'postDepense');
+        Route::get('listeTypeDepense', 'listeTypeDepense');
+        Route::post('postTypeDepense', 'postTypeDepense');
+        Route::get('listeSecteurs', 'listeSecteurs');
     });
 
 

@@ -107,7 +107,6 @@
 <script>
 import Multiselect from "@vueform/multiselect";
 import { createToaster } from "@meforma/vue-toaster";
-// import $ from "jquery";
 const toaster = createToaster({
     /* options */
 });
@@ -128,19 +127,19 @@ export default {
     created() {
         this.fetchData();
     },
-    mounted() {
-        this.fetchData();
-    },
     methods: {
         storeCategorie() {
             axios
-                .post("/catdepenses/assoc/", {
+                .post("/api/auth/catdepenses/assoc/", {
                     categorie_id: this.categorie_id,
                     expense_id: this.expense_id,
                 })
                 .then((response) => {
                     this.fetchData();
                     // console.log(response.data);
+                    toaster.success(`Catégorie ajouté avec succès`, {
+                            position: "top-right",
+                        });
                 })
                 .catch((error) => {
                     // console.log(error.response.headers);
@@ -159,7 +158,7 @@ export default {
         },
         fetchData() {
             var that = this;
-            axios.all([axios.get("/catdepenses"), axios.get("/typexpenses"), axios.get("/getresult")]).then(
+            axios.all([axios.get("/api/auth/catdepenses"), axios.get("/api/auth/typexpenses"), axios.get("/api/auth/getresult")]).then(
                 axios.spread(function (categories, expenses, results) {
                     that.categories = categories.data;
                     that.expenses = expenses.data;

@@ -40,7 +40,7 @@
                         <div class="card flex-fill tickets-card">
                             <div class="card-header">
                                 <div class="text-center w-100 p-3">
-                                    <h2><a href="/salary">Salaires</a></h2>
+                                    <h2><router-link to="/listsalaire">Salaires</router-link></h2>
                                     <h2 class="bl-text mb-1">Ce module permet de lister les entreprises</h2>
                                 </div>
                             </div>

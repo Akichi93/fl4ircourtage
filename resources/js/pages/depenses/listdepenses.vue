@@ -77,15 +77,12 @@ export default {
     created() {
         this.fetchData();
     },
-    mounted() {
-        this.fetchData();
-    },
     methods: {
         fetchData() {
             this.error = this.branches = null;
             this.loading = true;
             axios
-                .get("/expenditures")
+                .get("/api/auth/expenditures")
                 .then((response) => {
                     this.expenditures = response.data;
                 })

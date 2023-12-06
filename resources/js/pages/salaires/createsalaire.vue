@@ -7,7 +7,8 @@
                     <h3>Salaires</h3>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/home">Tableau de bord</a></li>
+
+                            <li class="breadcrumb-item"><router-link to="/home">Tableau de bord</router-link></li>
                             <li class="breadcrumb-item active" aria-current="page">Salaires</li>
                         </ol>
                     </nav>
@@ -24,69 +25,67 @@
                         <h4 class="card-title mb-0">Ajoût de salaire</h4>
                     </div>
                     <div class="card-body">
-                        <form action="#">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Nom:</label>
-                                        <input class="form-control" type="text" placeholder="Akichi" v-model="nom" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Prénom:</label>
-                                        <input class="form-control" placeholder="Jean-Philippe" type="text"
-                                            v-model="prenom" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Secteur:</label>
-                                        <input class="form-control" placeholder="Jean-Philippe" type="text"
-                                            v-model="secteur" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Sexe:</label>
-                                        <Multiselect v-model="sexe" :options="sexes" placeholder="Choisir le sexe"
-                                            :searchable="false" />
-                                    </div>
 
-
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Nom:</label>
+                                    <input class="form-control" type="text" placeholder="Akichi" v-model="nom" />
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label>Date de naissance :</label>
-                                                <input type="date" class="form-control" v-model="date_naissance" />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label>Rénumération:</label>
-                                                <input type="text" class="form-control" placeholder="850000"
-                                                    v-model="renumeration" />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label>Date d'embauche:</label>
-                                                <input type="date" class="form-control" v-model="date_embauche" />
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-
-
+                                <div class="form-group">
+                                    <label>Prénom:</label>
+                                    <input class="form-control" placeholder="Jean-Philippe" type="text" v-model="prenom" />
                                 </div>
+                                <div class="form-group">
+                                    <label>Secteur:</label>
+                                    <input class="form-control" placeholder="Jean-Philippe" type="text" v-model="secteur" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Sexe:</label>
+                                    <Multiselect v-model="sexe" :options="sexes" placeholder="Choisir le sexe"
+                                        :searchable="false" />
+                                </div>
+
+
                             </div>
-                            <div class="text-end">
-                                <button type="button" class="btn btn-primary" @click="storeSalary">Enregistrer</button>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Date de naissance :</label>
+                                            <input type="date" class="form-control" v-model="date_naissance" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Rénumération:</label>
+                                            <input type="text" class="form-control" placeholder="850000"
+                                                v-model="renumeration" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Date d'embauche:</label>
+                                            <input type="date" class="form-control" v-model="date_embauche" />
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
                             </div>
-                        </form>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-primary" @click="storeSalary">Enregistrer</button>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -128,7 +127,7 @@ export default {
     methods: {
         storeSalary() {
             axios
-                .post("/salaires", {
+                .post("/api/auth/salaires", {
                     nom: this.nom,
                     prenom: this.prenom,
                     sexe: this.sexe,
@@ -162,16 +161,15 @@ export default {
                 });
         },
         getCategories: function () {
-            axios.get("/catdepenses").then(
+            axios.get("/api/auth/catdepenses").then(
                 function (response) {
                     this.categories = response.data;
                 }.bind(this)
             );
         },
         getTypes: function () {
-            alert
             axios
-                .post("/get-depense", {
+                .post("/api/auth/get-depense", {
                     id_catdep: this.category.id_catdep,
                 })
                 .then(

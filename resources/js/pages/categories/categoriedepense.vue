@@ -110,13 +110,10 @@ export default {
     created() {
         this.fetchData();
     },
-    mounted() {
-        this.fetchData()
-    },
     methods: {
         storeCategorie() {
             axios
-                .post("/typexpenses", {
+                .post("/api/auth/typexpenses", {
                     nom_type: this.nom_type,
                 })
                 .then((response) => {
@@ -145,7 +142,7 @@ export default {
         },
         fetchData() {
             var that = this;
-            axios.all([axios.get("/typexpenses")]).then(
+            axios.all([axios.get("/api/auth/typexpenses")]).then(
                 axios.spread(function (expenses) {
                     that.expenses = expenses.data;
                 })

@@ -112,13 +112,10 @@ export default {
     created() {
         this.fetchData();
     },
-    mounted() {
-        this.fetchData();
-    },
     methods: {
         storeCategorie() {
             axios
-                .post("/catdepenses", {
+                .post("/api/auth/catdepenses", {
                     nom_secteur: this.nom_secteur,
                 })
                 .then((response) => {
@@ -148,7 +145,7 @@ export default {
         },
         fetchData() {
             var that = this;
-            axios.all([axios.get("/catdepenses")]).then(
+            axios.all([axios.get("/api/auth/catdepenses")]).then(
                 axios.spread(function (categories) {
                     that.categories = categories.data;
                 })
