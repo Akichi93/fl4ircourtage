@@ -1,43 +1,34 @@
 class AppStorage {
-
-    constructor() { }
+    static TOKEN_KEY = 'token';
+    static USER_KEY = 'user';
+    static ID_KEY = 'id';
+    static ENTREPRISE_KEY = 'entreprise';
+    static CLIENTS_KEY = 'clients';
+    static PROSPECTS_KEY = 'prospects';
+    static CONTRATS_KEY = 'contrats';
+    static COMPAGNIES_KEY = 'compagnies';
+    static APPORTEURS_KEY = 'apporteurs';
 
     static storeToken(token) {
-        localStorage.setItem('token', token);
+        localStorage.setItem(AppStorage.TOKEN_KEY, token);
     }
 
     static storeUser(user) {
-        localStorage.setItem('user', user);
+        localStorage.setItem(AppStorage.USER_KEY, user);
     }
 
     static storeId(id) {
-        localStorage.setItem('id', id);
+        localStorage.setItem(AppStorage.ID_KEY, id);
     }
 
     static storeEntreprise(entreprise) {
-        localStorage.setItem('entreprise', entreprise);
+        localStorage.setItem(AppStorage.ENTREPRISE_KEY, entreprise);
     }
 
-    static storeClients(clients) {
-        localStorage.setItem('clients', JSON.stringify(clients));
+    static storeData(key, data, useSessionStorage = false) {
+        const storage = useSessionStorage ? sessionStorage : localStorage;
+        storage.setItem(key, JSON.stringify(data));
     }
-
-    static storeProspects(prospects) {
-        localStorage.setItem('prospects', JSON.stringify(prospects));
-    }
-
-    static storeContrats(contrats) {
-        localStorage.setItem('contrats', JSON.stringify(contrats));
-    }
-
-    static storeCompagnies(compagnies) {
-        localStorage.setItem('compagnies', JSON.stringify(compagnies));
-    }
-
-    static storeApporteurs(apporteurs) {
-        localStorage.setItem('apporteurs', JSON.stringify(apporteurs));
-    }
-
 
     static store(token, user, id, entreprise) {
         this.storeToken(token);
@@ -47,56 +38,70 @@ class AppStorage {
     }
 
     static clear() {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        localStorage.removeItem('id');
-        localStorage.removeItem('entreprise');
-        localStorage.removeItem('clients');   
-        localStorage.removeItem('prospects');  
-        localStorage.removeItem('contrats');   
-        localStorage.removeItem('compagnies');  
-        localStorage.removeItem('apporteurs');  
+        const keysToRemove = [
+            AppStorage.TOKEN_KEY,
+            AppStorage.USER_KEY,
+            AppStorage.ID_KEY,
+            AppStorage.ENTREPRISE_KEY,
+            AppStorage.CLIENTS_KEY,
+            AppStorage.PROSPECTS_KEY,
+            AppStorage.CONTRATS_KEY,
+            AppStorage.COMPAGNIES_KEY,
+            AppStorage.APPORTEURS_KEY,
+        ];
+
+        keysToRemove.forEach(key => {
+            if (localStorage.getItem(key)) {
+                localStorage.removeItem(key);
+            }
+        });
+    }
+
+    static getData(key, useSessionStorage = false) {
+        const storage = useSessionStorage ? sessionStorage : localStorage;
+        try {
+            const data = storage.getItem(key);
+            return data ? JSON.parse(data) : [];
+        } catch (error) {
+            console.error(`Error parsing ${key}:`, error.message);
+            return [];
+        }
     }
 
     static getToken() {
-        return localStorage.getItem('token');
+        return localStorage.getItem(AppStorage.TOKEN_KEY);
     }
 
     static getUser() {
-        return localStorage.getItem('user');
+        return localStorage.getItem(AppStorage.USER_KEY);
     }
 
     static getId() {
-        return localStorage.getItem('id');
+        return localStorage.getItem(AppStorage.ID_KEY);
     }
 
     static getEntreprise() {
-        return localStorage.getItem('entreprise');
+        return localStorage.getItem(AppStorage.ENTREPRISE_KEY);
     }
 
     static getClients() {
-        const clients = localStorage.getItem('clients');
-        return clients ? JSON.parse(clients) : [];
+        return this.getData(AppStorage.CLIENTS_KEY, true);
     }
 
     static getProspects() {
-        const prospects = localStorage.getItem('prospects');
-        return prospects ? JSON.parse(prospects) : [];
+        return this.getData(AppStorage.PROSPECTS_KEY, true);
     }
 
     static getContrats() {
-        const contrats = localStorage.getItem('contrats');
-        return contrats ? JSON.parse(contrats) : [];
+        return this.getData(AppStorage.CONTRATS_KEY, true);
     }
 
     static getCompagnies() {
-        const compagnies = localStorage.getItem('compagnies');
-        return compagnies ? JSON.parse(compagnies) : [];
+        return this.getData(AppStorage.COMPAGNIES_KEY, true);
     }
 
     static getApporteurs() {
-        const apporteurs = localStorage.getItem('apporteurs');
-        return apporteurs ? JSON.parse(apporteurs) : [];
+        return this.getData(AppStorage.APPORTEURS_KEY, true);
     }
 }
 

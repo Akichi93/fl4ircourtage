@@ -69,8 +69,8 @@ class FormController extends Controller
 
     public function getLocalisations()
     {
-        $localisations = Localisation::orderBy('nom_ville', 'ASC')->get();
-        // $this->localisation->getLocalisations();
+        // $localisations = Localisation::orderBy('nom_ville', 'ASC')->get();
+        $localisations = $this->localisation->getLocalisations();
 
         return response()->json($localisations);
     }

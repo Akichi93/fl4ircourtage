@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia';
 import { createToaster } from "@meforma/vue-toaster";
 
-export const useClientFileStore = defineStore('clientfile', {
+export const useApporteurFileStore = defineStore('apporteurfile', {
   state: () => ({
     selectedFile: null,
     loading: false,
@@ -30,7 +30,7 @@ export const useClientFileStore = defineStore('clientfile', {
 
       // Create FormData and append the file
       const formData = new FormData();
-      formData.append('import_client', this.selectedFile);
+      formData.append('import_apporteur', this.selectedFile);
 
       // Access the token from your authentication system
       const token = localStorage.getItem("token");
@@ -61,7 +61,7 @@ export const useClientFileStore = defineStore('clientfile', {
         this.progress = 0;
 
         // Display success message using toaster
-        this.toaster.success("Base client importé avec succès.", {
+        this.toaster.success("Base apporteur importé avec succès.", {
           position: "top-right",
         });
       } catch (error) {

@@ -12,6 +12,6 @@ export async function getInfo() {
     };
 
     const response = await axios.get("/api/auth/me", { headers })
-    return response;
+    return response.data;
 
 }

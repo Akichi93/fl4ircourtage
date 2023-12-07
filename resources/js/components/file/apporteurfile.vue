@@ -41,95 +41,38 @@
 </template>
 <script>
 import axios from 'axios';
+import { useApporteurFileStore } from '../../store/apporteurfile';
 import { createToaster } from "@meforma/vue-toaster";
-// import $ from "jquery";
+
 const toaster = createToaster({
     /* options */
 });
 
 export default {
-    data() {
-        return {
-            selectedFile: null,
-            loading: false, // Ajout de la variable pour l'indicateur de chargement
-            progress: 0, // Ajout de la variable pour le progrès de l'envoi
-            error: null, // Ajout de la variable d'erreur
-        };
-    },
+
     methods: {
         handleFileChange(event) {
-            this.selectedFile = event.target.files[0];
+            this.apporteurFileStore.handleFileChange(event);
         },
-        uploadFile() {
-            if (!this.selectedFile) {
-                // alert('Veuillez sélectionner un fichier CSV.');
-                toaster.error("Veuillez sélectionner un fichier CSV.", {
-                    position: "top-right",
-                });
-                return;
-            }
-
-            this.loading = true; // Activer l'indicateur de chargement
-
-            const formData = new FormData();
-            formData.append('import_apporteur', this.selectedFile);
-
-            const token = localStorage.getItem("token");
-
-            const headers = {
-                Authorization: "Bearer " + token,
-                "x-access-token": token,
-            };
-
-            axios.post('/api/auth/importapporteur', formData, {
-                headers,
-                onUploadProgress: progressEvent => {
-                    // Mettez à jour l'indicateur de chargement en fonction du progrès de l'envoi
-                    this.progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-                },
-            })
-                .then(response => {
-                    console.log(response.data);
-                    this.selectedFile = ""; // Réinitialiser le champ de fichier après l'envoi réussi
-                    toaster.success("Fichier importé avec succès.", {
-                        position: "top-right",
-                    });
-                    // alert('Fichier importé avec succès.');
-                    // Traitez les erreurs ici si nécessaire
-                    if (response.data.error) {
-                        // Affichez ou traitez les erreurs côté client
-                        console.error(response.data.error);
-                    }
-
-                    // Traitez les données réussies ici si nécessaire
-                    if (response.data.success) {
-                        // Affichez un message de réussite ou effectuez d'autres actions
-                        console.log(response.data.success);
-                    }
-
-                    // Traitez les lignes invalides ici si nécessaire
-                    if (response.data.details && response.data.details.invalid_rows) {
-                        // Affichez ou traitez les lignes invalides côté client
-                        console.error(response.data.details.invalid_rows);
-                    }
-
-                    // Traitez les doublons ici si nécessaire
-                    if (response.data.details && response.data.details.duplicate_rows) {
-                        // Affichez ou traitez les doublons côté client
-                        console.error(response.data.details.duplicate_rows);
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                    toaster.error("Une erreur s\'est produite lors de l\'envoi du fichier.", {
-                        position: "top-right",
-                    });
-                    // alert('Une erreur s\'est produite lors de l\'envoi du fichier.');
-                })
-                .finally(() => {
-                    this.loading = false; // Désactiver l'indicateur de chargement, peu importe le résultat
-                    this.progress = 0; // Réinitialiser le progrès une fois terminé
-                });
+        async uploadFile() {
+            await this.apporteurFileStore.uploadFile(axios);
+        },
+    },
+    computed: {
+        apporteurFileStore() {
+            return useApporteurFileStore();
+        },
+        selectedFile() {
+            return this.apporteurFileStore.selectedFile;
+        },
+        loading() {
+            return this.apporteurFileStore.loading;
+        },
+        progress() {
+            return this.apporteurFileStore.progress;
+        },
+        error() {
+            return this.apporteurFileStore.error;
         },
     },
 };

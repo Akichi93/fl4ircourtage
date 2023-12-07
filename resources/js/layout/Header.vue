@@ -140,14 +140,6 @@ export default {
         this.roleactif = result;
       });
     },
-
-    // logout() {
-    //   localStorage.removeItem("token");
-    //   localStorage.removeItem("user");
-    //   axios.post("/api/auth/logout").then(() => {
-    //     this.$router.push({ name: "welcome" });
-    //   });
-    // },
   },
   created() {
     this.info();
@@ -158,6 +150,3 @@ export default {
 </script>
 
 <style scoped></style>
-
-
-

@@ -1,97 +1,60 @@
-import Token from './Token'
-import AppStorage from './AppStorage'
+import Token from './Token';
+import AppStorage from './AppStorage';
+import axios from 'axios';
 
 class User {
-    constructor() {
-    }
-    static responseAfterLogin(res) {
+    static async responseAfterLogin(res) {
         const { access_token, name, user_id, id_entreprise } = res.data;
 
-        AppStorage.store(access_token, name, user_id, id_entreprise)
+        AppStorage.store(access_token, name, user_id, id_entreprise);
 
-        // Récupérer les clients de l'utilisateur après la connexion
-        axios.get('/api/auth/getClient', { headers: { Authorization: `Bearer ${access_token}` } })
-            .then(response => {
-                // Stocker les clients dans le localStorage
-                AppStorage.storeClients(response.data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        try {
+            const headers = { Authorization: `Bearer ${access_token}` };
 
-        // Récupérer les prospects de l'utilisateur après la connexion
-        axios.get('/api/auth/getProspect', { headers: { Authorization: `Bearer ${access_token}` } })
-            .then(response => {
-                // Stocker les prospects dans le localStorage 
-                AppStorage.storeProspects(response.data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+            const clients = await axios.get('/api/auth/getClient', { headers });
+            AppStorage.storeData(AppStorage.CLIENTS_KEY, clients.data);
 
-        // Récupérer les contrats de l'utilisateur après la connexion
-        axios.get('/api/auth/getContrat', { headers: { Authorization: `Bearer ${access_token}` } })
-            .then(response => {
-                // Stocker les contrat dans le localStorage 
-                AppStorage.storeContrats(response.data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+            const prospects = await axios.get('/api/auth/getProspect', { headers });
+            AppStorage.storeData(AppStorage.PROSPECTS_KEY, prospects.data);
 
-        // Récupérer les compagnies de l'utilisateur après la connexion
-        axios.get('/api/auth/getCompagnie', { headers: { Authorization: `Bearer ${access_token}` } })
-            .then(response => {
-                // Stocker les compagnies dans le localStorage 
-                AppStorage.storeCompagnies(response.data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+            const contracts = await axios.get('/api/auth/getContrat', { headers });
+            AppStorage.storeData(AppStorage.CONTRATS_KEY, contracts.data);
 
+            const companies = await axios.get('/api/auth/getCompagnie', { headers });
+            AppStorage.storeData(AppStorage.COMPAGNIES_KEY, companies.data);
 
-        // Récupérer les apporteurs de l'utilisateur après la connexion
-        axios.get('/api/auth/getApporteur', { headers: { Authorization: `Bearer ${access_token}` } })
-            .then(response => {
-                // Stocker les apporteurs dans le localStorage 
-                AppStorage.storeApporteurs(response.data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+            const apporteurs = await axios.get('/api/auth/getApporteur', { headers });
+            AppStorage.storeData(AppStorage.APPORTEURS_KEY, apporteurs.data);
 
-      
+        } catch (error) {
+            if (error.response && error.response.status === 401) {
+                console.error('Unauthorized access:', error.message);
+            } else {
+                console.error('An error occurred:', error.message);
+            }
+        }
     }
 
     static hasToken() {
-        const storedToken = localStorage.getItem('token');
-        if (storedToken) {
-            return Token.isValid(storedToken) ? true : false
-        }
-        false
+        const storedToken = AppStorage.getToken();
+        return storedToken ? Token.isValid(storedToken) : false;
     }
 
     static loggedIn() {
-        return this.hasToken()
+        return this.hasToken();
     }
 
-
     static name() {
-        if (this.loggedIn()) {
-            return localStorage.getItem('user')
-        }
+        return this.loggedIn() ? AppStorage.getUser() : null;
     }
 
     static id() {
         if (this.loggedIn()) {
-            const payload = Token.payload(localStorage.getItem('user'))
-            return payload.sub
+            const payload = Token.payload(AppStorage.getUser());
+            return payload.sub;
         }
-        return false
+        return null;
     }
-
-
-
 }
 
 export default User;
