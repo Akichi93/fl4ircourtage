@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia';
 import { createToaster } from "@meforma/vue-toaster";
 
-export const useClientFileStore = defineStore('tauxapporteurfile', {
+export const useTauxApporteurFileStore = defineStore('tauxapporteurfile', {
   state: () => ({
     selectedFile: null,
     loading: false,

@@ -33,6 +33,7 @@
         "highcharts": "^11.2.0",
         "highcharts-vue": "^1.4.3",
         "html2pdf.js": "^0.10.1",
+        "idb": "^8.0.0",
         "jquery": "^3.7.0",
         "laravel-vue-pagination": "^3.0.0-beta.1",
         "moment": "^2.29.4",

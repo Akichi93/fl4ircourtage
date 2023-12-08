@@ -1,60 +1,79 @@
-import Token from './Token';
-import AppStorage from './AppStorage';
-import axios from 'axios';
+import Token from './Token'
+import AppStorage from './AppStorage'
 
 class User {
-    static async responseAfterLogin(res) {
+    constructor() {
+    }
+    static responseAfterLogin(res) {
         const { access_token, name, user_id, id_entreprise } = res.data;
 
-        AppStorage.store(access_token, name, user_id, id_entreprise);
+        AppStorage.store(access_token, name, user_id, id_entreprise)
 
-        try {
-            const headers = { Authorization: `Bearer ${access_token}` };
+        // Fonction générique pour effectuer un appel API et stocker les données dans le localStorage
+        const fetchDataAndStore = (endpoint, storageKey, accessToken) => {
+            return axios.get(`/api/auth/${endpoint}`, { headers: { Authorization: `Bearer ${accessToken}` } })
+                .then(response => {
+                    AppStorage[storageKey](response.data);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        };
 
-            const clients = await axios.get('/api/auth/getClient', { headers });
-            AppStorage.storeData(AppStorage.CLIENTS_KEY, clients.data);
+        // Liste des appels API à effectuer
+        const apiCalls = [
+            { endpoint: 'getClient', storageKey: 'storeClients' },
+            { endpoint: 'getProspect', storageKey: 'storeProspects' },
+            { endpoint: 'getContrat', storageKey: 'storeContrats' },
+            { endpoint: 'getCompagnie', storageKey: 'storeCompagnies' },
+            { endpoint: 'getApporteur', storageKey: 'storeApporteurs' },
+        ];
 
-            const prospects = await axios.get('/api/auth/getProspect', { headers });
-            AppStorage.storeData(AppStorage.PROSPECTS_KEY, prospects.data);
+        // Promesse pour traiter toutes les requêtes en parallèle
+        const promises = apiCalls.map(call => fetchDataAndStore(call.endpoint, call.storageKey, access_token));
 
-            const contracts = await axios.get('/api/auth/getContrat', { headers });
-            AppStorage.storeData(AppStorage.CONTRATS_KEY, contracts.data);
+        // Exécute toutes les promesses en parallèle
+        Promise.all(promises)
+            .then(() => {
+                console.log('Toutes les données ont été récupérées et stockées avec succès.');
+            })
+            .catch(error => {
+                console.error('Une erreur s\'est produite lors de la récupération des données :', error);
+            });
 
-            const companies = await axios.get('/api/auth/getCompagnie', { headers });
-            AppStorage.storeData(AppStorage.COMPAGNIES_KEY, companies.data);
 
-            const apporteurs = await axios.get('/api/auth/getApporteur', { headers });
-            AppStorage.storeData(AppStorage.APPORTEURS_KEY, apporteurs.data);
-
-        } catch (error) {
-            if (error.response && error.response.status === 401) {
-                console.error('Unauthorized access:', error.message);
-            } else {
-                console.error('An error occurred:', error.message);
-            }
-        }
     }
 
     static hasToken() {
-        const storedToken = AppStorage.getToken();
-        return storedToken ? Token.isValid(storedToken) : false;
+        const storedToken = localStorage.getItem('token');
+        if (storedToken) {
+            return Token.isValid(storedToken) ? true : false
+        }
+        false
     }
 
     static loggedIn() {
-        return this.hasToken();
+        return this.hasToken()
     }
 
+
     static name() {
-        return this.loggedIn() ? AppStorage.getUser() : null;
+        if (this.loggedIn()) {
+            return localStorage.getItem('user')
+        }
     }
 
     static id() {
         if (this.loggedIn()) {
-            const payload = Token.payload(AppStorage.getUser());
-            return payload.sub;
+            const payload = Token.payload(localStorage.getItem('user'))
+            return payload.sub
         }
-        return null;
+        return false
     }
+
+
+
 }
 
 export default User;
+
