@@ -4,23 +4,35 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Ajouter client</h5>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <button
+            type="button"
+            class="close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          >
             <i class="fas fa-times"></i>
           </button>
         </div>
         <div class="modal-body">
-
           <div class="row">
             <div class="col-sm-12">
               <div class="form-group">
                 <label>Civilité</label>
-                <civilitecomponent :placeholder="'selectionnez une civilité'" v-model="civilite"></civilitecomponent>
+                <civilitecomponent
+                  :placeholder="'selectionnez une civilité'"
+                  v-model="civilite"
+                ></civilitecomponent>
               </div>
             </div>
             <div class="col-sm-12">
               <div class="form-group">
                 <label>Nom complet du client</label>
-                <input type="text" class="form-control" placeholder="Entrez le nom du client" v-model="nom_client" />
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Entrez le nom du client"
+                  v-model="nom_client"
+                />
               </div>
             </div>
           </div>
@@ -28,13 +40,21 @@
             <div class="col-sm-12">
               <div class="form-group">
                 <label>Boîte postal</label>
-                <input type="text" class="form-control" placeholder="Entrez la boîte postale" v-model="postal_client" />
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Entrez la boîte postale"
+                  v-model="postal_client"
+                />
               </div>
             </div>
             <div class="col-sm-12">
               <div class="form-group">
                 <label>Téléphone</label>
-                <inputText :placeholder="'téléphone'" v-model="tel_client"></inputText>
+                <inputText
+                  :placeholder="'téléphone'"
+                  v-model="tel_client"
+                ></inputText>
               </div>
             </div>
           </div>
@@ -42,49 +62,68 @@
             <div class="col-sm-12">
               <div class="form-group">
                 <label>Adresse</label>
-                <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="adresse_client"></adressecomponent>
+                <adressecomponent
+                  :placeholder="'selectionnez l\'adresse'"
+                  v-model="adresse_client"
+                ></adressecomponent>
               </div>
             </div>
-           
-
-           
           </div>
           <div class="row">
             <div class="col-sm-12">
               <div class="form-group">
                 <label>Profession</label>
-                <professioncomponent :placeholder="'selectionnez une profession'" v-model="profession_client">
+                <professioncomponent
+                  :placeholder="'selectionnez une profession'"
+                  v-model="profession_client"
+                >
                 </professioncomponent>
               </div>
             </div>
-
           </div>
           <div class="row">
             <div class="col-sm-12">
               <div class="form-group">
                 <label>Email</label>
-                <input type="text" class="form-control" placeholder="Email du client" v-model="email_client" />
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Email du client"
+                  v-model="email_client"
+                />
               </div>
             </div>
           </div>
 
           <div class="form-group">
             <label>Fax</label>
-            <input type="text" class="form-control" placeholder="fax du client" v-model="fax_client" />
+            <input
+              type="text"
+              class="form-control"
+              placeholder="fax du client"
+              v-model="fax_client"
+            />
           </div>
           <div class="submit-section">
-            <button type="button" class="btn btn-primary cancel-btn" data-bs-dismiss="modal" aria-label="Close">
+            <button
+              type="button"
+              class="btn btn-primary cancel-btn"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
               Annuler
             </button>
-            <button type="button" class="btn btn-primary submit-btn" @click="storeClient" data-bs-dismiss="modal">
+            <button
+              type="button"
+              class="btn btn-primary submit-btn"
+              @click="storeClient"
+              data-bs-dismiss="modal"
+            >
               Ajouter
             </button>
           </div>
         </div>
-
       </div>
-
-     
     </div>
   </div>
 </template>
@@ -95,9 +134,13 @@ import civilitecomponent from "../../components/select/civilitecomponent.vue";
 import inputText from "../../components/input/inputText.vue";
 import AppStorage from "../../utils/helpers/AppStorage";
 import { createToaster } from "@meforma/vue-toaster";
+import { openDB } from "idb";
+import axios from "axios"; // Importer axios pour les requêtes HTTP
+
 const toaster = createToaster({
   /* options */
 });
+
 export default {
   components: {
     adressecomponent,
@@ -108,31 +151,24 @@ export default {
   data() {
     return {
       civilite: "",
-      civil: "",
       nom_client: "",
-      prenom_client: "",
       postal_client: "",
       adresse_client: "",
-      adresse: "",
       email_client: "",
       tel_client: "",
       profession_client: "",
-      profession: "",
       fax_client: "",
-      clientoedit: "",
-      ajout_adresse: "",
-      ajout_profession: "",
     };
   },
   methods: {
-    storeClient() {
+    async storeClient() {
       const userId = AppStorage.getId();
       const entrepriseId = AppStorage.getEntreprise();
-      axios
-        .post("/api/auth/postClient", {
+
+      try {
+        const response = await axios.post("/api/auth/postClient", {
           civilite: this.civilite,
           nom_client: this.nom_client,
-          prenom_client: this.prenom_client,
           postal_client: this.postal_client,
           adresse_client: this.adresse_client,
           tel_client: this.tel_client,
@@ -141,44 +177,53 @@ export default {
           email_client: this.email_client,
           id: userId,
           id_entreprise: entrepriseId,
-        })
-        .then((response) => {
-          this.$emit('client-added', response);
-          this.$emit('client-add', response.data);
-          AppStorage.storeClients(response.data)
-          // this.civilite =
-          //   this.nom_client =
-          //   this.prenom_client =
-          //   this.postal_client =
-          //   this.adresse_client =
-          //   this.tel_client =
-          //   this.profession_client =
-          //   this.fax_client =
-          //   this.email_client =
-          //     "";
-          if (response.status === 200) {
-            toaster.success(`Client ajouté avec succès`, {
-              position: "top-right",
-            });
-          }
-        })
-        .catch((error) => {
-          // console.log(error.response.headers);
-
-          // if (error.response.status === 422) {
-          //   this.errors = error.response.data.errors;
-          //   toaster.error(`Veuillez remplir les champs`, {
-          //     position: "top-right",
-          //   });
-          //   // console.log("Message non enregisté")
-          // } else if (error.request) {
-          //   // The request was made but no response was received
-          //   console.log(error.request);
-          // } else {
-          //   // Something happened in setting up the request that triggered an Error
-          //   console.log("Error", error.message);
-          // }
         });
+
+        await this.insertDataIntoIndexedDB(response.data, "clients");
+        this.$emit("client-added", response);
+        this.$emit("client-add", response.data);
+
+        if (response.status === 200) {
+          toaster.success(`Client ajouté avec succès`, {
+            position: "top-right",
+          });
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'ajout du client sur le serveur", error);
+      }
+    },
+
+    async insertDataIntoIndexedDB(clientData, objectStoreName) {
+      try {
+        const db = await openDB("your_database_name", 1, {
+          upgrade(db, oldVersion, newVersion, transaction) {
+            if (!db.objectStoreNames.contains(objectStoreName)) {
+              const store = db.createObjectStore(objectStoreName, {
+                keyPath: "id",
+                autoIncrement: true,
+              });
+
+              store.createIndex("id", "id", { unique: true });
+            }
+          },
+        });
+
+        // Effacer les données existantes dans le magasin d'objets spécifié
+        const clearTx = db.transaction('clients', "readwrite");
+        const clearStore = clearTx.objectStore(clients);
+        clearStore.clear();
+        await clearTx.done;
+
+        // Ajouter les nouvelles données du client
+        const addTx = db.transaction('clients', "readwrite");
+        const addStore = addTx.objectStore(clients);
+        await addStore.add(clientData);
+        await addTx.done;
+
+        console.log("Insertion réussie dans IndexedDB : ", clientData);
+      } catch (error) {
+        console.error("Erreur lors de l'insertion des données dans IndexedDB", error);
+      }
     },
   },
 };

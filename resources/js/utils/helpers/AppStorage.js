@@ -1,5 +1,6 @@
-class AppStorage {
+import { openDB } from 'idb';
 
+class AppStorage {
     constructor() { }
 
     static storeToken(token) {
@@ -18,26 +19,27 @@ class AppStorage {
         localStorage.setItem('entreprise', entreprise);
     }
 
-    static storeClients(clients) {
-        localStorage.setItem('clients', JSON.stringify(clients));
+    static async storeDataInIndexedDB(key, data) {
+        const db = await openDB('your_database_name', 1, {
+            upgrade(db) {
+                db.createObjectStore('apiData');
+            },
+        });
+
+        const tx = db.transaction('apiData', 'readwrite');
+        const store = tx.objectStore('apiData');
+        store.put(data, key);
+
+        return tx.complete;
     }
 
-    static storeProspects(prospects) {
-        localStorage.setItem('prospects', JSON.stringify(prospects));
-    }
+    static async fetchDataFromIndexedDB(key) {
+        const db = await openDB('your_database_name', 1);
+        const tx = db.transaction('apiData', 'readonly');
+        const store = tx.objectStore('apiData');
 
-    static storeContrats(contrats) {
-        localStorage.setItem('contrats', JSON.stringify(contrats));
+        return store.get(key);
     }
-
-    static storeCompagnies(compagnies) {
-        localStorage.setItem('compagnies', JSON.stringify(compagnies));
-    }
-
-    static storeApporteurs(apporteurs) {
-        localStorage.setItem('apporteurs', JSON.stringify(apporteurs));
-    }
-
 
     static store(token, user, id, entreprise) {
         this.storeToken(token);
@@ -51,11 +53,11 @@ class AppStorage {
         localStorage.removeItem('user');
         localStorage.removeItem('id');
         localStorage.removeItem('entreprise');
-        localStorage.removeItem('clients');   
-        localStorage.removeItem('prospects');  
-        localStorage.removeItem('contrats');   
-        localStorage.removeItem('compagnies');  
-        localStorage.removeItem('apporteurs');  
+        localStorage.removeItem('clients');
+        localStorage.removeItem('prospects');
+        localStorage.removeItem('contrats');
+        localStorage.removeItem('compagnies');
+        localStorage.removeItem('apporteurs');
     }
 
     static getToken() {
@@ -74,29 +76,100 @@ class AppStorage {
         return localStorage.getItem('entreprise');
     }
 
-    static getClients() {
+    static async storeClients(clients) {
+        localStorage.setItem('clients', JSON.stringify(clients));
+        await this.storeDataInIndexedDB('clients', clients);
+    }
+
+    static async getClients() {
+        const indexedDBData = await this.fetchDataFromIndexedDB('clients');
+
+        if (indexedDBData) {
+            return indexedDBData;
+        }
+
         const clients = localStorage.getItem('clients');
         return clients ? JSON.parse(clients) : [];
     }
 
-    static getProspects() {
+    static async storeProspects(prospects) {
+        localStorage.setItem('prospects', JSON.stringify(prospects));
+        await this.storeDataInIndexedDB('prospects', prospects);
+    }
+
+    static async getProspects() {
+        const indexedDBData = await this.fetchDataFromIndexedDB('prospects');
+
+        if (indexedDBData) {
+            return indexedDBData;
+        }
+
         const prospects = localStorage.getItem('prospects');
         return prospects ? JSON.parse(prospects) : [];
     }
 
-    static getContrats() {
+    static async storeContrats(contrats) {
+        localStorage.setItem('contrats', JSON.stringify(contrats));
+        await this.storeDataInIndexedDB('contrats', contrats);
+    }
+
+    static async getContrats() {
+        const indexedDBData = await this.fetchDataFromIndexedDB('contrats');
+
+        if (indexedDBData) {
+            return indexedDBData;
+        }
+
         const contrats = localStorage.getItem('contrats');
         return contrats ? JSON.parse(contrats) : [];
     }
 
-    static getCompagnies() {
+    static async storeCompagnies(compagnies) {
+        localStorage.setItem('compagnies', JSON.stringify(compagnies));
+        await this.storeDataInIndexedDB('compagnies', compagnies);
+    }
+
+    static async getCompagnies() {
+        const indexedDBData = await this.fetchDataFromIndexedDB('compagnies');
+
+        if (indexedDBData) {
+            return indexedDBData;
+        }
+
         const compagnies = localStorage.getItem('compagnies');
         return compagnies ? JSON.parse(compagnies) : [];
     }
 
-    static getApporteurs() {
+    static async storeApporteurs(apporteurs) {
+        localStorage.setItem('apporteurs', JSON.stringify(apporteurs));
+        await this.storeDataInIndexedDB('apporteurs', apporteurs);
+    }
+
+    static async getApporteurs() {
+        const indexedDBData = await this.fetchDataFromIndexedDB('apporteurs');
+
+        if (indexedDBData) {
+            return indexedDBData;
+        }
+
         const apporteurs = localStorage.getItem('apporteurs');
         return apporteurs ? JSON.parse(apporteurs) : [];
+    }
+
+    static async storeBranches(branches) {
+        localStorage.setItem('branches', JSON.stringify(branches));
+        await this.storeDataInIndexedDB('branches', branches);
+    }
+
+    static async getBranches() {
+        const indexedDBData = await this.fetchDataFromIndexedDB('branches');
+
+        if (indexedDBData) {
+            return indexedDBData;
+        }
+
+        const branches = localStorage.getItem('branches');
+        return branches ? JSON.parse(branches) : [];
     }
 }
 
