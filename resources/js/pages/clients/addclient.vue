@@ -135,7 +135,7 @@ import inputText from "../../components/input/inputText.vue";
 import AppStorage from "../../utils/helpers/AppStorage";
 import { createToaster } from "@meforma/vue-toaster";
 import { openDB } from "idb";
-import axios from "axios"; // Importer axios pour les requêtes HTTP
+import axios from "axios";
 
 const toaster = createToaster({
   /* options */
@@ -179,7 +179,13 @@ export default {
           id_entreprise: entrepriseId,
         });
 
-        await this.insertDataIntoIndexedDB(response.data, "clients");
+        // Écraser les données clients existantes dans IndexedDB
+        await AppStorage.storeDataInIndexedDB(
+          "clients",
+          response.data,
+          "apiData"
+        );
+
         this.$emit("client-added", response);
         this.$emit("client-add", response.data);
 
@@ -190,39 +196,6 @@ export default {
         }
       } catch (error) {
         console.error("Erreur lors de l'ajout du client sur le serveur", error);
-      }
-    },
-
-    async insertDataIntoIndexedDB(clientData, objectStoreName) {
-      try {
-        const db = await openDB("your_database_name", 1, {
-          upgrade(db, oldVersion, newVersion, transaction) {
-            if (!db.objectStoreNames.contains(objectStoreName)) {
-              const store = db.createObjectStore(objectStoreName, {
-                keyPath: "id",
-                autoIncrement: true,
-              });
-
-              store.createIndex("id", "id", { unique: true });
-            }
-          },
-        });
-
-        // Effacer les données existantes dans le magasin d'objets spécifié
-        const clearTx = db.transaction('clients', "readwrite");
-        const clearStore = clearTx.objectStore(clients);
-        clearStore.clear();
-        await clearTx.done;
-
-        // Ajouter les nouvelles données du client
-        const addTx = db.transaction('clients', "readwrite");
-        const addStore = addTx.objectStore(clients);
-        await addStore.add(clientData);
-        await addTx.done;
-
-        console.log("Insertion réussie dans IndexedDB : ", clientData);
-      } catch (error) {
-        console.error("Erreur lors de l'insertion des données dans IndexedDB", error);
       }
     },
   },

@@ -501,7 +501,7 @@ class FormController extends Controller
         // Validation du formulaire
         $validated = $request->validated();
 
-        $user =  JWTAuth::parseToken()->authenticate();
+        $user = JWTAuth::parseToken()->authenticate();
 
         // Récupération des données
         $data = $request->all();
@@ -512,16 +512,7 @@ class FormController extends Controller
         if ($Data) {
             $branches = Branche::where('supprimer_branche', '=', '0')->where('id_entreprise', $user->id_entreprise)->orderBy('id_branche', 'DESC')->get();
 
-            // $veriforder = Order::where([
-            //     ['user_id', $data['user_id']],
-            //     ['cart_id', $data['cart_id']],
-            // ])->count();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Genre enregistré avec succès',
-                'genre' => $branches
-            ], Response::HTTP_OK);
+            return response()->json($branches);
         }
     }
 }

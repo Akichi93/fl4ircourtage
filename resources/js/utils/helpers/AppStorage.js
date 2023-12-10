@@ -28,7 +28,8 @@ class AppStorage {
 
         const tx = db.transaction('apiData', 'readwrite');
         const store = tx.objectStore('apiData');
-        store.put(data, key);
+
+        await store.put(data, key);
 
         return tx.complete;
     }

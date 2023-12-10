@@ -66,9 +66,8 @@
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import { postBranche } from "../../services/brancheservice";
-// import { useBranchesStore } from "../../store/branche"; // Importez le magasin Pinia
+import { useBranchesStore } from "../../store/branche"; // Importez le magasin Pinia
 import { createToaster } from "@meforma/vue-toaster";
-// import $ from "jquery";
 const toaster = createToaster({
   /* options */
 });
@@ -84,11 +83,12 @@ export default {
   },
   methods: {
     storeBranche() {
-      // const branchesStore = useBranchesStore();
+      const branchesStore = useBranchesStore();
       postBranche(this.form)
         .then((response) => {
+          console.log(response)
           // Utilisez le magasin Pinia pour ajouter la branche
-          // useBranchesStore().addBranch(response);
+          useBranchesStore().addBranch(response);
 
           this.$router.push("/listbranche");
           toaster.success(`Branche ajouté avec succès`, {
