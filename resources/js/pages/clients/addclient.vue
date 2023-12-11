@@ -4,12 +4,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Ajouter client</h5>
-          <button
-            type="button"
-            class="close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          >
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <i class="fas fa-times"></i>
           </button>
         </div>
@@ -18,21 +13,13 @@
             <div class="col-sm-12">
               <div class="form-group">
                 <label>Civilité</label>
-                <civilitecomponent
-                  :placeholder="'selectionnez une civilité'"
-                  v-model="civilite"
-                ></civilitecomponent>
+                <civilitecomponent :placeholder="'selectionnez une civilité'" v-model="civilite"></civilitecomponent>
               </div>
             </div>
             <div class="col-sm-12">
               <div class="form-group">
                 <label>Nom complet du client</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Entrez le nom du client"
-                  v-model="nom_client"
-                />
+                <input type="text" class="form-control" placeholder="Entrez le nom du client" v-model="nom_client" />
               </div>
             </div>
           </div>
@@ -40,21 +27,13 @@
             <div class="col-sm-12">
               <div class="form-group">
                 <label>Boîte postal</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Entrez la boîte postale"
-                  v-model="postal_client"
-                />
+                <input type="text" class="form-control" placeholder="Entrez la boîte postale" v-model="postal_client" />
               </div>
             </div>
             <div class="col-sm-12">
               <div class="form-group">
                 <label>Téléphone</label>
-                <inputText
-                  :placeholder="'téléphone'"
-                  v-model="tel_client"
-                ></inputText>
+                <inputText :placeholder="'téléphone'" v-model="tel_client"></inputText>
               </div>
             </div>
           </div>
@@ -62,10 +41,7 @@
             <div class="col-sm-12">
               <div class="form-group">
                 <label>Adresse</label>
-                <adressecomponent
-                  :placeholder="'selectionnez l\'adresse'"
-                  v-model="adresse_client"
-                ></adressecomponent>
+                <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="adresse_client"></adressecomponent>
               </div>
             </div>
           </div>
@@ -73,10 +49,7 @@
             <div class="col-sm-12">
               <div class="form-group">
                 <label>Profession</label>
-                <professioncomponent
-                  :placeholder="'selectionnez une profession'"
-                  v-model="profession_client"
-                >
+                <professioncomponent :placeholder="'selectionnez une profession'" v-model="profession_client">
                 </professioncomponent>
               </div>
             </div>
@@ -85,40 +58,20 @@
             <div class="col-sm-12">
               <div class="form-group">
                 <label>Email</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Email du client"
-                  v-model="email_client"
-                />
+                <input type="text" class="form-control" placeholder="Email du client" v-model="email_client" />
               </div>
             </div>
           </div>
 
           <div class="form-group">
             <label>Fax</label>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="fax du client"
-              v-model="fax_client"
-            />
+            <input type="text" class="form-control" placeholder="fax du client" v-model="fax_client" />
           </div>
           <div class="submit-section">
-            <button
-              type="button"
-              class="btn btn-primary cancel-btn"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            >
+            <button type="button" class="btn btn-primary cancel-btn" data-bs-dismiss="modal" aria-label="Close">
               Annuler
             </button>
-            <button
-              type="button"
-              class="btn btn-primary submit-btn"
-              @click="storeClient"
-              data-bs-dismiss="modal"
-            >
+            <button type="button" class="btn btn-primary submit-btn" @click="storeClient" data-bs-dismiss="modal">
               Ajouter
             </button>
           </div>
@@ -179,12 +132,15 @@ export default {
           id_entreprise: entrepriseId,
         });
 
-        // Écraser les données clients existantes dans IndexedDB
-        await AppStorage.storeDataInIndexedDB(
-          "clients",
-          response.data,
-          "apiData"
-        );
+        // Appeler fetchClients pour récupérer la liste mise à jour après l'insertion
+        const updatedClients = await this.fetchClients();
+
+        // // Écraser les données clients existantes dans IndexedDB
+        // await AppStorage.storeDataInIndexedDB(
+        //   "clients",
+        //   response.data,
+        // );
+
 
         this.$emit("client-added", response);
         this.$emit("client-add", response.data);
@@ -194,8 +150,38 @@ export default {
             position: "top-right",
           });
         }
+
+        // Mettre à jour IndexedDB avec les clients récupérés
+        await AppStorage.storeDataInIndexedDB("clients", updatedClients);
+
       } catch (error) {
         console.error("Erreur lors de l'ajout du client sur le serveur", error);
+      }
+    },
+
+    // Votre méthode actuelle fetchClients
+    async fetchClients() {
+      const token = AppStorage.getToken();
+
+      // Configurez les en-têtes de la requête
+      const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+      };
+
+      try {
+        const response = await axios.get("/api/auth/getClient",  { headers });
+
+        // Vous pouvez traiter les données comme vous le souhaitez
+        const clients = response.data;
+
+        // Mettre à jour IndexedDB avec les clients récupérés
+        // await AppStorage.storeDataInIndexedDB("clients", clients);
+
+        // Retourner les clients pour une utilisation éventuelle
+        return clients;
+      } catch (error) {
+        console.error("Erreur lors de la récupération des clients sur le serveur", error);
       }
     },
   },
