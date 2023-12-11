@@ -32,24 +32,14 @@
               <div class="card-body">
                 <form action="#">
                   <div class="form-group row">
-                    <label class="col-lg-3 col-form-label"
-                      >Nom de branche</label
-                    >
+                    <label class="col-lg-3 col-form-label">Nom de branche</label>
                     <div class="col-lg-9">
-                      <input
-                        type="text"
-                        v-model="form.nom_branche"
-                        class="form-control"
-                      />
+                      <input type="text" v-model="form.nom_branche" class="form-control" />
                     </div>
                   </div>
 
                   <div class="text-end">
-                    <button
-                      type="submit"
-                      class="btn btn-primary"
-                      @click.prevent="storeBranche"
-                    >
+                    <button type="submit" class="btn btn-primary" @click.prevent="storeBranche">
                       Créer
                     </button>
                   </div>
@@ -66,11 +56,13 @@
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import { postBranche } from "../../services/brancheservice";
-import { useBranchesStore } from "../../store/branche"; // Importez le magasin Pinia
+import { useBranchesStore } from "../../store/branche";
 import { createToaster } from "@meforma/vue-toaster";
+
 const toaster = createToaster({
   /* options */
 });
+
 export default {
   components: { Header, Sidebar },
 
@@ -82,22 +74,54 @@ export default {
     };
   },
   methods: {
-    storeBranche() {
+    async storeBranche() {
       const branchesStore = useBranchesStore();
-      postBranche(this.form)
-        .then((response) => {
-          console.log(response)
-          // Utilisez le magasin Pinia pour ajouter la branche
-          useBranchesStore().addBranch(response);
+      try {
+        const response = await postBranche(this.form);
+        console.log(response);
 
-          this.$router.push("/listbranche");
-          toaster.success(`Branche ajouté avec succès`, {
-            position: "top-right",
-          });
-        })
-        .catch((error) => {
-          console.log("error", error);
+        // Utilisez le magasin Pinia pour ajouter la branche
+        branchesStore.addBranch(response);
+
+
+        // Appeler fetchClients pour récupérer la liste mise à jour après l'insertion
+        const updatedBranches = await this.fetchBranches();
+
+        // Mettre à jour IndexedDB avec les clients récupérés
+        await AppStorage.storeDataInIndexedDB("branches", updatedBranches);
+
+        this.$router.push("/listbranche");
+        toaster.success(`Branche ajoutée avec succès`, {
+          position: "top-right",
         });
+
+
+      } catch (error) {
+        console.error("Erreur lors de l'ajout de la branche", error);
+      }
+    },
+
+    // Votre méthode actuelle fetchClients
+    async fetchBranches() {
+      const token = AppStorage.getToken();
+
+      // Configurez les en-têtes de la requête
+      const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+      };
+
+      try {
+        const response = await axios.get("/api/auth/getBranche", { headers });
+
+        // Vous pouvez traiter les données comme vous le souhaitez
+        const branches = response.data;
+
+        // Retourner les clients pour une utilisation éventuelle
+        return branches;
+      } catch (error) {
+        console.error("Erreur lors de la récupération des clients sur le serveur", error);
+      }
     },
   },
 };

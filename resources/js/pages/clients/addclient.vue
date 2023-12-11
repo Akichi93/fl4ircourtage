@@ -135,13 +135,6 @@ export default {
         // Appeler fetchClients pour récupérer la liste mise à jour après l'insertion
         const updatedClients = await this.fetchClients();
 
-        // // Écraser les données clients existantes dans IndexedDB
-        // await AppStorage.storeDataInIndexedDB(
-        //   "clients",
-        //   response.data,
-        // );
-
-
         this.$emit("client-added", response);
         this.$emit("client-add", response.data);
 
@@ -174,9 +167,6 @@ export default {
 
         // Vous pouvez traiter les données comme vous le souhaitez
         const clients = response.data;
-
-        // Mettre à jour IndexedDB avec les clients récupérés
-        // await AppStorage.storeDataInIndexedDB("clients", clients);
 
         // Retourner les clients pour une utilisation éventuelle
         return clients;
