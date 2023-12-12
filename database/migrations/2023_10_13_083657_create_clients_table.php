@@ -24,6 +24,7 @@ class CreateClientsTable extends Migration
             $table->string('fax_client')->nullable();
             $table->string('email_client')->nullable();
             $table->string('numero_client');
+            $table->boolean('sync')->default(true);
             $table->string('supprimer_client')->comment('0 = encours, 1 = supprimé')->default(0);
             $table->timestamps();
         });

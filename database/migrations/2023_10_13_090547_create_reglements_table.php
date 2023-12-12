@@ -33,6 +33,7 @@ class CreateReglementsTable extends Migration
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
+            $table->boolean('sync')->default(true);
 
             $table->string('supprimer_reglement')->comment('0 = encours, 1 = supprimé')->default(0);
             $table->timestamps();

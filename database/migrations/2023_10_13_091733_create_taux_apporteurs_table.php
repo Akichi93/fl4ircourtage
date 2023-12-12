@@ -29,6 +29,7 @@ class CreateTauxApporteursTable extends Migration
                 ->onDelete('cascade');
 
             $table->integer('taux');
+            $table->boolean('sync')->default(true);
             $table->timestamps();
         });
     }

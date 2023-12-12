@@ -22,6 +22,7 @@ class CreateApporteursTable extends Migration
             $table->string('code_apporteur');
             $table->string('code_postal')->nullable();
             $table->string('apporteur_url')->nullable();
+            $table->boolean('sync')->default(true);
             $table->string('supprimer_apporteur')->comment('0 = encours, 1 = supprimé')->default(0);
             $table->timestamps();
         });

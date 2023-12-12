@@ -148,8 +148,8 @@ ChartJS.register(
 export default {
   data() {
     return {
+      isConnected: false,
       year: "",
-      online: navigator.onLine,
       branch: "",
       contrat: "",
       prospect: "",
@@ -198,29 +198,37 @@ export default {
     this.getCategory();
     this.getTypes();
     this.getData();
-    // this.informerUtilisateur()
   },
   name: "dashboard",
   components: { Header, Sidebar, Bar },
-  // mounted() {
-  //   window.addEventListener('online', this.updateOnlineStatus);
-  //   window.addEventListener('offline', this.updateOnlineStatus);
-  //   this.updateOnlineStatus();
-  // },
-  // beforeDestroy() {
-  //   window.removeEventListener('online', this.updateOnlineStatus);
-  //   window.removeEventListener('offline', this.updateOnlineStatus);
-  // },
-  methods: {
-    // updateOnlineStatus() {
-    //   this.isOnline = navigator.onLine;
+  mounted() {
+    // Vérifiez la connexion au montage
+    this.checkInternetConnection();
 
-    //   if (this.isOnline) {
-    //     toaster.success('Vous êtes connecté à Internet');
-    //   } else {
-    //     toaster.error('Vous n\'êtes pas connecté à Internet. Veuillez vous connecter.');
-    //   }
-    // },
+    // Écoutez les changements de connexion
+    this.$watch('isConnected', (newVal, oldVal) => {
+      if (newVal !== oldVal) {
+        this.notifyConnectionStatus();
+      }
+    });
+  },
+  methods: {
+    async checkInternetConnection() {
+      try {
+        const response = await axios.get('https://www.example.com');
+        this.isConnected = response.status === 200;
+      } catch (error) {
+        this.isConnected = false;
+      }
+    },
+    notifyConnectionStatus() {
+      // Utilisez toaster.success ou toaster.error en fonction de la connexion
+      if (this.isConnected) {
+        toaster.success('Vous êtes connecté à Internet');
+      } else {
+        toaster.error('Vous n\'êtes pas connecté à Internet');
+      }
+    },
 
     getCategory: function () {
       const token = localStorage.getItem("token");

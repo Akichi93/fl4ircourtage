@@ -16,6 +16,7 @@ class CreateMarquesTable extends Migration
         Schema::create('marques', function (Blueprint $table) {
             $table->bigIncrements('id_marque');
             $table->string('marque');
+            $table->boolean('sync')->default(true);
             $table->timestamps();
         });
     }

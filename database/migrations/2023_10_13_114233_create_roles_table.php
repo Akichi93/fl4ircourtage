@@ -17,6 +17,7 @@ class CreateRolesTable extends Migration
             $table->bigIncrements('id_role');
             $table->string('nom_role');
             $table->string('statut')->default(0);
+            $table->boolean('sync')->default(true);
             $table->timestamps();
         });
     }

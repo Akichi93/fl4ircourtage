@@ -24,6 +24,7 @@ class CreateFileSinistresTable extends Migration
                 ->onDelete('cascade');
                 
             $table->string('titre');
+            $table->boolean('sync')->default(true);
             $table->softDeletes();
             $table->timestamps();
         });

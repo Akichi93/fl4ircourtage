@@ -61,6 +61,7 @@ class CreateContratsTable extends Migration
             $table->string('commission_apporteur')->nullable();
             $table->string('supprimer_contrat')->comment('0 = encours, 1 = supprimé')->default(0);
             $table->string('contrat_url')->nullable();
+            $table->boolean('sync')->default(true);
             $table->timestamps();
         });
     }

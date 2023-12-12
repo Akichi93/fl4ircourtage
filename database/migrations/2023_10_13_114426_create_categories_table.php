@@ -16,6 +16,7 @@ class CreateCategoriesTable extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->bigIncrements('id_categorie');
             $table->string('categorie');
+            $table->boolean('sync')->default(true);
             $table->timestamps();
         });
     }

@@ -25,6 +25,7 @@ class CreateProspectsTable extends Migration
             $table->string('email_prospect')->nullable();
             $table->string('etat')->default(0);
             $table->string('statut')->nullable();
+            $table->boolean('sync')->default(true);
             $table->string('supprimer_prospect')->comment('0 = encours, 1 = supprimé')->default(0);
             $table->timestamps();
         });

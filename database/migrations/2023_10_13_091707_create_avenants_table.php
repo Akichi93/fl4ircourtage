@@ -43,6 +43,7 @@ class CreateAvenantsTable extends Migration
             $table->string('code_avenant')->nullable();
             $table->string('solder')->default(0);
             $table->string('reverser')->default(0);
+            $table->boolean('sync')->default(true);
             $table->timestamps();
         });
     }

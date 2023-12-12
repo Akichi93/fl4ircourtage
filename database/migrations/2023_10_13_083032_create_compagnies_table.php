@@ -22,6 +22,7 @@ class CreateCompagniesTable extends Migration
             $table->string('postal_compagnie')->nullable();
             $table->string('code_compagnie')->nullable();
             $table->string('compagnie_url')->nullable();
+             $table->boolean('sync')->default(true);
             $table->string('supprimer_compagnie')->comment('0 = encours, 1 = supprimé')->default(0);
             $table->timestamps();
         });

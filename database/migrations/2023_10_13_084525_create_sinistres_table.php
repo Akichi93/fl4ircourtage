@@ -42,6 +42,7 @@ class CreateSinistresTable extends Migration
             $table->integer('etat')->comment('0 = encours, 2 = terminer')->default(0);
             $table->string('supprimer_sinistre')->comment('0 = encours, 1 = supprimé')->default(0);
             $table->string('sinistre_url')->nullable();
+            $table->boolean('sync')->default(true);
             $table->timestamps();
         });
     }

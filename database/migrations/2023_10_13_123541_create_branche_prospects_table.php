@@ -29,6 +29,7 @@ class CreateBrancheProspectsTable extends Migration
                 ->onDelete('cascade');
 
             $table->longText('description');
+            $table->boolean('sync')->default(true);
             $table->timestamps();
         });
     }

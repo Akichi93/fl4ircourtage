@@ -33,6 +33,7 @@ class CreateDepensesTable extends Migration
             $table->string('montant');
             $table->string('info_depense');
             $table->integer('etat')->default(0);
+            $table->boolean('sync')->default(false);
             $table->timestamps();
         });
     }

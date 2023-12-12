@@ -1,26 +1,43 @@
+// AppStorage.js
 import { openDB } from 'idb';
 
 class AppStorage {
-    constructor() { }
+    static dbName = 'fl4ir';
 
-    static storeToken(token) {
+    static async storeToken(token) {
         localStorage.setItem('token', token);
     }
 
-    static storeUser(user) {
+    static async storeUser(user) {
         localStorage.setItem('user', user);
     }
 
-    static storeId(id) {
+    static async storeId(id) {
         localStorage.setItem('id', id);
     }
 
-    static storeEntreprise(entreprise) {
+    static async storeEntreprise(entreprise) {
         localStorage.setItem('entreprise', entreprise);
     }
 
+    static async storeData(key, data) {
+        localStorage.setItem(key, JSON.stringify(data));
+        await this.storeDataInIndexedDB(key, data);
+    }
+
+    static async getData(key) {
+        const indexedDBData = await this.fetchDataFromIndexedDB(key);
+
+        if (indexedDBData) {
+            return indexedDBData;
+        }
+
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : null;
+    }
+
     static async storeDataInIndexedDB(key, data) {
-        const db = await openDB('your_database_name', 1, {
+        const db = await openDB(this.dbName, 1, {
             upgrade(db) {
                 db.createObjectStore('apiData');
             },
@@ -29,36 +46,140 @@ class AppStorage {
         const tx = db.transaction('apiData', 'readwrite');
         const store = tx.objectStore('apiData');
 
-        await store.put(data, key);
+        const existingData = await store.get(key);
 
-        return tx.complete;
+        if (existingData) {
+            // Gestion des conflits : fusionner les données existantes avec les nouvelles données
+            const mergedData = { ...existingData, ...data };
+            await store.put(mergedData, key);
+            console.log(`Données fusionnées à apiData dans IndexedDB avec succès`);
+        } else {
+            // Aucune donnée existante, ajouter simplement les nouvelles données
+            await store.put(data, key);
+            console.log(`Donnée ajoutée à apiData dans IndexedDB avec succès`);
+        }
+
+        // Terminer la transaction
+        await tx.complete;
     }
 
     static async fetchDataFromIndexedDB(key) {
-        const db = await openDB('your_database_name', 1);
+        const db = await openDB(this.dbName, 1);
         const tx = db.transaction('apiData', 'readonly');
         const store = tx.objectStore('apiData');
 
         return store.get(key);
     }
 
-    static store(token, user, id, entreprise) {
-        this.storeToken(token);
-        this.storeUser(user);
-        this.storeId(id);
-        this.storeEntreprise(entreprise);
+    static async storeClients(clients) {
+        await this.storeData('clients', clients);
     }
 
-    static clear() {
+    static async getClients() {
+        return this.getData('clients') || [];
+    }
+
+    static async storeProspects(prospects) {
+        await this.storeData('prospects', prospects);
+    }
+
+    static async getProspects() {
+        return this.getData('prospects') || [];
+    }
+
+    static async storeContrats(contrats) {
+        await this.storeData('contrats', contrats);
+    }
+
+    static async getContrats() {
+        return this.getData('contrats') || [];
+    }
+
+    static async storeCompagnies(compagnies) {
+        await this.storeData('compagnies', compagnies);
+    }
+
+    static async getCompagnies() {
+        return this.getData('compagnies') || [];
+    }
+
+    static async storeApporteurs(apporteurs) {
+        await this.storeData('apporteurs', apporteurs);
+    }
+
+    static async getApporteurs() {
+        return this.getData('apporteurs') || [];
+    }
+
+    static async storeBranches(branches) {
+        await this.storeData('branches', branches);
+    }
+
+    static async getBranches() {
+        return this.getData('branches') || [];
+    }
+
+    static async storeClientList(clientList) {
+        await this.storeData('clientList', clientList);
+    }
+
+    static async getClientList() {
+        return this.getData('clientList') || [];
+    }
+
+    static async storeBranchesList(branchesList) {
+        await this.storeData('branchesList', branchesList);
+    }
+
+    static async getBranchesList() {
+        return this.getData('branchesList') || [];
+    }
+
+    static async storeCompagnieList(compagnieList) {
+        await this.storeData('compagnieList', compagnieList);
+    }
+
+    static async getCompagnieList() {
+        return this.getData('compagnieList') || [];
+    }
+
+    static async storeApporteurList(apporteurList) {
+        await this.storeData('apporteurList', apporteurList);
+    }
+
+    static async getApporteurList() {
+        return this.getData('apporteurList') || [];
+    }
+
+    static async storeContratList(contratList) {
+        await this.storeData('contratList', contratList);
+    }
+
+    static async getContratList() {
+        return this.getData('contratList') || [];
+    }
+
+    static async storeProspectList(prospectList) {
+        await this.storeData('prospectList', prospectList);
+    }
+
+    static async getProspectList() {
+        return this.getData('prospectList') || [];
+    }
+
+
+    static async store(token, user, id, entreprise) {
+        await this.storeToken(token);
+        await this.storeUser(user);
+        await this.storeId(id);
+        await this.storeEntreprise(entreprise);
+    }
+
+    static async clear() {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('id');
         localStorage.removeItem('entreprise');
-        localStorage.removeItem('clients');
-        localStorage.removeItem('prospects');
-        localStorage.removeItem('contrats');
-        localStorage.removeItem('compagnies');
-        localStorage.removeItem('apporteurs');
     }
 
     static getToken() {
@@ -75,102 +196,6 @@ class AppStorage {
 
     static getEntreprise() {
         return localStorage.getItem('entreprise');
-    }
-
-    static async storeClients(clients) {
-        localStorage.setItem('clients', JSON.stringify(clients));
-        await this.storeDataInIndexedDB('clients', clients);
-    }
-
-    static async getClients() {
-        const indexedDBData = await this.fetchDataFromIndexedDB('clients');
-
-        if (indexedDBData) {
-            return indexedDBData;
-        }
-
-        const clients = localStorage.getItem('clients');
-        return clients ? JSON.parse(clients) : [];
-    }
-
-    static async storeProspects(prospects) {
-        localStorage.setItem('prospects', JSON.stringify(prospects));
-        await this.storeDataInIndexedDB('prospects', prospects);
-    }
-
-    static async getProspects() {
-        const indexedDBData = await this.fetchDataFromIndexedDB('prospects');
-
-        if (indexedDBData) {
-            return indexedDBData;
-        }
-
-        const prospects = localStorage.getItem('prospects');
-        return prospects ? JSON.parse(prospects) : [];
-    }
-
-    static async storeContrats(contrats) {
-        localStorage.setItem('contrats', JSON.stringify(contrats));
-        await this.storeDataInIndexedDB('contrats', contrats);
-    }
-
-    static async getContrats() {
-        const indexedDBData = await this.fetchDataFromIndexedDB('contrats');
-
-        if (indexedDBData) {
-            return indexedDBData;
-        }
-
-        const contrats = localStorage.getItem('contrats');
-        return contrats ? JSON.parse(contrats) : [];
-    }
-
-    static async storeCompagnies(compagnies) {
-        localStorage.setItem('compagnies', JSON.stringify(compagnies));
-        await this.storeDataInIndexedDB('compagnies', compagnies);
-    }
-
-    static async getCompagnies() {
-        const indexedDBData = await this.fetchDataFromIndexedDB('compagnies');
-
-        if (indexedDBData) {
-            return indexedDBData;
-        }
-
-        const compagnies = localStorage.getItem('compagnies');
-        return compagnies ? JSON.parse(compagnies) : [];
-    }
-
-    static async storeApporteurs(apporteurs) {
-        localStorage.setItem('apporteurs', JSON.stringify(apporteurs));
-        await this.storeDataInIndexedDB('apporteurs', apporteurs);
-    }
-
-    static async getApporteurs() {
-        const indexedDBData = await this.fetchDataFromIndexedDB('apporteurs');
-
-        if (indexedDBData) {
-            return indexedDBData;
-        }
-
-        const apporteurs = localStorage.getItem('apporteurs');
-        return apporteurs ? JSON.parse(apporteurs) : [];
-    }
-
-    static async storeBranches(branches) {
-        localStorage.setItem('branches', JSON.stringify(branches));
-        await this.storeDataInIndexedDB('branches', branches);
-    }
-
-    static async getBranches() {
-        const indexedDBData = await this.fetchDataFromIndexedDB('branches');
-
-        if (indexedDBData) {
-            return indexedDBData;
-        }
-
-        const branches = localStorage.getItem('branches');
-        return branches ? JSON.parse(branches) : [];
     }
 }
 

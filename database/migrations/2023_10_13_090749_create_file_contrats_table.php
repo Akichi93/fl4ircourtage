@@ -26,6 +26,8 @@ class CreateFileContratsTable extends Migration
                 ->on('contrats')
                 ->onDelete('cascade');
 
+            $table->boolean('sync')->default(true);
+
             $table->timestamps();
         });
     }

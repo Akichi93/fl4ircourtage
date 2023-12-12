@@ -29,6 +29,7 @@ class CreateTauxCompagniesTable extends Migration
                 ->onDelete('cascade');
 
             $table->integer('tauxcomp');
+            $table->boolean('sync')->default(true);
             $table->timestamps();
         });
     }

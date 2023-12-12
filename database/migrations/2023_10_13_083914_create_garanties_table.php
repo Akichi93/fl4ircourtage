@@ -21,6 +21,7 @@ class CreateGarantiesTable extends Migration
                 ->on('contrats')
                 ->onDelete('cascade');
             $table->string('nom_garantie');
+            $table->boolean('sync')->default(true);
             $table->timestamps();
         });
     }

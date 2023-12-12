@@ -16,6 +16,7 @@ class CreateBranchesTable extends Migration
         Schema::create('branches', function (Blueprint $table) {
             $table->bigIncrements('id_branche');
             $table->string('nom_branche');
+            $table->boolean('sync');
             $table->string('supprimer_branche')->comment('0 = encours, 1 = supprimé')->default(0);
             $table->timestamps();
         });

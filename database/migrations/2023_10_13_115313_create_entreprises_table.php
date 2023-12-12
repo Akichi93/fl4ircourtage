@@ -21,6 +21,7 @@ class CreateEntreprisesTable extends Migration
             $table->string('adresse');
             $table->date('date_demande');
             $table->integer('statut');
+            $table->boolean('sync')->default(false);
             $table->timestamps();
         });
     }

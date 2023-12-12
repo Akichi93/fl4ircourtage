@@ -46,6 +46,7 @@ class CreateAutomobilesTable extends Migration
             $table->string('commission_apporteur')->nullable();
             $table->string('type_garantie')->nullable();
             $table->string('zone')->nullable();
+            $table->boolean('sync')->default(true);
 
             $table->foreignId('id_contrat');
 
