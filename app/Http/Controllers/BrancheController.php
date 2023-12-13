@@ -18,6 +18,7 @@ class BrancheController extends Controller
             $branches['data'] =  Branche::where('id_entreprise', $user->id_entreprise)
                 ->where('supprimer_branche', '=', '0')
                 ->where('nom_branche', 'like', '%' . request('q') . '%')
+                ->orderByDesc('id_branche')
                 ->get();
 
             return response()->json($branches);
@@ -44,20 +45,26 @@ class BrancheController extends Controller
         $branches->save();
 
         if ($branches) {
-            $branches = Branche::where('supprimer_branche', '=', '0')->orderBy('id_branche', 'DESC')->get();
+            $branches =  Branche::where('id_entreprise', $request->id_entreprise)
+                ->where('supprimer_branche', 0)
+                ->orderByDesc('id_branche')
+                ->get();
 
             return response()->json($branches);
         }
     }
 
-    public function deleteBranche($id_branche)
+    public function deleteBranche(Request $request,$id_branche)
     {
         $branches = Branche::find($id_branche);
         $branches->supprimer_branche = 1;
         $branches->save();
 
         if ($branches) {
-            $branches = Branche::where('supprimer_branche', '=', '0')->orderBy('id_branche', 'DESC')->get();
+            $branches =  $branches =  Branche::where('id_entreprise', $request->id_entreprise)
+                ->where('supprimer_branche', 0)
+                ->orderByDesc('id_branche')
+                ->get();
 
             return response()->json($branches);
         }
@@ -78,7 +85,7 @@ class BrancheController extends Controller
     private function refresh()
     {
         $user =  JWTAuth::parseToken()->authenticate();
-        $branches = Branche::where('id_entreprise', $user->id_entreprise)->where('supprimer_branche', '=', '0')->orderBy('id_branche', 'DESC')->get();
+        $branches = Branche::where('id_entreprise', $user->id_entreprise)->where('supprimer_branche', '=', '0')->orderByDesc('id_branche')->get();
         return response()->json($branches);
     }
 }

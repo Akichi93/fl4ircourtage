@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import AppStorage from "../../utils/helpers/AppStorage";
 import { createToaster } from "@meforma/vue-toaster";
 // import $ from "jquery";
 const toaster = createToaster({
@@ -40,8 +41,12 @@ export default {
   name: "editbranche",
   methods: {
     userUpdate() {
+      const entrepriseId = AppStorage.getEntreprise();
+
       axios.patch("/api/auth/updateBranche/" + this.branchetoedit.id_branche, {
         nom_branche: this.branchetoedit.nom_branche,
+        id_entreprise: entrepriseId,
+        
       })
         .then((response) => {
           this.$emit('task-updated', response)

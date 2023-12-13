@@ -107,14 +107,14 @@ class ApporteurController extends Controller
       |
      */
 
-    public function deleteApporteur($id_apporteur)
+    public function deleteApporteur(Request $request,$id_apporteur)
     {
 
         $apporteurs = Apporteur::find($id_apporteur);
         $apporteurs->supprimer_apporteur = 1;
         $apporteurs->save();
         if ($apporteurs) {
-            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->latest()->get();
+            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->where('id_entreprise', $request->id_entreprise)->latest()->get();
 
             return response()->json($apporteurs);
         }
@@ -152,7 +152,7 @@ class ApporteurController extends Controller
       |
      */
 
-    public function updateApporteur($id_apporteur)
+    public function updateApporteur(Request $request,$id_apporteur)
     {
 
         $apporteurs = Apporteur::find($id_apporteur);
@@ -164,7 +164,7 @@ class ApporteurController extends Controller
         $apporteurs->save();
 
         if ($apporteurs) {
-            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->latest()->get();
+            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->where('id_entreprise', $request->id_entreprise)->latest()->get();
 
             return response()->json($apporteurs);
         }

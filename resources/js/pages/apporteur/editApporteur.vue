@@ -10,61 +10,62 @@
         </div>
         <div class="modal-body">
           <input type="hidden" class="form-control" v-model="apporteurtoedit.id_apporteur" />
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Nom complet de l'apporteur</label>
-                  <input type="text" class="form-control" v-model="apporteurtoedit.nom_apporteur" />
-                </div>
-              </div>
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Email</label>
-                  <input type="text" class="form-control" v-model="apporteurtoedit.email_apporteur" />
-                </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Nom complet de l'apporteur</label>
+                <input type="text" class="form-control" v-model="apporteurtoedit.nom_apporteur" />
               </div>
             </div>
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Contact</label>
-                  <input type="text" class="form-control" v-model="apporteurtoedit.contact_apporteur" />
-                </div>
-              </div>
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Ville</label>
-                  <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="apporteurtoedit.adresse_apporteur"></adressecomponent>
-                </div>
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Email</label>
+                <input type="text" class="form-control" v-model="apporteurtoedit.email_apporteur" />
               </div>
             </div>
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label>Code postal</label>
-                  <input type="text" class="form-control" v-model="apporteurtoedit.code_postal" />
-                </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Contact</label>
+                <input type="text" class="form-control" v-model="apporteurtoedit.contact_apporteur" />
               </div>
             </div>
-            <div class="submit-section">
-              <button class="btn btn-primary cancel-btn" type="button" data-bs-dismiss="modal" aria-label="Close">
-                Annuler
-              </button>
-              <button class="btn btn-primary submit-btn" type="button" @click.prevent="apporteurUpdate"
-                data-bs-dismiss="modal">
-                Modifier
-              </button>
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Ville</label>
+                <adressecomponent :placeholder="'selectionnez l\'adresse'" v-model="apporteurtoedit.adresse_apporteur">
+                </adressecomponent>
+              </div>
             </div>
-        
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Code postal</label>
+                <input type="text" class="form-control" v-model="apporteurtoedit.code_postal" />
+              </div>
+            </div>
+          </div>
+          <div class="submit-section">
+            <button class="btn btn-primary cancel-btn" type="button" data-bs-dismiss="modal" aria-label="Close">
+              Annuler
+            </button>
+            <button class="btn btn-primary submit-btn" type="button" @click.prevent="apporteurUpdate"
+              data-bs-dismiss="modal">
+              Modifier
+            </button>
+          </div>
+
         </div>
       </div>
     </div>
   </div>
 </template> 
 <script>
+import AppStorage from "../../utils/helpers/AppStorage";
 import adressecomponent from "../../components/select/adressecomponent.vue";
 import { createToaster } from "@meforma/vue-toaster";
-// import $ from "jquery";
 const toaster = createToaster({
   /* options */
 });
@@ -81,18 +82,21 @@ export default {
   },
   methods: {
     apporteurUpdate() {
+      const entrepriseId = AppStorage.getEntreprise();
+
       axios.patch("/api/auth/updateApporteur/" + this.apporteurtoedit.id_apporteur, {
         nom_apporteur: this.apporteurtoedit.nom_apporteur,
         email_apporteur: this.apporteurtoedit.email_apporteur,
         contact_apporteur: this.apporteurtoedit.contact_apporteur,
         adresse_apporteur: this.apporteurtoedit.adresse_apporteur,
         code_postal: this.apporteurtoedit.code_postal,
+        id_entreprise: entrepriseId,
       })
         .then((response) => {
           this.$emit('apporteur-updated', response)
           toaster.success(`Apporteur modifié avec succès`, {
-              position: "top-right",
-            });
+            position: "top-right",
+          });
         })
         .catch((error) => {
           console.log(error)

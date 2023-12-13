@@ -259,7 +259,7 @@ class FormRepository extends BaseRepository
 
         $branches = new Branche();
         $branches->nom_branche = $min;
-        $branches->id_entreprise = Auth::user()->id_entreprise;
+        $branches->id_entreprise = $user->id_entreprise;
         $branches->save();
 
         $id = $branches->id;
@@ -276,7 +276,7 @@ class FormRepository extends BaseRepository
 
 
         // Verifier si des apporteurs et compagnies existent
-        $apporteurs = Apporteur::where('id_entreprise', Auth::user()->id_entreprise)->count();
+        $apporteurs = Apporteur::where('id_entreprise', $user->id_entreprise)->count();
         if ($apporteurs > 0) {
             //Recuperer les permissions du rôle
             $idapporteur = Apporteur::select('id_apporteur')
@@ -289,7 +289,7 @@ class FormRepository extends BaseRepository
             }
 
 
-            $lastID = Branche::where('id_entreprise', Auth::user()->id_entreprise)->max('id_branche');
+            $lastID = Branche::where('id_entreprise', $user->id_entreprise)->max('id_branche');
 
             // Ajout des permissions
             for ($i = 0; $i < count($qwerty); $i++) {
@@ -300,12 +300,12 @@ class FormRepository extends BaseRepository
                 $assoc->save();
             }
         }
-        $compagnies = Compagnie::where('id_entreprise', Auth::user()->id_entreprise)->count();
+        $compagnies = Compagnie::where('id_entreprise', $user->id_entreprise)->count();
 
         if ($compagnies > 0) {
             //Recuperer les compagnies de l'entreprise
             $idcompagnie = Compagnie::select('id_compagnie')
-                ->where('id_entreprise', Auth::user()->id_entreprise)
+                ->where('id_entreprise', $user->id_entreprise)
                 ->get();
 
             foreach ($idcompagnie as $get) {
