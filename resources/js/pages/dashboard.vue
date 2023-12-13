@@ -201,34 +201,34 @@ export default {
   },
   name: "dashboard",
   components: { Header, Sidebar, Bar },
-  mounted() {
-    // Vérifiez la connexion au montage
-    this.checkInternetConnection();
+  // mounted() {
+  //   // Vérifiez la connexion au montage
+  //   this.checkInternetConnection();
 
-    // Écoutez les changements de connexion
-    this.$watch('isConnected', (newVal, oldVal) => {
-      if (newVal !== oldVal) {
-        this.notifyConnectionStatus();
-      }
-    });
-  },
+  //   // Écoutez les changements de connexion
+  //   this.$watch('isConnected', (newVal, oldVal) => {
+  //     if (newVal !== oldVal) {
+  //       this.notifyConnectionStatus();
+  //     }
+  //   });
+  // },
   methods: {
-    async checkInternetConnection() {
-      try {
-        const response = await axios.get('https://www.example.com');
-        this.isConnected = response.status === 200;
-      } catch (error) {
-        this.isConnected = false;
-      }
-    },
-    notifyConnectionStatus() {
-      // Utilisez toaster.success ou toaster.error en fonction de la connexion
-      if (this.isConnected) {
-        toaster.success('Vous êtes connecté à Internet');
-      } else {
-        toaster.error('Vous n\'êtes pas connecté à Internet');
-      }
-    },
+    // async checkInternetConnection() {
+    //   try {
+    //     const response = await axios.get('https://www.example.com');
+    //     this.isConnected = response.status === 200;
+    //   } catch (error) {
+    //     this.isConnected = false;
+    //   }
+    // },
+    // notifyConnectionStatus() {
+    //   // Utilisez toaster.success ou toaster.error en fonction de la connexion
+    //   if (this.isConnected) {
+    //     toaster.success('Vous êtes connecté à Internet');
+    //   } else {
+    //     toaster.error('Vous n\'êtes pas connecté à Internet');
+    //   }
+    // },
 
     getCategory: function () {
       const token = localStorage.getItem("token");
