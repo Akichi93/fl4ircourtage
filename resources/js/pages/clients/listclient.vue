@@ -49,7 +49,7 @@
               <table class="table table-striped custom-table mb-0">
                 <thead>
                   <tr>
-                    <th>Nom du prospect</th>
+                    <th>Nom du client</th>
                     <th>Adresse</th>
                     <th>Email</th>
                     <th>Contact</th>
@@ -58,7 +58,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="(client, i) in clients.data" :key="i">
+                  <template v-for="(client, i) in clients" :key="i">
                     <tr>
                       <td v-text="client.nom_client"></td>
                       <td v-text="client.adresse_client"></td>
@@ -122,7 +122,7 @@ export default {
   methods: {
     getClients(page) {
       getClientsList(page).then((result) => {
-        this.clients = result;
+        this.clients = result.data;
       });
     },
 

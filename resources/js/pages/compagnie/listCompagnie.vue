@@ -27,36 +27,22 @@
           <div class="col-md-8"></div>
           <div class="col-md-4">
             <div class="add-emp-section">
-              <router-link
-                to="createcompagnie"
-                class="btn btn-success btn-add-emp"
-                style="width: auto"
-                ><i class="fa fa-plus"></i> Ajouter une compagnie</router-link
-              >
+              <router-link to="createcompagnie" class="btn btn-success btn-add-emp" style="width: auto"><i
+                  class="fa fa-plus"></i> Ajouter une compagnie</router-link>
             </div>
           </div>
         </div>
 
         <div class="row">
           <div class="col-row">
-            <searchbranche
-              :placeholder="'Rechercher une compagnie'"
-              v-model="q"
-              @keyup="searchtask"
-            ></searchbranche>
+            <searchbranche :placeholder="'Rechercher une compagnie'" v-model="q" @keyup="searchtask"></searchbranche>
           </div>
           <div class="col-md-12" style="display: flex; justify-content: end">
             <compagniexport></compagniexport>
           </div>
           <div class="col-md-12">
             <div class="table-responsive">
-              <table
-                class="table table-striped custom-table mb-0"
-                cellspacing="0"
-                cellpadding="1"
-                border="1"
-                width="300"
-              >
+              <table class="table table-striped custom-table mb-0" cellspacing="0" cellpadding="1" border="1" width="300">
                 <thead>
                   <tr>
                     <th>Nom de la compagnie</th>
@@ -67,37 +53,25 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="(compagnie, i) in compagnies.data" :key="i">
+                  <template v-for="(compagnie, i) in compagnies" :key="i">
                     <tr>
                       <td v-text="compagnie.nom_compagnie"></td>
                       <td v-text="compagnie.email_compagnie"></td>
                       <td v-text="compagnie.contact_compagnie"></td>
                       <td v-text="compagnie.adresse_compagnie"></td>
                       <td class="text-end ico-sec d-flex justify-content-end">
-                        <router-link
-                          :to="{
-                            name: 'tauxcompagnie',
-                            params: { id_compagnie: compagnie.id_compagnie },
-                          }"
-                        >
+                        <router-link :to="{
+                          name: 'tauxcompagnie',
+                          params: { id_compagnie: compagnie.id_compagnie },
+                        }">
                           <i class="fa fa-pen-fancy"></i>
                         </router-link>
-                        <a
-                          href="#"
-                          data-bs-toggle="modal"
-                          data-bs-target="#edit_compagnie"
-                          @click="editCompagnie(compagnie.id_compagnie)"
-                          title="Modifier"
-                          ><i class="fas fa-pen"></i>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#edit_compagnie"
+                          @click="editCompagnie(compagnie.id_compagnie)" title="Modifier"><i class="fas fa-pen"></i>
                         </a>
-                        <a
-                          href="#"
-                          v-if="roleactif == 'ADMIN'"
-                          data-bs-toggle="modal"
-                          data-bs-target="#delete_compagnie"
-                          @click="editCompagnie(compagnie.id_compagnie)"
-                          title="supprimer"
-                          ><i class="fas fa-trash-alt"></i>
+                        <a href="#" v-if="roleactif == 'ADMIN'" data-bs-toggle="modal" data-bs-target="#delete_compagnie"
+                          @click="editCompagnie(compagnie.id_compagnie)" title="supprimer"><i
+                            class="fas fa-trash-alt"></i>
                         </a>
                       </td>
                     </tr>
@@ -105,23 +79,11 @@
                 </tbody>
               </table>
             </div>
-            <editCompagnie
-              v-bind:compagnietoedit="compagnietoedit"
-              @compagnie-updated="refresh"
-            ></editCompagnie>
-            <deleteCompagnie
-              v-bind:compagnietoedit="compagnietoedit"
-              @compagnie-delete="refresh"
-            ></deleteCompagnie>
+            <editCompagnie v-bind:compagnietoedit="compagnietoedit" @compagnie-updated="refresh"></editCompagnie>
+            <deleteCompagnie v-bind:compagnietoedit="compagnietoedit" @compagnie-delete="refresh"></deleteCompagnie>
 
-            <pagination
-              align="center"
-              :data="compagnies"
-              :limit="5"
-              :current_page="compagnies.current_page"
-              :last_page="compagnies.last_page"
-              @pagination-change-page="getCompagnies"
-            >
+            <pagination align="center" :data="compagnies" :limit="5" :current_page="compagnies.current_page"
+              :last_page="compagnies.last_page" @pagination-change-page="getCompagnies">
             </pagination>
           </div>
         </div>
@@ -156,7 +118,7 @@ export default {
       compagnies: {},
       compagnietoedit: "",
       q: "",
-      roleactif:""
+      roleactif: ""
     };
   },
   created() {
@@ -178,7 +140,7 @@ export default {
     },
     getCompagnies(page) {
       getCompagniesList(page).then((result) => {
-        this.compagnies = result;
+        this.compagnies = result.data;
       });
     },
 
@@ -194,7 +156,9 @@ export default {
       if (this.q.length > 0) {
         axios
           .get("/api/auth/compagnieList/" + this.q, { headers })
-          .then((response) => (this.compagnies = response.data.data))
+          .then((response) => (
+            this.compagnies = response.data.data
+          ))
           .catch((error) => console.log(error));
       } else {
         axios

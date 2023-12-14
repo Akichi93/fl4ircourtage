@@ -164,7 +164,7 @@ class ApporteurController extends Controller
         $apporteurs->save();
 
         if ($apporteurs) {
-            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->where('id_entreprise', $request->id_entreprise)->latest()->get();
+            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->where('id_entreprise', $request->id_entreprise)->latest()->paginate(10);
 
             return response()->json($apporteurs);
         }

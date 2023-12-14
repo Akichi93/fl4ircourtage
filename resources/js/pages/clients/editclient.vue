@@ -196,9 +196,15 @@
   </div>
 </template>
 <script>
+import AppStorage from "../../utils/helpers/AppStorage";
 import adressecomponent from "../../components/select/adressecomponent.vue";
 import professioncomponent from "../../components/select/professioncomponent.vue";
 import civilitecomponent from "../../components/select/civilitecomponent.vue";
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   props: ["clientoedit"],
   name: "editclient",
@@ -209,6 +215,8 @@ export default {
   },
   methods: {
     editClient() {
+      const entrepriseId = AppStorage.getEntreprise();
+
       axios
         .patch("/api/auth/updateClient/" + this.clientoedit.id_client, {
           civilite: this.clientoedit.civilite,
@@ -219,13 +227,16 @@ export default {
           profession_client: this.clientoedit.profession_client,
           fax_client: this.clientoedit.fax_client,
           email_client: this.clientoedit.email_client,
+          id_entreprise: entrepriseId,
         })
         .then((response) => {
-          if (response.status === 200) {
+          
+          // if (response.status === 200) {
             toaster.success(`Client modifié avec succès`, {
               position: "top-right",
             });
-          }
+            this.$emit('client-updated', response.data)
+          // }
         })
         .catch((error) => {
           if (error.response.status === 422) {

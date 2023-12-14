@@ -74,7 +74,7 @@ class CompagnieController extends Controller
         // Insertion dans la bdd
         $Data = $this->compagnie->postCompagnie($data);
 
-        if($Data){
+        if ($Data) {
             $compagnies = Compagnie::where('id_entreprise', $data['id_entreprise'])
                 ->where('supprimer_compagnie', '=', '0')->latest()->paginate(10);
             return response()->json($compagnies);
@@ -93,14 +93,16 @@ class CompagnieController extends Controller
         return response()->json($compagnies);
     }
 
-    public function deleteCompagnie(int $id_compagnie)
+    public function deleteCompagnie(Request $request, int $id_compagnie)
     {
         $compagnies = Compagnie::find($id_compagnie);
         $compagnies->supprimer_compagnie = 1;
         $compagnies->save();
 
         if ($compagnies) {
-            $compagnies = Compagnie::where('supprimer_compagnie', '=', '0')->latest()->get();
+            $user =  JWTAuth::parseToken()->authenticate();
+            $compagnies = Compagnie::where('id_entreprise', $user->id_entreprise)
+                ->where('supprimer_compagnie', '=', '0')->latest()->paginate(10);
 
             return response()->json($compagnies);
         }
@@ -112,7 +114,7 @@ class CompagnieController extends Controller
         // ], Response::HTTP_OK);
     }
 
-    public function updateCompagnie(int $id_compagnie)
+    public function updateCompagnie(Request $request, int $id_compagnie)
     {
         $compagnies = Compagnie::find($id_compagnie);
         $compagnies->nom_compagnie = request('nom_compagnie');
@@ -122,9 +124,10 @@ class CompagnieController extends Controller
         $compagnies->save();
 
         if ($compagnies) {
-            $user =  JWTAuth::parseToken()->authenticate();
-            $compagnies = Compagnie::where('id_entreprise', $user->id_entreprise)
-                ->where('supprimer_compagnie', '=', '0')->latest()->get();
+
+
+            $compagnies = Compagnie::where('id_entreprise', $request->id_entreprise)
+                ->where('supprimer_compagnie', '=', '0')->latest()->paginate(10);
 
             return response()->json($compagnies);
         }

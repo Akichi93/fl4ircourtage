@@ -80,6 +80,7 @@
   </div>
 </template>
 <script>
+import AppStorage from '../../utils/helpers/AppStorage';
 import adressecomponent from "../../components/select/adressecomponent.vue";
 import { createToaster } from "@meforma/vue-toaster";
 // import $ from "jquery";
@@ -94,11 +95,14 @@ export default {
   },
   methods: {
     compagnieUpdate() {
+      const entrepriseId = AppStorage.getEntreprise();
+
       axios.patch("/api/auth/updateCompagnie/" + this.compagnietoedit.id_compagnie, {
         nom_compagnie: this.compagnietoedit.nom_compagnie,
         email_compagnie: this.compagnietoedit.email_compagnie,
         contact_compagnie: this.compagnietoedit.contact_compagnie,
         adresse_compagnie: this.compagnietoedit.adresse_compagnie,
+        id_entreprise: entrepriseId,
       })
         .then((response) => {
           this.$emit('compagnie-updated', response)

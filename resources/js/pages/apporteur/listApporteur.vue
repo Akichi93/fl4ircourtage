@@ -65,7 +65,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="(apporteur, i) in apporteurs.data" :key="i">
+                  <template v-for="(apporteur, i) in apporteurs" :key="i">
                     <tr>
                       <td v-text="apporteur.code_apporteur"></td>
                       <td v-text="apporteur.nom_apporteur"></td>
@@ -165,7 +165,7 @@ export default {
   methods: {
     getApporteurs(page) {
       getApporteursList(page).then((result) => {
-        this.apporteurs = result;
+        this.apporteurs = result.data;
       });
     },
 

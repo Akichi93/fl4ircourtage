@@ -87,7 +87,7 @@
                             <div class="col-md-9">
                               <div class="form-group">
                                 <label>Adresse</label>
-                                <Multiselect v-model="zone" :options="localisations" :custom-label="({ id_localisation, nom_ville }) =>
+                                <Multiselect v-model="adresse_apporteur" :options="localisations" :custom-label="({ id_localisation, nom_ville }) =>
                                   `${id_localisation} - [${nom_ville}]`
                                   " valueProp="nom_ville" placeholder="Selectionnez zone" label="nom_ville"
                                   track-by="nom_ville" :searchable="true">

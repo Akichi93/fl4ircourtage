@@ -20,14 +20,13 @@ class ClientController extends Controller
         $user =  JWTAuth::parseToken()->authenticate();
         $data = strlen($request->q);
         if ($data > 0) {
-            dd($request->all());
             $clients['data'] = Client::where('id_entreprise', $user->id_entreprise)
                 ->where('nom_client', 'like', '%' . request('q') . '%')
                 ->orWhere('adresse_client', 'like', '%' . request('q') . '%')
                 ->orWhere('numero_client', 'like', '%' . request('q') . '%')
                 ->orWhere('profession_client', 'like', '%' . request('q') . '%')
                 ->latest()
-                ->paginate(10);
+                ->get();
             return response()->json($clients);
         } else {
             $clients = Client::where('id_entreprise', $user->id_entreprise)->latest()->paginate(10);
@@ -125,7 +124,7 @@ class ClientController extends Controller
         $clients->save();
 
         if ($clients) {
-            $clients = Client::where('id_entreprise', $request->id_entreprise)->latest()->get();
+            $clients = Client::where('id_entreprise', $request->id_entreprise)->latest()->paginate(10);
 
             return response()->json($clients);
         }
