@@ -120,7 +120,7 @@ export default {
     };
   },
   methods: {
-    info() {
+    async info() {
       const token = localStorage.getItem("token");
 
       // Configurez les en-têtes de la requête
@@ -135,15 +135,14 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    getRoleconnect() {
-      getRoleActif().then((result) => {
-        this.roleactif = result;
-      });
+    async getRoleconnect() {
+      this.roleactif = await getRoleActif();
     },
   },
-  created() {
-    this.info();
-    this.getRoleconnect();
+
+  async created() {
+    await this.getRoleconnect();
+    await this.info();
   },
   name: "Header",
 };

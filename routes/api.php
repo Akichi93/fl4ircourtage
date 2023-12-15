@@ -73,7 +73,7 @@ Route::group([
         Route::get('getBranches', 'getBranches');
         Route::get('getSecteurs', 'getSecteurs');
         Route::get('getRoles', 'getRoles');
-        Route::get('getRolesActif', 'getRolesActif');
+        Route::get('getRolesActif', 'getRolesActif')->middleware('throttle:100,60');
 
         // Form post
         Route::post('postLocalisations', 'postLocalisations');
@@ -264,20 +264,20 @@ Route::group([
 
 
     // Secteurs
-    Route::resource('secteurs', SecteurController::class);
+    // Route::resource('secteurs', SecteurController::class);
 
-    // Categorie dépenses
-    Route::resource('catdepenses', CatdepenseController::class);
-    Route::post('catdepenses/assoc', [CatdepenseController::class, 'assoc']);
-    Route::post('/get-depense', [CatdepenseController::class, 'getdepense']);
-    Route::get('/getresult', [CatdepenseController::class, 'getresult']);
+    // // Categorie dépenses
+    // Route::resource('catdepenses', CatdepenseController::class);
+    // Route::post('catdepenses/assoc', [CatdepenseController::class, 'assoc']);
+    // Route::post('/get-depense', [CatdepenseController::class, 'getdepense']);
+    // Route::get('/getresult', [CatdepenseController::class, 'getresult']);
 
-    // Type dépenses
-    Route::resource('typexpenses', TypedepenseController::class);
+    // // Type dépenses
+    // Route::resource('typexpenses', TypedepenseController::class);
 
-    // Dépenses
-    Route::resource('expenditures', DepenseController::class);
-    Route::get('/depenseslist/{q?}', [DepenseController::class, 'depenseslist']);
+    // // Dépenses
+    // Route::resource('expenditures', DepenseController::class);
+    // Route::get('/depenseslist/{q?}', [DepenseController::class, 'depenseslist']);
 
     // Route::get('get/expires', [HomeController::class, 'getexpires'])->name('contrats/getexpires');
     // Route::get('get/nonsoldes', [HomeController::class, 'getnonsoldes']);
