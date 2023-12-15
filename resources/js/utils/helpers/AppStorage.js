@@ -20,6 +20,10 @@ class AppStorage {
         localStorage.setItem('entreprise', entreprise);
     }
 
+    static async storeRole(role) {
+        localStorage.setItem('role', role);
+    }
+
     static async storeData(key, data) {
         localStorage.setItem(key, JSON.stringify(data));
         await this.storeDataInIndexedDB(key, data);
@@ -168,11 +172,12 @@ class AppStorage {
     }
 
 
-    static async store(token, user, id, entreprise) {
+    static async store(token, user, id, entreprise,role) {
         await this.storeToken(token);
         await this.storeUser(user);
         await this.storeId(id);
         await this.storeEntreprise(entreprise);
+        await this.storeRole(role);
     }
 
     static async clear() {
@@ -180,6 +185,7 @@ class AppStorage {
         localStorage.removeItem('user');
         localStorage.removeItem('id');
         localStorage.removeItem('entreprise');
+        localStorage.removeItem('role');
     }
 
     static getToken() {
@@ -196,6 +202,10 @@ class AppStorage {
 
     static getEntreprise() {
         return localStorage.getItem('entreprise');
+    }
+
+    static getRole() {
+        return localStorage.getItem('role');
     }
 }
 

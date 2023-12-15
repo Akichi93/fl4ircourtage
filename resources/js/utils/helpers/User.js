@@ -4,9 +4,9 @@ import Token from './Token';
 
 class User {
     static async responseAfterLogin(res) {
-        const { access_token, name, user_id, id_entreprise } = res.data;
+        const { access_token, name, user_id, id_entreprise, role } = res.data;
 
-        await AppStorage.store(access_token, name, user_id, id_entreprise);
+        await AppStorage.store(access_token, name, user_id, id_entreprise, role);
 
         const apiCalls = [
             { endpoint: 'getClient', storageKey: 'clients' },

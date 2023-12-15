@@ -62,8 +62,7 @@ export default {
             errors: []
         }
     },
-    methods: {
-        
+    methods: {       
         login() {
             axios.post('/api/auth/login', this.form)
                 .then(res => {
