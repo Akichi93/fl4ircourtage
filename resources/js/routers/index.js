@@ -50,7 +50,17 @@ import profil from "../pages/users/profil";
 import entreprise from "../pages/parametre/entreprise";
 import upload from "../pages/uploads/upload";
 import reporting from "../pages/statistiques/reporting";
-import listsalaire from "../pages/salaires/listsalaires"
+import listsalaire from "../pages/salaires/listsalaires";
+import notfound from "../pages/notfound"
+
+// Fonction de vérification
+function isPageValid(route) {
+  // Ajoutez votre logique de vérification ici
+  // Par exemple, vérifiez si le chemin correspond à une route existante
+  const validRoutes = ['/', '/register', '/forgot']; // Liste des routes valides
+  return validRoutes.includes(route);
+}
+
 
 const routes = [
   {
@@ -340,6 +350,21 @@ const routes = [
     name: 'listsalaire',
     component: listsalaire,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/:path(.*)*',
+    name: 'notfound',
+    component: notfound,
+    beforeEnter: (to, from, next) => {
+      console.log('Before enter NotFound route');
+      if (isPageValid(to.fullPath)) {
+        // La page existe, laissez la navigation se poursuivre normalement
+        next();
+      } else {
+        // La page n'existe pas, redirigez vers la page NotFound
+        next('/not-found');
+      }
+    }
   },
 ];
 

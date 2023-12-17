@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="utf-8">
@@ -41,8 +41,6 @@
         <router-view></router-view>
     </div>
 
-
-    {{-- <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script> --}}
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('assets/js/jquery-3.6.0.min.js') }}"></script>
 
@@ -94,8 +92,6 @@
             });
         });
     </script>
-
-
 
     <script src="{{ asset('assets/js/app.js') }}"></script>
 </body>
