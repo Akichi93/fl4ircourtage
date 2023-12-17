@@ -57,7 +57,7 @@ import notfound from "../pages/notfound"
 function isPageValid(route) {
   // Ajoutez votre logique de vérification ici
   // Par exemple, vérifiez si le chemin correspond à une route existante
-  const validRoutes = ['/', '/register', '/forgot']; // Liste des routes valides
+  const validRoutes = ['/', '/register', '/forgot','/home','/courtage']; // Liste des routes valides
   return validRoutes.includes(route);
 }
 
@@ -116,7 +116,7 @@ const routes = [
     name: 'listapporteur',
     component: listapporteur,
     meta: { requiresAuth: true },
-  },
+  }, 
   {
     path: '/createapporteur',
     name: 'createapporteur',
@@ -355,16 +355,16 @@ const routes = [
     path: '/:path(.*)*',
     name: 'notfound',
     component: notfound,
-    beforeEnter: (to, from, next) => {
-      console.log('Before enter NotFound route');
-      if (isPageValid(to.fullPath)) {
-        // La page existe, laissez la navigation se poursuivre normalement
-        next();
-      } else {
-        // La page n'existe pas, redirigez vers la page NotFound
-        next('/not-found');
-      }
-    }
+    // beforeEnter: (to, from, next) => {
+    //   console.log('Before enter NotFound route');
+    //   if (isPageValid(to.fullPath)) {
+    //     // La page existe, laissez la navigation se poursuivre normalement
+    //     next();
+    //   } else {
+    //     // La page n'existe pas, redirigez vers la page NotFound
+    //     next('/not-found');
+    //   }
+    // }
   },
 ];
 

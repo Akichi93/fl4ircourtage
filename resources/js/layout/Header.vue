@@ -207,10 +207,10 @@ export default {
       return this.roleactif === "RH";
     },
     isCommercial() {
-      return this.roleactif === "CoMMERCIAL";
+      return this.roleactif === "COMMERCIAL";
     },
     isCourtier() {
-      return this.roleactif === "CoMMERCIAL";
+      return this.roleactif === "COURTIER";
     },
   },
   name: "Header",

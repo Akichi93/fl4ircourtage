@@ -1,11 +1,11 @@
 <!-- NotFound.vue -->
 
 <template>
-    <div>
-      <h1>404 Not Found</h1>
-      <p>La page que vous recherchez n'existe pas.</p>
+    <div style="color: black;">
+        <h1>404 Not Found</h1>
+        <p>La page que vous recherchez n'existe pas.</p>
     </div>
-  </template>
+</template>
   
   <script>
   export default {
