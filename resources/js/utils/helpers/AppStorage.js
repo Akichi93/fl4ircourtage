@@ -25,7 +25,7 @@ class AppStorage {
     }
 
     static async storeData(key, data) {
-        localStorage.setItem(key, JSON.stringify(data));
+        // localStorage.setItem(key, JSON.stringify(data));
         await this.storeDataInIndexedDB(key, data);
     }
 

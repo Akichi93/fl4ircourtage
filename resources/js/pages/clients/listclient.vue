@@ -77,8 +77,8 @@
             <addclient @client-added="refresh"></addclient>
             <editclient v-bind:clientoedit="clientoedit" @client-updated="refresh"></editclient>
 
-            <pagination align="center" :data="clients" :limit="5" :current_page="clients.current_page"
-              :last_page="clients.last_page" @pagination-change-page="getClients">
+            <pagination align="center" :data="paginations" :limit="5" :current_page="paginations.current_page"
+              :last_page="paginations.last_page" @pagination-change-page="getClients">
             </pagination>
           </div>
         </div>
@@ -110,6 +110,7 @@ export default {
     return {
       value: null,
       clients: {},
+      paginations: {},
       localisations: {},
       professions: {},
       q: "",
@@ -123,6 +124,7 @@ export default {
     getClients(page) {
       getClientsList(page).then((result) => {
         this.clients = result.data;
+        this.paginations = result;
       });
     },
 

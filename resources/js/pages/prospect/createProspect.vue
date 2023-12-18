@@ -14,7 +14,10 @@
                             <h3>Prospects</h3>
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="/home">Tableau de bord</a></li>
+
+                                    <li class="breadcrumb-item">
+                                        <router-link to="/home">Tableau de bord</router-link>
+                                    </li>
                                     <li class="breadcrumb-item active" aria-current="page">Prospects</li>
                                 </ol>
                             </nav>
@@ -62,8 +65,8 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label>Etat:</label>
-                                                        <etatcomponent :placeholder="'selectionnez un état'"
-                                                            v-model="etat"></etatcomponent>
+                                                        <etatcomponent :placeholder="'selectionnez un état'" v-model="etat">
+                                                        </etatcomponent>
                                                         <p style="color: red" class="text-red" v-if="errors.etat"
                                                             v-text="errors.etat[0]">
                                                         </p>
@@ -204,6 +207,7 @@
     </div>
 </template>
 <script>
+import AppStorage from "../../utils/helpers/AppStorage";
 import Header from "../../layout/Header.vue"
 import Sidebar from "../../layout/Sidebar.vue";
 import adressecomponent from "../../components/select/adressecomponent.vue";
@@ -240,18 +244,11 @@ export default {
             errors: {}
         };
     },
-    created() {
-        this.fetchTask();
-    },
-    mounted() {
-        this.fetchTask();
-    },
     methods: {
         storeProspect() {
 
-            const token = localStorage.getItem("token");
-            const userId = localStorage.getItem("id");
-            const entrepriseId = localStorage.getItem("entreprise");
+            const userId = AppStorage.getId();
+            const entrepriseId = AppStorage.getEntreprise();
 
             axios
                 .post("/api/auth/postProspect", {
@@ -267,95 +264,36 @@ export default {
                     id_entreprise: entrepriseId,
                     id: userId,
                 })
-                .then((response) => {
-                    if (response.status === 200) {
-                        toaster.success(`Prospect ajouté avec succès`, {
-                            position: "top-right",
-                        });
-                    }
+                .then(async (response) => {
+                    const newProspect = response.data; // Assurez-vous que votre serveur renvoie le prospect nouvellement créé
+
+                    // Mettre à jour IndexedDB avec les clients récupérés
+                    await AppStorage.storeDataInIndexedDB("prospects", newProspect);
+
+                    toaster.success(`Prospect ajouté avec succès`, {
+                        position: "top-right",
+                    });
+
+                    // Redirect to the listprospect page
                     this.$router.push("/listprospect");
-                    
+
                 })
                 .catch((error) => {
-                    if (error.response.status === 422) {
-                        this.errors = error.response.data.errors;
-                    } else if (error.request) {
-                        // The request was made but no response was received
-                        console.log(error.request);
-                    } else {
-                        // Something happened in setting up the request that triggered an Error
-                        console.log("Error", error.message);
-                    }
+                    // if (error.response.status === 422) {
+                    //     this.errors = error.response.data.errors;
+                    // } else if (error.request) {
+                    //     // The request was made but no response was received
+                    //     console.log(error.request);
+                    // } else {
+                    //     // Something happened in setting up the request that triggered an Error
+                    //     console.log("Error", error.message);
+                    // }
                 });
         },
 
-        storeAdresse() {
-            axios
-                .post("/postLocalisations", {
-                    ajout_adresse: this.ajout_adresse,
-                })
-                .then((response) => {
-                    this.ajout_adresse = '';
-                    if (response.status === 200) {
-                        toaster.success(`Adresse ajouté avec succès`, {
-                            position: "top-right",
-                        });
-                    }
-                })
-                .catch((error) => {
-                    if (error.response.status === 422) {
-                        this.errors = error.response.data.errors;
-                    } else if (error.request) {
-                        // The request was made but no response was received
-                        console.log(error.request);
-                    } else {
-                        // Something happened in setting up the request that triggered an Error
-                        console.log("Error", error.message);
-                    }
-                });
-        },
 
-        storeProfession() {
-            axios
-                .post("/postProfessions", {
-                    ajout_profession: this.ajout_profession,
-                })
-                .then((response) => {
-                    this.fetchTask();
-                    this.ajout_profession = '';
-                    if (response.status === 200) {
-                        toaster.success(`Profession ajouté avec succès`, {
-                            position: "top-right",
-                        });
-                    }
-                })
-                .catch((error) => {
-                    if (error.response.status === 422) {
-                        this.errors = error.response.data.errors;
-                    } else if (error.request) {
-                        // The request was made but no response was received
-                        console.log(error.request);
-                    } else {
-                        // Something happened in setting up the request that triggered an Error
-                        console.log("Error", error.message);
-                    }
-                });
-        },
 
-        fetchTask() {
-            var that = this;
-            axios
-                .all([
-                    axios.get("/getLocalisations"),
-                    axios.get("/getProfessions"),
-                ])
-                .then(
-                    axios.spread(function (localisations, professions) {
-                        that.localisations = localisations.data;
-                        that.professions = professions.data;
-                    })
-                );
-        },
+
     },
 };
 </script>

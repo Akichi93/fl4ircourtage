@@ -57,7 +57,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="(prospect, index) in prospects.data" :key="index">
+                  <template v-for="(prospect, index) in prospects" :key="index">
                     <tr>
                       <td v-text="prospect.nom_prospect"></td>
                       <td v-text="prospect.adresse_prospect"></td>
@@ -103,8 +103,8 @@
             <changeProspect v-bind:prospectoedit="prospectoedit" @prospect-change="refresh"></changeProspect>
             <deleteProspect v-bind:prospectoedit="prospectoedit" @prospect-deleted="refresh"></deleteProspect>
 
-            <pagination align="center" :data="prospects" :limit="5" :current_page="prospects.current_page"
-              :last_page="prospects.last_page" @pagination-change-page="getProspects">
+            <pagination align="center" :data="paginations" :limit="5" :current_page="paginations.current_page"
+              :last_page="paginations.last_page" @pagination-change-page="getProspects">
             </pagination>
           </div>
         </div>
@@ -152,7 +152,8 @@ export default {
   methods: {
     getProspects(page) {
       getProspectsList(page).then((result) => {
-        this.prospects = result;
+        this.prospects = result.data;
+        this.paginations = result;
       });
     },
     getRoleconnect() {
