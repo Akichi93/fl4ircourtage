@@ -42,9 +42,7 @@
               <div class="card-header">
                 <div class="text-center w-100 p-3">
                   <h2>
-                    <router-link to="/statclient"
-                      >Statistiques Clients</router-link
-                    >
+                    <router-link to="/statclient">Statistiques Clients</router-link>
                   </h2>
                   <h2 class="bl-text mb-1" v-text="clients"></h2>
                 </div>
@@ -56,8 +54,7 @@
               <div class="card-header">
                 <div class="text-center w-100 p-3">
                   <h2>
-                    <router-link to="">Statistiques contrats</router-link>
-                    <a href="/statcontrat"></a>
+                    <router-link to="/statcontrat">Statistiques contrats</router-link>
                   </h2>
                   <h2 class="bl-text mb-1" v-text="contrats"></h2>
                 </div>
@@ -72,9 +69,7 @@
               <div class="card-header">
                 <div class="text-center w-100 p-3">
                   <h2>
-                    <router-link to="/statsinistre"
-                      >Statistiques sinistres</router-link
-                    >
+                    <router-link to="/statsinistre">Statistiques sinistres</router-link>
                   </h2>
                   <h2 class="bl-text mb-1" v-text="sinistres"></h2>
                 </div>
@@ -113,7 +108,7 @@
               <div class="card-header">
                 <div class="text-center w-100 p-3">
                   <h2>
-                    <router-link to="">Statistiques apporteurs</router-link>
+                    <router-link to="/statapporteur">Statistiques apporteurs</router-link>
                   </h2>
                   <h2 class="bl-text mb-1"></h2>
                 </div>

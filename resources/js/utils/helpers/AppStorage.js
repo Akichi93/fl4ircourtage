@@ -50,21 +50,40 @@ class AppStorage {
         const tx = db.transaction('apiData', 'readwrite');
         const store = tx.objectStore('apiData');
 
-        const existingData = await store.get(key);
+        // const existingData = await store.get(key);
 
-        if (existingData) {
-            // Gestion des conflits : fusionner les données existantes avec les nouvelles données
-            const mergedData = { ...existingData, ...data };
-            await store.put(mergedData, key);
-            console.log(`Données fusionnées à apiData dans IndexedDB avec succès`);
-        } else {
-            // Aucune donnée existante, ajouter simplement les nouvelles données
-            await store.put(data, key);
-            console.log(`Donnée ajoutée à apiData dans IndexedDB avec succès`);
-        }
+        // if (existingData) {
+        //     // Gestion des conflits : fusionner les données existantes avec les nouvelles données
+        //     const mergedData = { ...existingData, ...data };
+        //     await store.put(mergedData, key);
+        //     console.log(`Données fusionnées à apiData dans IndexedDB avec succès`);
+        // } else {
+        //     // Aucune donnée existante, ajouter simplement les nouvelles données
+        await store.put(data, key);
+        console.log(`Donnée ajoutée à apiData dans IndexedDB avec succès`);
+        // }
 
         // Terminer la transaction
         await tx.complete;
+    }
+
+    static async clearData(key) {
+        const db = await openDB(this.dbName, 1, {
+            upgrade(db) {
+                db.createObjectStore('apiData');
+            },
+        });
+
+        const tx = db.transaction('apiData', 'readwrite');
+        const store = tx.objectStore('apiData');
+
+        // Delete the data for the specified key
+        await store.delete(key);
+
+        // Complete the transaction
+        await tx.complete;
+
+        console.log(`Data cleared for ${key} in apiData in IndexedDB`);
     }
 
     static async fetchDataFromIndexedDB(key) {
@@ -172,7 +191,7 @@ class AppStorage {
     }
 
 
-    static async store(token, user, id, entreprise,role) {
+    static async store(token, user, id, entreprise, role) {
         await this.storeToken(token);
         await this.storeUser(user);
         await this.storeId(id);
@@ -186,6 +205,8 @@ class AppStorage {
         localStorage.removeItem('id');
         localStorage.removeItem('entreprise');
         localStorage.removeItem('role');
+
+        await this.clearData('clients');
     }
 
     static getToken() {
@@ -207,6 +228,11 @@ class AppStorage {
     static getRole() {
         return localStorage.getItem('role');
     }
+
+    static async clearClients() {
+        await this.clearData('clients');
+    }
+
 }
 
 export default AppStorage;
