@@ -12,7 +12,7 @@
                     <b-form @submit="submit" @keydown="form.onKeydown($event)">
                         <div class="row">
                             <div class="col-md-12">
-                                <input v-model="avenantoedit.id_avenant" type="text" :modelValue="avenantoedit.id_avenant"
+                                <input v-model="avenantoedit.id_avenant" type="hidden" :modelValue="avenantoedit.id_avenant"
                                     name="name" />
                                 <HasError :form="form" field="name" class="form-control" />
 
@@ -44,6 +44,10 @@
 <script>
 import Form from "vform";
 import { HasError } from "vform/src/components/bootstrap5";
+import { createToaster } from "@meforma/vue-toaster";
+const toaster = createToaster({
+  /* options */
+});
 export default {
     components: {
         HasError,
@@ -66,6 +70,7 @@ export default {
 
             // Set the file object onto the form...
             this.form.file = file;
+            this.form.id_avenant = this.avenantoedit.id_avenant
             // this.form.id_sinistre = file
             // php artisan make:migration create_item_order_table --create="item_order" file_sinistres
         },

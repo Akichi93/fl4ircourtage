@@ -99,15 +99,17 @@ class ContratController extends Controller
 
         $latestOrder = Avenant::latest()->first();
 
+        $annee = date('Y');
+        $mois = date('m');
+
         if ($latestOrder) {
-            $month = date('m');
-            $year = date('Y');
-            $orderNumber = intval($month) . $year . str_pad((int)substr($latestOrder->code_avenant, 4) + 1, 4, '0', STR_PAD_LEFT);
+
+            $nouvelId = $latestOrder->id + 1;
         } else {
-            $month = date('m');
-            $year = date('Y');
-            $orderNumber = intval($month) . $year . 0001;
+            $nouvelId = intval($mois) . $annee . 0001;
         }
+
+        $numeroFacture = $annee . '' . $mois . '' . $nouvelId;
 
         $avenants = new Avenant();
         $avenants->id_contrat = $id;
@@ -130,7 +132,7 @@ class ContratController extends Controller
         $avenants->taxes_totales = $request->taxes_totales;
         $avenants->id_entreprise = $request->id_entreprise;
         $avenants->user_id = $request->id;
-        $avenants->code_avenant = $orderNumber;
+        $avenants->code_avenant = $numeroFacture;
         $avenants->save();
 
         // Obtenir le nom de la branche

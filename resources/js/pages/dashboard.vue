@@ -102,17 +102,19 @@
           </div>
         </div>
       </div>
+
       <div class="row">
         <div class="col-md-6">
-          <Bar :data="chartData" />
+          <Bar :data="chartData"/>
         </div>
         <div class="col-md-6">
-          <Bar :data="chartDonnees" />
+          <Bar :data="chartDonnees"/>
         </div>
       </div>
+
       <div class="row">
         <div class="col-md-6">
-          <Bar :data="chartGraphs" />
+          <Bar :data="chartGraphs"/>
         </div>
 
       </div>
