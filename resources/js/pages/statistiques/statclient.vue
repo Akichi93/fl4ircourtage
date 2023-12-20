@@ -48,7 +48,7 @@
                           name: 'infoclient',
                           params: { id_client: client.id_client },
 
-                        }">{{ client.nom_client }}</router-link>
+                        }" style=" color: #007bff;">{{ client.nom_client }}</router-link>
                       </td>
                       <td v-text="client.email_client"></td>
                       <td v-text="client.tel_client"></td>

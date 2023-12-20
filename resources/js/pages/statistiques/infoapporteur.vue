@@ -9,11 +9,11 @@
         <div class="row">
           <div class="col-md-12">
             <div class="page-head-box">
-              <h3>Detail de l4apporteur</h3>
+              <h3>Detail de l'apporteur</h3>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="admin-dashboard.html">Tableau de bord</a>
+                    <router-link to="/home">Tableau de bord</router-link>
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Detail de l'apporteur

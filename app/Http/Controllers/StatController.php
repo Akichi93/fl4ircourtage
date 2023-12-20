@@ -11,6 +11,7 @@ use App\Models\Depense;
 use App\Models\Prospect;
 use App\Models\Sinistre;
 use App\Models\Apporteur;
+use App\Models\Avenant;
 use App\Models\Compagnie;
 use App\Models\FileAvenant;
 use App\Models\FileSinistre;
@@ -185,19 +186,19 @@ class StatController extends Controller
     {
         $apporteurs = Apporteur::findOrFail($id_apporteur);
 
-        $listescontrats = Contrat::select('nom_branche', 'numero_police', DB::raw('SUM(avenants.commission) as commission_apporteur'))
-            ->join("avenants", 'contrats.id_contrat', '=', 'avenants.id_contrat')
+        $listescontrats = Avenant::join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
             ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
             ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
             ->where('contrats.id_apporteur', $apporteurs->id_apporteur)
             ->where('supprimer_contrat', 0)
-            ->groupBy('nom_branche', 'numero_police')
             ->get();
 
-        $sommes = Contrat::join("avenants", 'contrats.id_contrat', '=', 'avenants.id_contrat')
+        $calcul = Avenant::join("contrats", 'contrats.id_contrat', '=', 'avenants.id_contrat')
             ->where('contrats.id_apporteur', $apporteurs->id_apporteur)
             ->where('supprimer_contrat', 0)
-            ->sum('commission');
+            ->sum('commission_apporteur');
+
+        $sommes = round($calcul, 2);
 
         return response()->json(["apporteurs" => $apporteurs, "listescontrats" => $listescontrats, "sommes" => $sommes]);
     }

@@ -13,7 +13,7 @@
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="/home">Tableau de bord</a>
+                    <router-link to="/home">Tableau de bord</router-link>
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Stat apporteur
@@ -38,18 +38,14 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template
-                    v-for="(apporteur, index) in apporteurs"
-                    :key="index"
-                  >
+                  <template v-for="(apporteur, index) in apporteurs" :key="index">
                     <tr>
                       <td>
                         <router-link :to="{
                           name: 'infoapporteur',
                           params: { id_apporteur: apporteur.id_apporteur },
-                          
 
-                        }">{{ apporteur.nom_apporteur }}</router-link>
+                        }" style=" color: #007bff;">{{ apporteur.nom_apporteur }}</router-link>
                       </td>
                       <td>
                         {{ apporteur.email_apporteur }}
