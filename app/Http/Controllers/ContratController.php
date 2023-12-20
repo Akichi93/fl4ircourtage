@@ -916,4 +916,31 @@ class ContratController extends Controller
 
         return response()->json($contrats);
     }
+
+    public function payeAvenant(Request $request)
+    {
+        $avenants = Avenant::where('id_avenant', $request->id)
+            ->update([
+                'paye' => 'OUI',
+            ]);
+
+        if ($avenants) {
+            $listescontrats = Avenant::join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
+                ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
+                ->join("apporteurs", 'contrats.id_apporteur', '=', 'apporteurs.id_apporteur')
+                ->where('contrats.id_apporteur', $request->id_apporteur)
+                ->where('supprimer_contrat', 0)
+                ->get();
+
+            $totalpaye = Avenant::join("contrats", 'contrats.id_contrat', '=', 'avenants.id_contrat')
+                ->where('contrats.id_apporteur', $request->id_apporteur)
+                ->where('supprimer_contrat', 0)
+                ->where('paye', '=', 'OUI')
+                ->sum('commission_apporteur');
+
+            $sommepayes = round($totalpaye, 2);
+
+            return response()->json(["listescontrats" => $listescontrats, "sommepayes" => $sommepayes]);
+        }
+    }
 }

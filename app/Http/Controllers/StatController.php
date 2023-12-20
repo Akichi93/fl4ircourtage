@@ -193,14 +193,22 @@ class StatController extends Controller
             ->where('supprimer_contrat', 0)
             ->get();
 
-        $calcul = Avenant::join("contrats", 'contrats.id_contrat', '=', 'avenants.id_contrat')
+        $total = Avenant::join("contrats", 'contrats.id_contrat', '=', 'avenants.id_contrat')
             ->where('contrats.id_apporteur', $apporteurs->id_apporteur)
             ->where('supprimer_contrat', 0)
             ->sum('commission_apporteur');
 
-        $sommes = round($calcul, 2);
+        $sommes = round($total, 2);
 
-        return response()->json(["apporteurs" => $apporteurs, "listescontrats" => $listescontrats, "sommes" => $sommes]);
+        $totalpaye = Avenant::join("contrats", 'contrats.id_contrat', '=', 'avenants.id_contrat')
+            ->where('contrats.id_apporteur', $apporteurs->id_apporteur)
+            ->where('supprimer_contrat', 0)
+            ->where('paye','=','OUI')
+            ->sum('commission_apporteur');
+
+        $sommepayes = round($totalpaye, 2);
+
+        return response()->json(["apporteurs" => $apporteurs, "listescontrats" => $listescontrats, "sommes" => $sommes, "sommepayes" => $sommepayes]);
     }
 
     public function statsupprime()

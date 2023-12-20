@@ -275,12 +275,14 @@ export default {
         year: this.year,
         branch: this.branch,
       };
+  
       axios
         .get("/api/auth/stat/", {
           params: params,
           headers: headers,
         })
         .then((response) => {
+          console.log(this.countemission)
           this.contrat = response.data.contrat;
           this.prospect = response.data.prospect;
           this.sinistre = response.data.sinistre;

@@ -529,6 +529,17 @@ class UploadController extends Controller
         // }
     }
 
+    public function importautomobile(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'import_auto' => ['required', 'file', 'mimes:csv,txt', 'max:10240'] // Adjust max file size as needed
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 400);
+        }
+    }
+
 
     // Validation des entetes de l'importation clients
     private function validateHeaders($headers, $expectedHeaders)
@@ -973,6 +984,4 @@ class UploadController extends Controller
             }
         }
     }
-
-    
 }

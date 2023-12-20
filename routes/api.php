@@ -184,6 +184,7 @@ Route::group([
         Route::post('updateContrat', 'updateContrat'); // Update d'un contrat
         Route::get('getFactures/{id_avenant}', 'getFactures');
         Route::get('getContrat',  'getContrat'); // Obtenir les contrats
+        Route::post('payeAvenant', 'payeAvenant'); // Update d'un contrat
     });
 
     // Sinistres

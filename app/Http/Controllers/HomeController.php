@@ -87,9 +87,12 @@ class HomeController extends Controller
 
     public function stat(Request $request)
     {
+
         $year = Avenant::where('id_avenant', $request->year)->pluck('annee')->first();
         // $year = $request->year;
-        $branch = $request->branch;
+
+        $branches = $request->branch;
+        $branch = (int)$branches;
         $user =  JWTAuth::parseToken()->authenticate();
         $entreprise = $user->id_entreprise;
 
@@ -145,7 +148,7 @@ class HomeController extends Controller
             $countemission = Avenant::where('annee', $Year)
                 ->where('id_entreprise', $entreprise)
                 ->where('supprimer_avenant', '=', 0)
-                ->sum('prime_nette', 'accessoires', 'frais_courtier');
+                ->sum(DB::raw('frais_courtier + accessoires + prime_nette'));
 
             $primes = Avenant::select('mois as name', DB::raw('SUM(prime_nette + accessoires) as y'))
                 // ->where('annee', $Year)
@@ -227,7 +230,7 @@ class HomeController extends Controller
             $countemission = Avenant::where('annee', $Year)
                 ->where('id_entreprise', $entreprise)
                 ->where('supprimer_avenant', '=', 0)
-                ->sum('prime_nette', 'accessoires', 'frais_courtier');
+                ->sum(DB::raw('frais_courtier + accessoires + prime_nette'));
 
             $primes = Avenant::select('mois as name', DB::raw('SUM(prime_nette + accessoires) as y'))
                 ->where('annee', $Year)
@@ -312,10 +315,16 @@ class HomeController extends Controller
             $countemission = Avenant::join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
                 ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
                 ->where('annee', $year)
-                ->where('branches.id_branche', '=', $branch)
-                ->where('avenants.id_entreprise', $entreprise)
-                ->where('supprimer_contrat', '=', 0)
-                ->sum('avenants.prime_nette', 'avenants.accessoires', 'avenants.frais_courtier');
+                // ->where('branches.id_branche', '=', $branch)
+                // ->where('avenants.id_entreprise', $entreprise)
+                ->sum(DB::raw('avenants.frais_courtier + avenants.accessoires + avenants.prime_nette'));
+
+            $year = $request->all();
+            dd($year);
+
+            dd($request->year);
+
+
 
             $primes = Avenant::select('mois as name', DB::raw('SUM(prime_nette + accessoires) as y'))
                 // ->where('annee', $Year)

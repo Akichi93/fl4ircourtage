@@ -77,19 +77,28 @@
                       <th>Type de contrat</th>
                       <th>Numéro de police</th>
                       <th>Commision</th>
+                      <th>Payé</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <template
-                      v-for="(contrat, index) in listescontrats"
-                      :key="index"
-                    >
+                    <template v-for="(contrat, index) in listescontrats" :key="index">
                       <tr>
                         <td>
                           <h5>{{ contrat.nom_branche }}</h5>
                         </td>
                         <td>{{ contrat.numero_police }}</td>
                         <td>{{ contrat.commission_apporteur }}</td>
+                        <td v-if="contrat.paye == 'NON'">
+                          <span class="badge badge-pill bg-danger">NON</span>
+                        </td>
+                        <td v-else>
+                          <span class="badge badge-pill bg-success">OUI</span>
+                        </td>
+                        <td>
+                          <a href="#" @click="editAvenant(contrat.id_avenant)" data-bs-toggle="modal"
+                            data-bs-target="#payer_apporteur" title="Payer"><i class="fas fa-check"></i>
+                          </a>
+                        </td>
                       </tr>
                     </template>
                   </tbody>
@@ -98,12 +107,17 @@
                       <th>Total :</th>
                       <th></th>
                       <td>{{ sommes }}</td>
+                      <td>{{ sommepayes }}</td>
                     </tr>
                   </tfoot>
                 </table>
               </div>
             </div>
           </div>
+
+          <validatepaye v-bind:avenantoedit="avenantoedit" @type-update="refresh"></validatepaye>
+
+
         </div>
       </div>
     </div>
@@ -112,23 +126,40 @@
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
+import validatepaye from "./validatepaye.vue";
 export default {
   name: "statapporteur",
   components: {
     Header,
     Sidebar,
+    validatepaye
   },
   data() {
     return {
       apporteurs: [],
       listescontrats: [],
       sommes: "",
+      sommepayes: "",
+      avenantoedit: ""
     };
   },
   created() {
     this.fetchData();
   },
   methods: {
+
+    editAvenant(id_avenant) {
+      axios
+        .get("/api/auth/editAvenant/" + id_avenant)
+        .then((response) => {
+          this.avenantoedit = response.data;
+
+
+          // this.form.id_avenant = response.data.id_avenant;
+        })
+        .catch((error) => console.log(error));
+    },
+
     fetchData() {
       const token = localStorage.getItem("token");
 
@@ -145,11 +176,17 @@ export default {
           this.apporteurs = response.data.apporteurs;
           this.listescontrats = response.data.listescontrats;
           this.sommes = response.data.sommes;
+          this.sommepayes = response.data.sommepayes;
         })
         .catch((error) => {
           this.error = error.response.data.message || error.message;
         });
     },
+
+    refresh(listescontrats) {
+      this.listescontrats = listescontrats.listescontrats;
+      this.sommepayes = listescontrats.sommepayes;
+    }
   },
 };
 </script>

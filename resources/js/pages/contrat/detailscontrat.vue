@@ -362,6 +362,7 @@
 
 
           <addautomobile  @automobile-add="refresh"></addautomobile>
+          <flotte></flotte>
           <addgarantie></addgarantie>
        
 
@@ -375,13 +376,15 @@
 import Sidebar from "../../layout/Sidebar.vue";
 import Header from "../../layout/Header.vue";
 import addautomobile from "./addAutomobile.vue";
+import flotte from "./flotte.vue";
 import addgarantie from "./addGarantie.vue"
 export default {
   components: {
     Header,
     Sidebar,
     addautomobile,
-    addgarantie
+    addgarantie,
+    flotte
   },
   data() {
     return {
