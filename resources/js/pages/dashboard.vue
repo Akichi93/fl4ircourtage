@@ -313,7 +313,7 @@ export default {
             datasets: [
               {
                 label: "Chiffre d'affaire par mois dans l'année",
-                backgroundColor: "#2980B9",
+                backgroundColor: ['#123E6B', '#97B0C4', '#A5C8ED', '#F26D85', '#4CAF50', '#FFC107', '#9C27B0', '#FF5722', '#795548', '#009688'],
                 data: data,
               },
             ],
