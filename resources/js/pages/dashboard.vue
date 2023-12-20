@@ -243,6 +243,7 @@ export default {
       axios.get("/api/auth/year", { headers }).then(
         function (response) {
           this.getYear = response.data;
+         
         }.bind(this)
       );
     },
@@ -282,7 +283,6 @@ export default {
           headers: headers,
         })
         .then((response) => {
-          console.log(this.countemission)
           this.contrat = response.data.contrat;
           this.prospect = response.data.prospect;
           this.sinistre = response.data.sinistre;
