@@ -10,8 +10,8 @@
       <form method="get">
         <div class="row">
           <div class="col-xl-3 col-md-6">
-            <select class="form-select mb-3" v-model="year">
-              <option v-for="data in getYear" :value="data.id_avenant" :key="data.id_avenant">
+            <select class="form-select mb-3" v-model="year" @select="optionSelected">
+              <option v-for="data in getYear" :value="data.annee" :key="data.annee">
                 {{ data.annee }}
               </option>
             </select>
@@ -105,16 +105,16 @@
 
       <div class="row">
         <div class="col-md-6">
-          <Bar :data="chartData"/>
+          <Bar :data="chartData" />
         </div>
         <div class="col-md-6">
-          <Bar :data="chartDonnees"/>
+          <Bar :data="chartDonnees" />
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-6">
-          <Bar :data="chartGraphs"/>
+          <Bar :data="chartGraphs" />
         </div>
 
       </div>
@@ -232,6 +232,10 @@ export default {
     //   }
     // },
 
+    optionSelected() {
+      // L'année sélectionnée est stockée dans la variable 'year'
+      console.log("Année sélectionnée :", this.year);
+    },
     getCategory: function () {
       const token = localStorage.getItem("token");
 
@@ -243,7 +247,7 @@ export default {
       axios.get("/api/auth/year", { headers }).then(
         function (response) {
           this.getYear = response.data;
-         
+
         }.bind(this)
       );
     },
@@ -272,11 +276,13 @@ export default {
         "x-access-token": token,
       };
 
+      const yearSelected = this.year;
+
       const params = {
-        year: this.year,
+        year: yearSelected,
         branch: this.branch,
       };
-  
+
       axios
         .get("/api/auth/stat/", {
           params: params,
