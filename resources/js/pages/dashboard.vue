@@ -126,9 +126,7 @@ import Header from "../layout/Header";
 import Sidebar from "../layout/Sidebar";
 import { Bar } from "vue-chartjs";
 import { createToaster } from "@meforma/vue-toaster";
-const toaster = createToaster({
-  /* options */
-});
+const toaster = createToaster({ });
 import {
   Chart as ChartJS,
   Title,
@@ -263,7 +261,10 @@ export default {
       );
     },
 
+    
+
     getData() {
+      alert(this.year)
       const token = localStorage.getItem("token");
 
       // Configurez les en-têtes de la requête
@@ -276,6 +277,8 @@ export default {
         year: this.year,
         branch: this.branch,
       };
+
+      alert(this.params)
   
       axios
         .get("/api/auth/stat/", {

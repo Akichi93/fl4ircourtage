@@ -176,7 +176,7 @@ class HomeController extends Controller
                 ->get();
 
             return response()->json(["contrat" => $contrats, "prospect" => $prospects, "client" => $clients, "sinistre" => $sinistres, "comissioncourtier" => $comissioncourtier, "comissionapporteur" => $comissionapporteur, "echeance" => $echeance, "countemission" => $countemission, "primes" => $primes, "accesoires" => $accesoires, "compagnies" => $compagnies]);
-        } elseif ($branch == "tous") {
+        } elseif ($branch == "tous" ) {
             $year = Avenant::where('id_avenant', $request->year)->pluck('annee')->first();
             $Year = date("Y");
             // Date du jour
@@ -320,7 +320,6 @@ class HomeController extends Controller
                 ->sum(DB::raw('avenants.frais_courtier + avenants.accessoires + avenants.prime_nette'));
 
             $year = $request->all();
-            dd($year);
 
             dd($request->year);
 
