@@ -78,43 +78,27 @@
                                                 <div class="col-md-9 adresse">
                                                     <div class="form-group">
                                                         <label>Adresse</label>
-                                                        <adressecomponent :placeholder="'selectionnez l\'adresse'"
-                                                            v-model="adresse_prospect"></adressecomponent>
+                                                        <Multiselect v-model="adresse_prospect" :options="localisations"
+                                                            :custom-label="({ id_localisation, nom_ville }) =>
+                                                                `${id_localisation} - [${nom_ville}]`
+                                                                " valueProp="nom_ville" placeholder="Selectionnez zone"
+                                                            label="nom_ville" track-by="nom_ville" :searchable="true">
+                                                        </Multiselect>
                                                         <p style="color: red" class="text-red"
                                                             v-if="errors.adresse_prospect"
                                                             v-text="errors.adresse_prospect[0]"></p>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3 ajout">
+                                                <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <button type="button" style="margin-top: 25px"
-                                                            class="btn btn-primary">
+                                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                            data-bs-target="#addProspect" style="margin-top: 25px">
                                                             Ajouter
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-6 form1" style="display: none">
-                                                    <div class="form-group">
 
-                                                        <label>Adresse</label>
-                                                        <input type="text" class="form-control"
-                                                            placeholder="Entrez une nouvelle adresse"
-                                                            v-model="ajout_adresse" />
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 form2" style="display: none">
-
-                                                    <div class="form-group">
-                                                        <button type="button" class="btn btn-primary"
-                                                            style="margin-top: 25px" @click="storeAdresse">
-                                                            Ajouter
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
 
                                         </div>
                                         <div class="col-md-6">
@@ -156,36 +140,21 @@
                                                 <div class="col-md-9 profession">
                                                     <div class="form-group">
                                                         <label>Profession:</label>
-                                                        <professioncomponent :placeholder="'selectionnez une profession'"
-                                                            v-model="profession_prospect"></professioncomponent>
+                                                        <Multiselect v-model="profession_prospect" :options="professions"
+                                                            :custom-label="({ id_profession, profession }) =>
+                                                                `${id_profession} - [${profession}]`
+                                                                " valueProp="profession" placeholder="Choisir une profession"
+                                                            label="profession" track-by="profession" :searchable="true">
+                                                        </Multiselect>
                                                         <p style="color: red" class="text-red"
                                                             v-if="errors.profession_prospect"
                                                             v-text="errors.profession_prospect[0]"></p>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3 ajouter">
+                                                <div class="col-md-3">
                                                     <div class="form-group">
                                                         <button type="button" style="margin-top: 25px"
                                                             class="btn btn-primary">
-                                                            Ajouter
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-6 form3" style="display: none">
-                                                    <div>
-                                                        <label>Profession</label>
-                                                        <input type="text" class="form-control"
-                                                            placeholder="Entrez une nouvelle profession"
-                                                            v-model="ajout_profession" />
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 form4" style="display: none">
-                                                    <div>
-                                                        <button type="button" class="btn btn-primary"
-                                                            style="margin-top: 25px" @click="storeProfession">
                                                             Ajouter
                                                         </button>
                                                     </div>
@@ -199,6 +168,8 @@
                                     </div>
                                 </form>
                             </div>
+
+                            <addadresse @adresse-add="handleClientsChange"></addadresse>
                         </div>
                     </div>
                 </div>
@@ -210,11 +181,17 @@
 import AppStorage from "../../utils/helpers/AppStorage";
 import Header from "../../layout/Header.vue"
 import Sidebar from "../../layout/Sidebar.vue";
-import adressecomponent from "../../components/select/adressecomponent.vue";
 import professioncomponent from "../../components/select/professioncomponent.vue";
 import civilitecomponent from "../../components/select/civilitecomponent.vue";
 import etatcomponent from "../../components/select/etatcomponent.vue";
 import inputText from "../../components/input/inputText.vue";
+import addadresse from "../../pages/form/addadresse.vue";
+import {
+    getAdresseList,
+    getProfessionList
+
+} from "../../services/formservice";
+import Multiselect from "@vueform/multiselect";
 
 import { createToaster } from "@meforma/vue-toaster";
 const toaster = createToaster({
@@ -224,7 +201,7 @@ const toaster = createToaster({
 export default {
     name: "createProspect",
     components: {
-        Header, Sidebar, adressecomponent, professioncomponent, civilitecomponent, etatcomponent, inputText
+        Header, Sidebar, Multiselect, professioncomponent, civilitecomponent, etatcomponent, inputText, addadresse
     },
     data() {
         return {
@@ -241,10 +218,28 @@ export default {
             ajout_profession: "",
             profession_prospect: "",
             prospectoedit: "",
-            errors: {}
+            errors: {},
+            localisations: [],
+            professions: [],
         };
     },
+    created() {
+        this.getAdresse();
+        this.getProfession();
+    },
     methods: {
+
+        getAdresse() {
+            getAdresseList().then((result) => {
+                this.localisations = result;
+            });
+        },
+
+        getProfession: function () {
+            getProfessionList().then((result) => {
+                this.professions = result;
+            });
+        },
         storeProspect() {
 
             const userId = AppStorage.getId();
@@ -291,8 +286,9 @@ export default {
                 });
         },
 
-
-
+        handleClientsChange(localisations) {
+            this.localisations = localisations;
+        },
 
     },
 };

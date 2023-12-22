@@ -106,11 +106,16 @@
                                                                                         data-trigger="" name="status-field"
                                                                                         id="status-field"
                                                                                         v-model="form.type">
+
                                                                                         <option value="">Selectionnez
                                                                                         </option>
-                                                                                        <option value="Beneficiaire">
-                                                                                            Beneficiaire</option>
-                                                                                        <option value="Block">Block</option>
+                                                                                        <option value="Client">Client
+                                                                                        </option>
+                                                                                        <option value="Expert">Expert
+                                                                                        </option>
+                                                                                        <option value="Garage">Garage
+                                                                                        </option>
+                                                                                        <option value="Tiers">Tiers</option>
                                                                                     </select>
                                                                                 </div>
 
@@ -448,7 +453,7 @@ export default {
         this.fetchData();
         this.getReglement();
     },
-  
+
 }
 </script>
 <style src="@vueform/multiselect/themes/default.css"></style>

@@ -39,20 +39,11 @@
                   </div>
 
                   <div class="col-xl-3 col-md-6">
-                    <input
-                      class="form-control"
-                      type="date"
-                      v-model="date_debut"
-                    />
+                    <input class="form-control" type="date" v-model="date_debut" />
                   </div>
                   <div class="col-xl-3 col-md-6">
-                    <input
-                      class="form-control"
-                      type="date"
-                      v-model="date_fin"
-                      v-if="date_debut != 0"
-                      @change="getDate()"
-                    />
+                    <input class="form-control" type="date" v-model="date_fin" v-if="date_debut != 0"
+                      @change="getDate()" />
                   </div>
 
                   <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
@@ -61,6 +52,9 @@
                       <button @click="exportToCSV" class="list-icon active">
                         <i class="fas fa-file-csv"></i> Exporter en CSV
                       </button>
+                      <button @click="exportToExcel" class="list-icon active">
+                        <i class="fas fa-file-csv"></i> Exporter en excel
+                      </button>
                     </div>
                     <label>Exportation de données</label>
                   </div>
@@ -68,19 +62,11 @@
               </div>
               <div class="card-body">
                 <div class="col-row">
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Rechercher un contrat"
-                    v-model="search"
-                    @keyup="searchcontrat"
-                  />
+                  <input type="text" class="form-control" placeholder="Rechercher un contrat" v-model="search"
+                    @keyup="searchcontrat" />
                 </div>
                 <div class="table-responsive">
-                  <table
-                    id="tbl_exporttable_to_xls"
-                    class="table table-striped mb-0"
-                  >
+                  <table id="tbl_exporttable_to_xls" class="table table-striped mb-0">
                     <thead>
                       <tr>
                         <th>Branche</th>
@@ -106,10 +92,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <template
-                        v-for="contrat in contrats"
-                        :key="contrat.id_contrat"
-                      >
+                      <template v-for="contrat in contrats" :key="contrat.id_contrat">
                         <tr>
                           <td v-text="contrat.branche.nom_branche"></td>
                           <td v-text="contrat.numero_police"></td>
@@ -147,6 +130,7 @@
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
+import ExcelJS from 'exceljs';
 export default {
   name: "statcontrat",
   components: {
@@ -297,6 +281,58 @@ export default {
       // Remove the link from the DOM
       document.body.removeChild(link);
     },
+
+    exportToExcel() {
+        // Create a new Excel file
+        const xlsContent = this.generateExcelContent();
+  
+        // Create a Blob from the content
+        const blob = new Blob([xlsContent], { type: "application/vnd.ms-excel" });
+  
+        // Create a link element and trigger a download
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "contrats.xls";
+        link.click();
+      },
+      generateExcelContent() {
+        // Create an HTML table with the data
+        const table = document.createElement("table");
+        const headerRow = table.insertRow(0);
+  
+        // Add headers
+        Object.keys(this.contrats[0]).forEach((header) => {
+          const th = document.createElement("th");
+          th.innerHTML = header;
+          headerRow.appendChild(th);
+        });
+  
+        // Add data rows
+        this.contrats.forEach((row) => {
+          const tr = table.insertRow(-1);
+  
+          Object.values(row).forEach((value) => {
+            const td = tr.insertCell(-1);
+            td.innerHTML = value;
+          });
+        });
+  
+        // Convert the table to HTML string
+        const tableHtml = table.outerHTML;
+  
+        // Create the Excel file content
+        return `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office"
+          xmlns:x="urn:schemas-microsoft-com:office:excel"
+          xmlns="http://www.w3.org/TR/REC-html40">
+          <head><!--[if gte mso 9]><xml>
+          <x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+          <x:Name>Sheet 1</x:Name>
+          <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+          </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+          </head><body>${tableHtml}</body></html>`;
+      },   
+
   },
 };
 </script>

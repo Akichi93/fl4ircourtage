@@ -89,7 +89,7 @@ class HomeController extends Controller
     {
 
         $year = Avenant::where('id_avenant', $request->year)->pluck('annee')->first();
-        // $year = $request->year;
+        $annee = $request->year;
 
         $branches = $request->branch;
         $branch = (int)$branches;
@@ -134,7 +134,6 @@ class HomeController extends Controller
                 ->where('id_entreprise', $entreprise)
                 ->where('supprimer_contrat', '=', 0)
                 ->sum('commission_courtier');
-
 
             // Nbre de contrats à echeance
             $exp = Carbon::now()->subDays(15);
@@ -265,7 +264,7 @@ class HomeController extends Controller
 
             // dd($branch);
             $contrats = Contrat::where('expire_le', '>', $date)
-                ->whereYear('souscrit_le', '=', $Year)
+                ->whereYear('souscrit_le', '=', $annee)
                 ->where('id_entreprise', $entreprise)
                 ->where('supprimer_contrat', '=', 0)
                 ->where('id_branche',  $branch)
@@ -278,26 +277,26 @@ class HomeController extends Controller
                 ->count();
 
             $clients = Client::where('id_entreprise', $entreprise)
-                ->whereYear('created_at', '=', $year)
+                ->whereYear('created_at', '=', $annee)
                 ->count();
 
             $sinistres = Sinistre::join("contrats", 'sinistres.id_contrat', '=', 'contrats.id_contrat')
                 ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
                 ->where('etat', '0')
-                ->whereYear('date_survenance', '=', $year)
+                ->whereYear('date_survenance', '=', $annee)
                 ->where('contrats.id_branche', '=', $branch)
                 ->where('sinistres.id_entreprise', $entreprise)
                 ->count();
 
             // Commission apporteur
-            $comissionapporteur = Contrat::whereYear('effet_police', '=', $year)
+            $comissionapporteur = Contrat::whereYear('effet_police', '=', $annee)
                 ->where('contrats.id_branche', '=', $branch)
                 ->where('id_entreprise', $entreprise)
                 ->where('supprimer_contrat', '=', 0)
                 ->sum('commission_apporteur');
 
             // Commission courtier
-            $comissioncourtier = Contrat::whereYear('effet_police', '=', $year)
+            $comissioncourtier = Contrat::whereYear('effet_police', '=', $annee)
                 ->where('contrats.id_branche', '=', $branch)
                 ->where('id_entreprise', $entreprise)
                 ->where('supprimer_contrat', '=', 0)
@@ -307,26 +306,29 @@ class HomeController extends Controller
             // Nbre de contrats à echeance
             $exp = Carbon::now()->subDays(60);
             $echeance = DB::table('contrats')->whereDate('expire_le', '< ', $exp)
-                ->whereYear('effet_police', '=', $year)
+                ->whereYear('effet_police', '=', $annee)
                 ->where('id_branche', '=', $branch)
                 ->where('id_entreprise', $entreprise)
                 ->count();
 
             $countemission = Avenant::join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
                 ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-                ->where('annee', $year)
-                // ->where('branches.id_branche', '=', $branch)
-                // ->where('avenants.id_entreprise', $entreprise)
+                ->where('annee', $annee)
+                ->where('branches.id_branche', '=', $branch)
+                ->where('avenants.id_entreprise', $entreprise)
                 ->sum(DB::raw('avenants.frais_courtier + avenants.accessoires + avenants.prime_nette'));
 
+<<<<<<< HEAD
             $year = $request->all();
 
             dd($request->year);
 
+=======
+>>>>>>> origin/main
 
 
             $primes = Avenant::select('mois as name', DB::raw('SUM(prime_nette + accessoires) as y'))
-                // ->where('annee', $Year)
+                ->where('annee', $annee)
                 ->where('id_entreprise', $entreprise)
                 ->where('supprimer_avenant', 0)
                 ->groupBy('mois')
@@ -335,7 +337,7 @@ class HomeController extends Controller
             $accesoires = Avenant::select('nom_branche as name', DB::raw('SUM(avenants.prime_nette + avenants.accessoires) as y'))
                 ->join("contrats", 'avenants.id_contrat', '=', 'contrats.id_contrat')
                 ->join("branches", 'contrats.id_branche', '=', 'branches.id_branche')
-                // ->where('annee', $Year)
+                ->where('annee', $annee)
                 ->where('avenants.id_entreprise', $entreprise)
                 ->where('supprimer_avenant', 0)
                 ->groupBy('nom_branche')

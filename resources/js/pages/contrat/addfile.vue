@@ -72,7 +72,6 @@ export default {
             this.form.file = file;
             this.form.id_avenant = this.avenantoedit.id_avenant
             // this.form.id_sinistre = file
-            // php artisan make:migration create_item_order_table --create="item_order" file_sinistres
         },
 
         async submit() {
