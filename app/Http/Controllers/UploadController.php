@@ -538,6 +538,76 @@ class UploadController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->first()], 400);
         }
+
+        $file = $request->file('import_auto');
+
+
+        if (!empty($request->import_auto)) {
+            $file = $request->import_auto;
+            $rows  = array_map("str_getcsv", file($file, FILE_SKIP_EMPTY_LINES));
+            $header = array_shift($rows);
+            $f = fopen($file, "r");
+            $firstLine = fgets($f);
+            //get first line of csv file
+            fclose($f); // close file
+            $foundHeaders = str_getcsv(trim($firstLine), ',', '"'); //parse to array
+
+            $requiredHeaders = array('numero_immatriculation', 'identification_proprietaire', 'date_circulation', 'adresse_proprietaire', 'categorie', 'marque', 'genre', 'type', 'carosserie', 'couleur', 'option', 'entree', 'energie', 'place', 'puissance', 'charge', 'valeur_venale', 'categorie_socio_professionelle', 'permis', 'frais_courtier', 'accessoires', 'cfga', 'taxes_totales', 'prime_ttc', 'commission_courtier', 'gestion', 'commission_apporteur', 'type_garantie', 'zone', 'numero_police');
+
+
+            if ($foundHeaders !== $requiredHeaders) {
+                echo 'Headers do not match: ' . implode(', ', $foundHeaders);
+                return response()->json('Veuillez entrer la bonne base');
+                // return back()->with('success', 'Veuillez entrer la bonne base');
+            } else {
+                $file = $request->import_auto;
+
+                // Open uploaded CSV file with read-only mode
+                $csvFile  = fopen($file, "r");
+
+                // Skip the first line
+                fgetcsv($csvFile);
+
+                // Parse data from CSV file line by line
+                while (($getData = fgetcsv($csvFile, 10000, ",")) !== FALSE) {
+                    // Get row data
+                    $civilite[] = $getData[0];
+                    $nom_client[] = $getData[1];
+                    $postal_client[] = $getData[2];
+                    $adresse_client[] = $getData[3];
+                    $tel_client[] = $getData[4];
+                    $profession_client[] = $getData[5];
+                    $fax_client[] = $getData[6];
+                    $email_client[] = $getData[7];
+                    $numero_client[] = $getData[8];
+                    // $id_entreprise[] = Auth::user()->id_entreprise;
+                    // $user_id[] = Auth::user()->id;
+
+
+                    $pcreate_data[] =
+                        array(
+                            'civilite' => $getData[0],
+                            'nom_client' => $getData[1],
+                            'postal_client' => $getData[2],
+                            'adresse_client' => $getData[3],
+                            'tel_client' => $getData[4],
+                            'profession_client' => $getData[5],
+                            'fax_client' => $getData[6],
+                            'email_client' => $getData[7],
+                            'numero_client' => $getData[8],
+                            // 'id_entreprise' =>  Auth::user()->id_entreprise,
+                            // 'user_id' =>  Auth::user()->id,
+
+                        );
+                }
+
+                foreach ($pcreate_data as $data) {
+                    Client::create($data);
+                }
+
+                return back()->with('success', 'Base de donnees clients importes');
+            }
+        }
     }
 
 
