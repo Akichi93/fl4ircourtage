@@ -65,8 +65,8 @@
               </table>
             </div>
 
-            <pagination align="center" :data="branches" :limit="5" :current_page="branches.current_page"
-              :last_page="branches.last_page" @pagination-change-page="getBranches">
+            <pagination align="center" :data="paginations" :limit="5" :current_page="paginations.current_page"
+              :last_page="paginations.last_page" @pagination-change-page="getBranches">
             </pagination>
           </div>
         </div>
@@ -93,7 +93,8 @@ export default {
       branches: [],
       branchetoedit: "",
       q: "",
-      roleactif: ""
+      roleactif: "",
+      paginations: {},
     };
   },
   created() {
@@ -104,6 +105,7 @@ export default {
     getBranches(page) {
       getBranchesList(page).then((result) => {
         this.branches = result.data;
+        this.paginations = result;
       });
     },
 
