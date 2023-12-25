@@ -56,6 +56,9 @@ import profil from "../js/pages/users/profil";
 import entreprise from "../js/pages/parametre/entreprise";
 import upload from "../js/pages/uploads/upload";
 import reporting from "../js/pages/statistiques/reporting";
+import tarification from "../js/pages/module/tarification";
+import listauto from "../js/pages/automobile/listauto";
+import createauto from "../js/pages/automobile/createauto";
 
 
 const options = {
@@ -125,7 +128,8 @@ createApp({
         profil,
         entreprise,
         upload,
-        reporting
+        reporting,
+        tarification
     }
 }).use(router)
     .use(BootstrapVue3)

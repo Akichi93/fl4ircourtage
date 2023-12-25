@@ -51,7 +51,10 @@ import entreprise from "../pages/parametre/entreprise";
 import upload from "../pages/uploads/upload";
 import reporting from "../pages/statistiques/reporting";
 import listsalaire from "../pages/salaires/listsalaires";
-import notfound from "../pages/notfound"
+import notfound from "../pages/notfound";
+import tarification from "../pages/module/tarification";
+import listauto from "../pages/automobile/listauto";
+import createauto from "../pages/automobile/createauto";
 
 // Fonction de vérification
 function isPageValid(route) {
@@ -365,6 +368,24 @@ const routes = [
     //     next('/not-found');
     //   }
     // }
+  },
+  {
+    path: '/tarification',
+    name: 'tarification',
+    component: tarification,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/listauto',
+    name: 'listauto',
+    component: listauto,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/createauto',
+    name: 'createauto',
+    component: createauto,
+    meta: { requiresAuth: true }
   },
 ];
 

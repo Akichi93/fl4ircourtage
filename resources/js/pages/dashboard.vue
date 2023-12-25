@@ -10,8 +10,16 @@
       <form method="get">
         <div class="row">
           <div class="col-xl-3 col-md-6">
-            <select class="form-select mb-3" v-model="year" @select="optionSelected">
-              <option v-for="data in getYear" :value="data.annee" :key="data.annee">
+            <select
+              class="form-select mb-3"
+              v-model="year"
+              @select="optionSelected"
+            >
+              <option
+                v-for="data in getYear"
+                :value="data.annee"
+                :key="data.annee"
+              >
                 {{ data.annee }}
               </option>
             </select>
@@ -19,7 +27,11 @@
           <div class="col-xl-3 col-md-6" v-if="year != 0" @change="getData()">
             <select class="form-select mb-3" v-model="branch">
               <option value="tous">Toutes les branches</option>
-              <option v-for="branche in branches" :value="branche.id_branche" :key="branche.id_branche">
+              <option
+                v-for="branche in branches"
+                :value="branche.id_branche"
+                :key="branche.id_branche"
+              >
                 {{ branche.nom_branche }}
               </option>
             </select>
@@ -116,7 +128,6 @@
         <div class="col-md-6">
           <Bar :data="chartGraphs" />
         </div>
-
       </div>
     </div>
   </div>
@@ -126,7 +137,7 @@ import Header from "../layout/Header";
 import Sidebar from "../layout/Sidebar";
 import { Bar } from "vue-chartjs";
 import { createToaster } from "@meforma/vue-toaster";
-const toaster = createToaster({ });
+const toaster = createToaster({});
 import {
   Chart as ChartJS,
   Title,
@@ -201,34 +212,49 @@ export default {
   },
   name: "dashboard",
   components: { Header, Sidebar, Bar },
-  // mounted() {
-  //   // Vérifiez la connexion au montage
-  //   this.checkInternetConnection();
+  mounted() {
+    this.checkInternetConnectivity();
+  },
 
-  //   // Écoutez les changements de connexion
-  //   this.$watch('isConnected', (newVal, oldVal) => {
-  //     if (newVal !== oldVal) {
-  //       this.notifyConnectionStatus();
-  //     }
-  //   });
-  // },
   methods: {
-    // async checkInternetConnection() {
-    //   try {
-    //     const response = await axios.get('https://www.example.com');
-    //     this.isConnected = response.status === 200;
-    //   } catch (error) {
-    //     this.isConnected = false;
-    //   }
-    // },
-    // notifyConnectionStatus() {
-    //   // Utilisez toaster.success ou toaster.error en fonction de la connexion
-    //   if (this.isConnected) {
-    //     toaster.success('Vous êtes connecté à Internet');
-    //   } else {
-    //     toaster.error('Vous n\'êtes pas connecté à Internet');
-    //   }
-    // },
+    async checkInternetConnectivity() {
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:8000/check-internet-connection"
+        );
+        const data = await response.json();
+
+        this.isConnected = data.connected;
+
+        // Affichage de la notification
+        if (this.isConnected) {
+          this.showNotification("Connecté à Internet", "success");
+        } else {
+          this.showNotification("Pas de connexion Internet", "error");
+        }
+      } catch (error) {
+        this.isConnected = false;
+        this.showNotification("Pas de connexion Internet", "error");
+      }
+    },
+
+    showNotification(message, type) {
+      // Configuration du toaster
+      const toaster = createToaster({
+        /* options */
+      });
+
+      // Affichage de la notification
+      if (type === "success") {
+        toaster.success(message, {
+          position: "top-right",
+        });
+      } else if (type === "error") {
+        toaster.error(message, {
+          position: "top-right",
+        });
+      }
+    },
 
     optionSelected() {
       // L'année sélectionnée est stockée dans la variable 'year'
@@ -245,7 +271,6 @@ export default {
       axios.get("/api/auth/year", { headers }).then(
         function (response) {
           this.getYear = response.data;
-
         }.bind(this)
       );
     },
@@ -265,10 +290,7 @@ export default {
       );
     },
 
-    
-
     getData() {
-      alert(this.year)
       const token = localStorage.getItem("token");
 
       // Configurez les en-têtes de la requête
@@ -284,11 +306,6 @@ export default {
         branch: this.branch,
       };
 
-<<<<<<< HEAD
-      alert(this.params)
-  
-=======
->>>>>>> origin/main
       axios
         .get("/api/auth/stat/", {
           params: params,
@@ -303,7 +320,34 @@ export default {
           this.echeance = response.data.echeance;
           this.countemission = response.data.countemission;
           this.compagnies = response.data.compagnies;
-          const labels = response.data.primes.map((prime) => prime.name);
+
+          const moisNoms = {
+            "01": "JANVIER",
+            "02": "FEVRIER",
+            "03": "MARS",
+            "04": "AVRIL",
+            "05": "MAI",
+            "06": "JUIN",
+            "07": "JUILLET",
+            "08": "AOUT",
+            "09": "SEPTEMBRE",
+            10: "OCTOBRE",
+            11: "NOVEMBRE",
+            12: "Décembre",
+          };
+
+          // Remplacer les nombres de mois par leurs noms correspondants dans les labels
+          const labels = response.data.primes.map((prime) => {
+            const moisNumber = prime.name; // Supposons que le nombre de mois est stocké dans la propriété "name" de l'objet
+
+            if (moisNoms[moisNumber]) {
+              return moisNoms[moisNumber];
+            }
+
+            // Si le mois n'est pas trouvé dans le tableau, retourne le nombre de mois sans modification
+            return moisNumber;
+          });
+
           const data = response.data.primes.map((prime) => prime.y);
 
           const label = response.data.accesoires.map(
@@ -327,7 +371,18 @@ export default {
             datasets: [
               {
                 label: "Chiffre d'affaire par mois dans l'année",
-                backgroundColor: ['#123E6B', '#97B0C4', '#A5C8ED', '#F26D85', '#4CAF50', '#FFC107', '#9C27B0', '#FF5722', '#795548', '#009688'],
+                backgroundColor: [
+                  "#123E6B",
+                  "#97B0C4",
+                  "#A5C8ED",
+                  "#F26D85",
+                  "#4CAF50",
+                  "#FFC107",
+                  "#9C27B0",
+                  "#FF5722",
+                  "#795548",
+                  "#009688",
+                ],
                 data: data,
               },
             ],
@@ -338,7 +393,18 @@ export default {
             datasets: [
               {
                 label: "Chiffres d'affaires par branche",
-                backgroundColor: ['#123E6B', '#97B0C4', '#A5C8ED', '#F26D85', '#4CAF50', '#FFC107', '#9C27B0', '#FF5722', '#795548', '#009688'],
+                backgroundColor: [
+                  "#123E6B",
+                  "#97B0C4",
+                  "#A5C8ED",
+                  "#F26D85",
+                  "#4CAF50",
+                  "#FFC107",
+                  "#9C27B0",
+                  "#FF5722",
+                  "#795548",
+                  "#009688",
+                ],
                 data: donnees,
               },
             ],
@@ -349,7 +415,18 @@ export default {
             datasets: [
               {
                 label: "Chiffres d'affaires par compagnie",
-                backgroundColor: ['#123E6B', '#97B0C4', '#A5C8ED', '#F26D85', '#4CAF50', '#FFC107', '#9C27B0', '#FF5722', '#795548', '#009688'],
+                backgroundColor: [
+                  "#123E6B",
+                  "#97B0C4",
+                  "#A5C8ED",
+                  "#F26D85",
+                  "#4CAF50",
+                  "#FFC107",
+                  "#9C27B0",
+                  "#FF5722",
+                  "#795548",
+                  "#009688",
+                ],
                 data: graphs,
               },
             ],
@@ -357,8 +434,6 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-
-
   },
 };
 </script>

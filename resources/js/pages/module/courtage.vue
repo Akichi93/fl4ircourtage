@@ -28,7 +28,7 @@
           class="row"
           v-if="isAdmin || isSuperadmin || isCourtier || isCommercial"
         >
-          <div class="col-2 col-sm-6 col-md-6 col-lg-6 col-xl-4">
+          <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
             <div class="card flex-fill tickets-card">
               <div class="card-header">
                 <div class="text-center w-100 p-3">
@@ -43,7 +43,7 @@
             </div>
           </div>
 
-          <div class="col-2 col-sm-6 col-md-6 col-lg-6 col-xl-4">
+          <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
             <div class="card flex-fill tickets-card">
               <div class="card-header">
                 <div class="text-center w-100 p-3">
@@ -58,7 +58,7 @@
             </div>
           </div>
 
-          <div class="col-2 col-sm-6 col-md-6 col-lg-6 col-xl-4">
+          <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
             <div class="card flex-fill tickets-card">
               <div class="card-header">
                 <div class="text-center w-100 p-3">

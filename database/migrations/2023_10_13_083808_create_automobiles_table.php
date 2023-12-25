@@ -15,6 +15,7 @@ class CreateAutomobilesTable extends Migration
     {
         Schema::create('automobiles', function (Blueprint $table) {
             $table->bigIncrements('id_automobile');
+            $table->uuid('id');
             $table->string('numero_immatriculation')->nullable();
             $table->string('identification_proprietaire')->nullable();
             $table->date('date_circulation')->nullable();

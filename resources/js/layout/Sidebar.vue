@@ -51,7 +51,6 @@
         <router-link
           to="/statistique"
           class="nav-link menu"
-          id="modulestat"
           title="Statistiques"
           role="tab"
           aria-controls="v-pills-apps"
@@ -60,6 +59,20 @@
           :replace="true"
         >
           <span class="material-icons-outlined"> leaderboard </span>
+        </router-link>
+
+        <router-link
+          to="/tarification"
+          class="nav-link menu"
+          id="module"
+          title="Tarifications"
+          role="tab"
+          aria-controls="v-pills-apps"
+          aria-selected="false"
+          :class="{ active: $route.path === '/tarification' }"
+          :replace="true"
+        >
+          <span class="material-icons-outlined"> attach_money </span>
         </router-link>
 
         <router-link

@@ -8,6 +8,7 @@ use App\Models\Contrat;
 use App\Models\Prospect;
 use App\Models\Sinistre;
 use App\Models\Apporteur;
+use App\Models\Automobile;
 use App\Models\Compagnie;
 use Illuminate\Http\Request;
 use App\Models\TauxApporteur;
@@ -552,7 +553,7 @@ class UploadController extends Controller
             fclose($f); // close file
             $foundHeaders = str_getcsv(trim($firstLine), ',', '"'); //parse to array
 
-            $requiredHeaders = array('numero_immatriculation', 'identification_proprietaire', 'date_circulation', 'adresse_proprietaire', 'categorie', 'marque', 'genre', 'type', 'carosserie', 'couleur', 'option', 'entree', 'energie', 'place', 'puissance', 'charge', 'valeur_venale', 'categorie_socio_professionelle', 'permis', 'frais_courtier', 'accessoires', 'cfga', 'taxes_totales', 'prime_ttc', 'commission_courtier', 'gestion', 'commission_apporteur', 'type_garantie', 'zone', 'numero_police');
+            $requiredHeaders = array('numero_immatriculation', 'identification_proprietaire', 'date_circulation', 'adresse_proprietaire', 'categorie', 'marque', 'genre', 'type', 'carosserie', 'couleur', 'option', 'entree', 'energie', 'place', 'puissance', 'charge', 'valeur_venale', 'categorie_socio_professionelle', 'permis', 'frais_courtier', 'accessoires', 'cfga', 'taxes_totales', 'prime_ttc', 'commission_courtier', 'gestion', 'commission_apporteur', 'type_garantie', 'zone');
 
 
             if ($foundHeaders !== $requiredHeaders) {
@@ -571,38 +572,76 @@ class UploadController extends Controller
                 // Parse data from CSV file line by line
                 while (($getData = fgetcsv($csvFile, 10000, ",")) !== FALSE) {
                     // Get row data
-                    $civilite[] = $getData[0];
-                    $nom_client[] = $getData[1];
-                    $postal_client[] = $getData[2];
-                    $adresse_client[] = $getData[3];
-                    $tel_client[] = $getData[4];
-                    $profession_client[] = $getData[5];
-                    $fax_client[] = $getData[6];
-                    $email_client[] = $getData[7];
-                    $numero_client[] = $getData[8];
-                    // $id_entreprise[] = Auth::user()->id_entreprise;
-                    // $user_id[] = Auth::user()->id;
+                    $numero_immatriculation[] = $getData[0];
+                    $identification_proprietaire[] = $getData[1];
+                    $date_circulation[] = $getData[2];
+                    $adresse_proprietaire[] = $getData[3];
+                    $categorie[] = $getData[4];
+                    $marque[] = $getData[5];
+                    $genre[] = $getData[6];
+                    $type[] = $getData[7];
+                    $carosserie[] = $getData[8];
+                    $couleur[] = $getData[9];
+                    $option[] = $getData[10];
+                    $entree[] = $getData[11];
+                    $energie[] = $getData[12];
+                    $place[] = $getData[13];
+                    $puissance[] = $getData[14];
+                    $charge[] = $getData[15];
+                    $valeur_venale[] = $getData[16];
+                    $categorie_socio_professionelle[] = $getData[17];
+                    $permis[] = $getData[18];
+                    $frais_courtier[] = $getData[19];
+                    $accessoires[] = $getData[20];
+                    $cfga[] = $getData[21];
+                    $taxes_totales[] = $getData[22];
+                    $prime_ttc[] = $getData[23];
+                    $commission_courtier[] = $getData[24];
+                    $gestion[] = $getData[25];
+                    $commission_apporteur[] = $getData[26];
+                    $type_garantie[] = $getData[27];
+                    $zone[] = $getData[28];
+                  
 
 
                     $pcreate_data[] =
                         array(
-                            'civilite' => $getData[0],
-                            'nom_client' => $getData[1],
-                            'postal_client' => $getData[2],
-                            'adresse_client' => $getData[3],
-                            'tel_client' => $getData[4],
-                            'profession_client' => $getData[5],
-                            'fax_client' => $getData[6],
-                            'email_client' => $getData[7],
-                            'numero_client' => $getData[8],
-                            // 'id_entreprise' =>  Auth::user()->id_entreprise,
-                            // 'user_id' =>  Auth::user()->id,
+                            'numero_immatriculation' => $getData[0],
+                            'identification_proprietaire' => $getData[1],
+                            'date_circulation' => $getData[2],
+                            'adresse_proprietaire' => $getData[3],
+                            'categorie' => $getData[4],
+                            'marque' => $getData[5],
+                            'genre' => $getData[6],
+                            'type' => $getData[7],
+                            'carosserie' => $getData[8],
+                            'couleur' => $getData[9],
+                            'option' => $getData[10],
+                            'entree' => $getData[11],
+                            'energie' => $getData[12],
+                            'place' => $getData[13],
+                            'puissance' => $getData[14],
+                            'charge' => $getData[15],
+                            'valeur_venale' => $getData[16],
+                            'categorie_socio_professionelle' => $getData[17],
+                            'permis' => $getData[18],
+                            'frais_courtier' => $getData[19],
+                            'accessoires' => $getData[20],
+                            'cfga' => $getData[21],
+                            'taxes_totales' => $getData[22],
+                            'prime_ttc' => $getData[23],
+                            'commission_courtier' => $getData[24],
+                            'gestion' => $getData[25],
+                            'commission_apporteur' => $getData[26],
+                            'type_garantie' => $getData[27],
+                            'zone' => $getData[28],
+                           
 
                         );
                 }
 
                 foreach ($pcreate_data as $data) {
-                    Client::create($data);
+                    Automobile::create($data);
                 }
 
                 return back()->with('success', 'Base de donnees clients importes');

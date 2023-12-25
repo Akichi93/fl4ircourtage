@@ -39,6 +39,20 @@ use App\Http\Controllers\RhController;
 Route::post('post-registration', [EntrepriseController::class, 'postRegistration'])->name('register.post');
 Route::post('post-reset', [EntrepriseController::class, 'postReset'])->name('reset.post');
 
+
+Route::get('/check-internet-connection', function () {
+    try {
+        $connected = @fsockopen("www.google.com", 80); 
+        if ($connected){
+            fclose($connected);
+            return response()->json(['connected' => true], 200);
+        }
+    } catch (\Exception $e) {
+        return response()->json(['connected' => false], 200);
+    }
+    return response()->json(['connected' => false], 200);
+});
+
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'

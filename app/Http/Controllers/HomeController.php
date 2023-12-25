@@ -104,13 +104,13 @@ class HomeController extends Controller
 
 
             $contrats = Contrat::where('expire_le', '>', $date)
-                ->whereYear('souscrit_le', '=', $Year)
+                // ->whereYear('souscrit_le', '=', $Year)
                 ->where('id_entreprise', $entreprise)
                 ->where('supprimer_contrat', '=', 0)
                 ->count();
 
             $prospects = Prospect::where('etat', 0)
-                ->whereYear('created_at', '=', $Year)
+                // ->whereYear('created_at', '=', $Year)
                 ->where('id_entreprise', $entreprise)
                 ->where('supprimer_prospect', '=', 0)
                 ->count();
@@ -118,7 +118,7 @@ class HomeController extends Controller
             $clients = Client::where('id_entreprise', $entreprise)->count();
 
             $sinistres = Sinistre::where('etat', '0')
-                ->whereYear('date_survenance', '=', $Year)
+                // ->whereYear('date_survenance', '=', $Year)
                 ->where('id_entreprise', $entreprise)
                 ->where('supprimer_sinistre', '=', 0)
                 ->count();
@@ -262,7 +262,6 @@ class HomeController extends Controller
             // Date du jour
             $date = date('Y-m-d');
 
-            // dd($branch);
             $contrats = Contrat::where('expire_le', '>', $date)
                 ->whereYear('souscrit_le', '=', $annee)
                 ->where('id_entreprise', $entreprise)
@@ -271,7 +270,7 @@ class HomeController extends Controller
                 ->count();
 
             $prospects = Prospect::where('etat', 0)
-                ->whereYear('created_at', '=', $Year)
+                // ->whereYear('created_at', '=', $Year)
                 ->where('id_entreprise', $entreprise)
                 ->where('supprimer_prospect', '=', 0)
                 ->count();
@@ -317,15 +316,6 @@ class HomeController extends Controller
                 ->where('branches.id_branche', '=', $branch)
                 ->where('avenants.id_entreprise', $entreprise)
                 ->sum(DB::raw('avenants.frais_courtier + avenants.accessoires + avenants.prime_nette'));
-
-<<<<<<< HEAD
-            $year = $request->all();
-
-            dd($request->year);
-
-=======
->>>>>>> origin/main
-
 
             $primes = Avenant::select('mois as name', DB::raw('SUM(prime_nette + accessoires) as y'))
                 ->where('annee', $annee)

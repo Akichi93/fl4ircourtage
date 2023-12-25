@@ -15,6 +15,7 @@ class CreateContratsTable extends Migration
     {
         Schema::create('contrats', function (Blueprint $table) {
             $table->bigIncrements('id_contrat');
+            $table->uuid('id');
 
             $table->foreignId('id_branche');
 

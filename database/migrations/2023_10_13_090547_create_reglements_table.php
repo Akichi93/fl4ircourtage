@@ -15,6 +15,7 @@ class CreateReglementsTable extends Migration
     {
         Schema::create('reglements', function (Blueprint $table) {
             $table->bigIncrements('id_reglement');
+            $table->uuid('id');
 
             $table->unsignedBigInteger('id_sinistre');
             $table->foreign('id_sinistre')
