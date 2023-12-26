@@ -220,7 +220,7 @@ export default {
     async checkInternetConnectivity() {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/check-internet-connection"
+          "/api/check-internet-connection"
         );
         const data = await response.json();
 

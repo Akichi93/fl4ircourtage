@@ -109,6 +109,7 @@ import { getRoleActif } from "../../services/roleservice";
 import deletecontrat from "../contrat/deletecontrat.vue";
 import pagination from "laravel-vue-pagination";
 import contratexport from "../../components/export/contratexport.vue";
+import AppStorage from "../../utils/helpers/AppStorage";
 export default {
   components: {
     Header,
@@ -123,7 +124,8 @@ export default {
       contrats: [],
       contrattoedit: "",
       q: "",
-      roleactif: ""
+      roleactif: "",
+      isConnected: false,
     };
   },
   created() {
@@ -141,10 +143,23 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    getContrat(page) {
-      getContratsList(page).then((result) => {
-        this.contrats = result;
-      });
+    async getContrat(page) {
+      const response = await fetch(
+        "/api/check-internet-connection"
+      );
+      const data = await response.json();
+
+      this.isConnected = data.connected;
+      if (this.isConnected) {
+        getContratsList(page).then((result) => {
+          this.contrats = result;
+        });
+      } else {
+        AppStorage.getContrats(page).then((result) => {
+          this.contrats = result;
+          console.log(result);
+        });
+      }
     },
     getRoleconnect() {
       getRoleActif().then((result) => {

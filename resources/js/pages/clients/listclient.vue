@@ -94,7 +94,8 @@ import { getClientsList } from "../../services/clientservice";
 import editclient from "./editclient.vue";
 import searchbranche from "../../components/search/searchbranche.vue";
 import pagination from "laravel-vue-pagination";
-import clientexport from "../../components/export/clientexport.vue"
+import clientexport from "../../components/export/clientexport.vue";
+import AppStorage from "../../utils/helpers/AppStorage";
 export default {
   name: "prospect",
   components: {
@@ -121,11 +122,25 @@ export default {
     this.getClients();
   },
   methods: {
-    getClients(page) {
-      getClientsList(page).then((result) => {
-        this.clients = result.data;
-        this.paginations = result;
-      });
+    async getClients(page) {
+      const response = await fetch(
+        "/api/check-internet-connection"
+      );
+      const data = await response.json();
+
+      this.isConnected = data.connected;
+      if (this.isConnected) {
+        getClientsList(page).then((result) => {
+          this.clients = result.data;
+          this.paginations = result;
+          console.log(result.data)
+        });
+      } else {
+        AppStorage.getClients(page).then((result) => {
+          this.clients = result;
+          console.log(result);
+        });
+      }
     },
 
     editClient(id_client) {

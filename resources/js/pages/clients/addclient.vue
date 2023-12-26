@@ -115,7 +115,15 @@ export default {
   },
   methods: {
     async storeClient() {
-      if (navigator.onLine) {
+      const response = await fetch(
+        "/api/check-internet-connection"
+      );
+
+      const data = await response.json();
+
+      this.isConnected = data.connected;
+
+      if (this.isConnected) {
         const userId = AppStorage.getId();
         const entrepriseId = AppStorage.getEntreprise();
 
@@ -152,6 +160,10 @@ export default {
           console.error("Erreur lors de l'ajout du client sur le serveur", error);
         }
       } else {
+
+        const { v4: uuidv4 } = require('uuid');
+        const uuid = uuidv4();
+        
         // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
         const newClientData = {
           civilite: this.civilite,
