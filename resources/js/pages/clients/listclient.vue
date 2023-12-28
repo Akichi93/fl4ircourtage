@@ -133,10 +133,9 @@ export default {
         getClientsList(page).then((result) => {
           this.clients = result.data;
           this.paginations = result;
-          console.log(result.data)
         });
       } else {
-        AppStorage.getClients(page).then((result) => {
+        AppStorage.getClientList(page).then((result) => {
           this.clients = result;
           console.log(result);
         });

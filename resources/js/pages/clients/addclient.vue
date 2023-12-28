@@ -127,6 +127,9 @@ export default {
         const userId = AppStorage.getId();
         const entrepriseId = AppStorage.getEntreprise();
 
+        const { v4: uuidv4 } = require('uuid');
+        const uuid = uuidv4();
+
         try {
           const response = await axios.post("/api/auth/postClient", {
             civilite: this.civilite,
@@ -139,10 +142,13 @@ export default {
             email_client: this.email_client,
             id: userId,
             id_entreprise: entrepriseId,
+            uuid: uuid,
           });
 
           // Appeler fetchClients pour récupérer la liste mise à jour après l'insertion
           const updatedClients = await this.fetchClients();
+
+          const updatedListClients = await this.fetchListClients();
 
           this.$emit("client-added", response);
           this.$emit("client-add", response.data);
@@ -156,7 +162,7 @@ export default {
           // Mettre à jour IndexedDB avec les clients récupérés
           await AppStorage.storeDataInIndexedDB("clients", updatedClients);
 
-          await AppStorage.storeDataInIndexedDB("clientList", updatedClients);
+          await AppStorage.storeDataInIndexedDB("clientList", updatedListClients);
 
         } catch (error) {
           console.error("Erreur lors de l'ajout du client sur le serveur", error);
@@ -183,8 +189,8 @@ export default {
 
         // Ajouter la nouvelle donnée dans IndexedDB
         await AppStorage.storeDataInIndexedDB("clients", newClientData);
-        
-        await AppStorage.storeDataInIndexedDB("clients", newClientData);
+
+        await AppStorage.storeDataInIndexedDB("clientList", newClientData);
 
         toaster.info(`Client ajouté localement (hors ligne)`, {
           position: "top-right",
