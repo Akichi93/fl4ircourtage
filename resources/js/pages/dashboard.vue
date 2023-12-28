@@ -10,16 +10,8 @@
       <form method="get">
         <div class="row">
           <div class="col-xl-3 col-md-6">
-            <select
-              class="form-select mb-3"
-              v-model="year"
-              @select="optionSelected"
-            >
-              <option
-                v-for="data in getYear"
-                :value="data.annee"
-                :key="data.annee"
-              >
+            <select class="form-select mb-3" v-model="year" @select="optionSelected">
+              <option v-for="data in getYear" :value="data.annee" :key="data.annee">
                 {{ data.annee }}
               </option>
             </select>
@@ -27,11 +19,7 @@
           <div class="col-xl-3 col-md-6" v-if="year != 0" @change="getData()">
             <select class="form-select mb-3" v-model="branch">
               <option value="tous">Toutes les branches</option>
-              <option
-                v-for="branche in branches"
-                :value="branche.id_branche"
-                :key="branche.id_branche"
-              >
+              <option v-for="branche in branches" :value="branche.id_branche" :key="branche.id_branche">
                 {{ branche.nom_branche }}
               </option>
             </select>
@@ -209,13 +197,16 @@ export default {
     this.getCategory();
     this.getTypes();
     this.getData();
+    // Vérification initiale de la connexion
+    this.checkInternetConnectivity();
   },
   name: "dashboard",
+
   components: { Header, Sidebar, Bar },
   mounted() {
     this.checkInternetConnectivity();
   },
-
+  
   methods: {
     async checkInternetConnectivity() {
       try {
@@ -225,7 +216,6 @@ export default {
         const data = await response.json();
 
         this.isConnected = data.connected;
-
         // Affichage de la notification
         if (this.isConnected) {
           this.showNotification("Connecté à Internet", "success");
@@ -256,10 +246,12 @@ export default {
       }
     },
 
+
     optionSelected() {
       // L'année sélectionnée est stockée dans la variable 'year'
       console.log("Année sélectionnée :", this.year);
     },
+
     getCategory: function () {
       const token = localStorage.getItem("token");
 

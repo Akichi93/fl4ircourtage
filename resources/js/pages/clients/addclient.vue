@@ -156,6 +156,8 @@ export default {
           // Mettre à jour IndexedDB avec les clients récupérés
           await AppStorage.storeDataInIndexedDB("clients", updatedClients);
 
+          await AppStorage.storeDataInIndexedDB("clientList", updatedClients);
+
         } catch (error) {
           console.error("Erreur lors de l'ajout du client sur le serveur", error);
         }
@@ -163,6 +165,7 @@ export default {
 
         const { v4: uuidv4 } = require('uuid');
         const uuid = uuidv4();
+      
         
         // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
         const newClientData = {
@@ -175,9 +178,12 @@ export default {
           fax_client: this.fax_client,
           email_client: this.email_client,
           sync: 0,
+          uuid: uuid,
         };
 
         // Ajouter la nouvelle donnée dans IndexedDB
+        await AppStorage.storeDataInIndexedDB("clients", newClientData);
+        
         await AppStorage.storeDataInIndexedDB("clients", newClientData);
 
         toaster.info(`Client ajouté localement (hors ligne)`, {
@@ -198,6 +204,28 @@ export default {
 
       try {
         const response = await axios.get("/api/auth/getClient", { headers });
+
+        // Vous pouvez traiter les données comme vous le souhaitez
+        const clients = response.data;
+
+        // Retourner les clients pour une utilisation éventuelle
+        return clients;
+      } catch (error) {
+        console.error("Erreur lors de la récupération des clients sur le serveur", error);
+      }
+    },
+
+    async fetchListClients(page = 1) {
+      const token = AppStorage.getToken();
+
+      // Configurez les en-têtes de la requête
+      const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+      };
+
+      try {
+        const response = await axios.get("/api/auth/clientList?page=" + page, { headers })
 
         // Vous pouvez traiter les données comme vous le souhaitez
         const clients = response.data;
