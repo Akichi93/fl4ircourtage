@@ -39,7 +39,7 @@ class ClientController extends Controller
         //validation
         $rules = [
             'civilite' => 'required',
-            'nom_client' => 'required',
+            'name_client' => 'required',
             'tel_client' => 'required|numeric',
             'adresse_client' => 'required',
             'profession_client' => 'required',
@@ -48,7 +48,7 @@ class ClientController extends Controller
 
         $customMessages = [
             'civilite.required' => 'Selectionnez la civilité',
-            'nom_client.required' => 'Veuillez entrer le nom du client',
+            'name_client.required' => 'Veuillez entrer le nom du client',
             'tel_client.required' => 'Veuillez entrer le contact de l\'apporteur',
             'tel_client.numeric' => 'Veuillez entrer un contact de',
             'adresse_client.required' => 'Veuillez entrer l\'adresse du client',
@@ -90,6 +90,7 @@ class ClientController extends Controller
             $clients->fax_client = $request->fax_client;
             $clients->email_client = $request->email_client;
             $clients->id_entreprise = $request->id_entreprise;
+            $clients->uuid = $request->uuid;
             $clients->user_id = $request->id;
             $clients->save();
 

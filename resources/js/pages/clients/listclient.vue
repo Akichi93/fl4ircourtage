@@ -61,7 +61,7 @@
                   <template v-for="(client, i) in clients" :key="i">
                     <tr>
                       <td v-text="client.nom_client"></td>
-                      <td v-text="client.adresse_client"></td>
+                      <td v-text="client.email_client"></td>
                       <td v-text="client.email_client"></td>
                       <td v-text="client.tel_client"></td>
                       <td v-text="client.profession_client"></td>
@@ -90,7 +90,8 @@
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import addclient from "./addclient.vue";
-import { getClientsList } from "../../services/clientservice";
+// import { getClientsList } from "../../services/clientservice";
+import { getClientSelect } from "../../services/clientservice";
 import editclient from "./editclient.vue";
 import searchbranche from "../../components/search/searchbranche.vue";
 import pagination from "laravel-vue-pagination";
@@ -107,6 +108,7 @@ export default {
     pagination,
     clientexport
   },
+  name: "listclient",
   data() {
     return {
       value: null,
@@ -115,14 +117,15 @@ export default {
       localisations: {},
       professions: {},
       q: "",
-      clientoedit: ''
+      clientoedit: '',
+      isConnected: false,
     };
   },
   created() {
     this.getClients();
   },
   methods: {
-    async getClients(page) {
+    async getClients() {
       const response = await fetch(
         "/api/check-internet-connection"
       );
@@ -130,14 +133,21 @@ export default {
 
       this.isConnected = data.connected;
       if (this.isConnected) {
-        getClientsList(page).then((result) => {
-          this.clients = result.data;
-          this.paginations = result;
+        getClientSelect().then((result) => {
+          // Mettre à jour IndexedDB avec les clients récupérés
+          AppStorage.storeDataInIndexedDB("clients", result.data);
+
+          AppStorage.getClients().then((result) => {
+            this.clients = result;
+            console.log(result);
+          });
+
+          // this.paginations = result;
         });
       } else {
-        AppStorage.getClientList(page).then((result) => {
+        AppStorage.getClients().then((result) => {
           this.clients = result;
-          console.log(result);
+
         });
       }
     },
@@ -151,31 +161,48 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    searchtask() {
-      const token = localStorage.getItem("token");
+    // searchtask() {
+    //   const token = localStorage.getItem("token");
 
-      // Configurez les en-têtes de la requête
-      const headers = {
-        Authorization: "Bearer " + token,
-        "x-access-token": token,
-      };
-      if (this.q.length > 0) {
-        axios
-          .get("/api/auth/clientList/" + this.q, { headers })
-          .then((response) => (
-            this.clients = response.data.data
-          ))
-          .catch((error) => console.log(error));
+    //   // Configurez les en-têtes de la requête
+    //   const headers = {
+    //     Authorization: "Bearer " + token,
+    //     "x-access-token": token,
+    //   };
+    //   if (this.q.length > 0) {
+    //     axios
+    //       .get("/api/auth/clientList/" + this.q, { headers })
+    //       .then((response) => (
+    //         this.clients = response.data.data
+    //       ))
+    //       .catch((error) => console.log(error));
+    //   } else {
+    //     axios
+    //       .get("/api/auth/clientList/", { headers })
+    //       .then((response) => (this.clients = response.data))
+    //       .catch((error) => console.log(error));
+    //   }
+    // },
+
+    searchtask() {
+      if (this.q.length > 3) {
+        AppStorage.searchClientsByName(this.q).then((result) => {
+          this.clients = result;
+        });
       } else {
-        axios
-          .get("/api/auth/clientList/", { headers })
-          .then((response) => (this.clients = response.data))
-          .catch((error) => console.log(error));
+        this.getClients();
       }
     },
 
-    refresh(clients) {
-      this.clients = clients.data;
+    // refresh(clients) {
+    //   this.clients = clients.data;
+    // }
+
+    refresh() {
+      // Récupérer les clients depuis IndexedDB après l'ajout d'un nouveau client
+      AppStorage.getClients().then((result) => {
+        this.clients = result;
+      });
     }
   },
 };

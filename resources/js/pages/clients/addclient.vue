@@ -87,7 +87,6 @@ import civilitecomponent from "../../components/select/civilitecomponent.vue";
 import inputText from "../../components/input/inputText.vue";
 import AppStorage from "../../utils/helpers/AppStorage";
 import { createToaster } from "@meforma/vue-toaster";
-import { openDB } from "idb";
 import axios from "axios";
 
 const toaster = createToaster({
@@ -148,7 +147,7 @@ export default {
           // Appeler fetchClients pour récupérer la liste mise à jour après l'insertion
           const updatedClients = await this.fetchClients();
 
-          const updatedListClients = await this.fetchListClients();
+          // const updatedListClients = await this.fetchListClients();
 
           this.$emit("client-added", response);
           this.$emit("client-add", response.data);
@@ -162,7 +161,7 @@ export default {
           // Mettre à jour IndexedDB avec les clients récupérés
           await AppStorage.storeDataInIndexedDB("clients", updatedClients);
 
-          await AppStorage.storeDataInIndexedDB("clientList", updatedListClients);
+          // await AppStorage.storeDataInIndexedDB("clientList", updatedListClients);
 
         } catch (error) {
           console.error("Erreur lors de l'ajout du client sur le serveur", error);
@@ -171,10 +170,10 @@ export default {
 
         const { v4: uuidv4 } = require('uuid');
         const uuid = uuidv4();
-      
-        
+
+
         // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
-        const newClientData = {
+        const newClientData = [{
           civilite: this.civilite,
           nom_client: this.nom_client,
           postal_client: this.postal_client,
@@ -185,12 +184,14 @@ export default {
           email_client: this.email_client,
           sync: 0,
           uuid: uuid,
-        };
+        }];
+
+       
 
         // Ajouter la nouvelle donnée dans IndexedDB
         await AppStorage.storeDataInIndexedDB("clients", newClientData);
 
-        await AppStorage.storeDataInIndexedDB("clientList", newClientData);
+        // await AppStorage.storeDataInIndexedDB("clientList", newClientData);
 
         toaster.info(`Client ajouté localement (hors ligne)`, {
           position: "top-right",
@@ -198,7 +199,7 @@ export default {
       }
     },
 
-    // Votre méthode actuelle fetchClients
+    // fetchClients
     async fetchClients() {
       const token = AppStorage.getToken();
 
@@ -221,27 +222,27 @@ export default {
       }
     },
 
-    async fetchListClients(page = 1) {
-      const token = AppStorage.getToken();
+    // async fetchListClients(page = 1) {
+    //   const token = AppStorage.getToken();
 
-      // Configurez les en-têtes de la requête
-      const headers = {
-        Authorization: "Bearer " + token,
-        "x-access-token": token,
-      };
+    //   // Configurez les en-têtes de la requête
+    //   const headers = {
+    //     Authorization: "Bearer " + token,
+    //     "x-access-token": token,
+    //   };
 
-      try {
-        const response = await axios.get("/api/auth/clientList?page=" + page, { headers })
+    //   try {
+    //     const response = await axios.get("/api/auth/clientList?page=" + page, { headers })
 
-        // Vous pouvez traiter les données comme vous le souhaitez
-        const clients = response.data;
+    //     // Vous pouvez traiter les données comme vous le souhaitez
+    //     const clients = response.data;
 
-        // Retourner les clients pour une utilisation éventuelle
-        return clients;
-      } catch (error) {
-        console.error("Erreur lors de la récupération des clients sur le serveur", error);
-      }
-    },
+    //     // Retourner les clients pour une utilisation éventuelle
+    //     return clients;
+    //   } catch (error) {
+    //     console.error("Erreur lors de la récupération des clients sur le serveur", error);
+    //   }
+    // },
   },
 };
 </script>

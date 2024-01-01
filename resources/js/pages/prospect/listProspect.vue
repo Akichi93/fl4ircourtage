@@ -124,7 +124,7 @@ import editProspect from "./editProspect.vue";
 import changeProspect from "./changeProspect.vue";
 import prospectexport from "../../components/export/prospectexport.vue";
 export default {
-  name: "search",
+  name: "listprospect",
   components: {
     Header,
     Sidebar,

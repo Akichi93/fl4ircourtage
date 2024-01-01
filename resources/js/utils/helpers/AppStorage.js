@@ -50,18 +50,23 @@ class AppStorage {
         const tx = db.transaction('apiData', 'readwrite');
         const store = tx.objectStore('apiData');
 
-        // const existingData = await store.get(key);
+        const existingData = await store.get(key);
 
-        // if (existingData) {
-        //     // Gestion des conflits : fusionner les données existantes avec les nouvelles données
-        //     const mergedData = { ...existingData, ...data };
-        //     await store.put(mergedData, key);
-        //     console.log(`Données fusionnées à apiData dans IndexedDB avec succès`);
-        // } else {
-        //     // Aucune donnée existante, ajouter simplement les nouvelles données
-        await store.put(data, key);
-        console.log(`Donnée ajoutée à apiData dans IndexedDB avec succès`);
-        // }
+        if (existingData) {
+            // Gestion des conflits : fusionner les données existantes avec les nouvelles données
+            if (Array.isArray(existingData) && Array.isArray(data)) {
+                const mergedData = existingData.concat(data);
+                await store.put(mergedData, key);
+                console.log(`Données fusionnées à apiData dans IndexedDB avec succès`);
+            } else {
+                console.error('Les données existantes ou les nouvelles données ne sont pas au format de tableau.');
+            }
+        } else {
+            // Aucune donnée existante, ajouter simplement les nouvelles données
+            await store.put(data, key);
+            console.log(`Donnée ajoutée à apiData dans IndexedDB avec succès`);
+        }
+
 
         // Terminer la transaction
         await tx.complete;
@@ -94,12 +99,34 @@ class AppStorage {
         return store.get(key);
     }
 
+    static async deleteIndexedDB() {
+        try {
+            const dbName = 'fl4ir'; // Nom de la base de données
+            indexedDB.deleteDatabase(dbName);
+            console.log('IndexedDB deleted successfully');
+        } catch (error) {
+            console.error('Error deleting IndexedDB:', error);
+        }
+    }
+
+    static async paginateData(key, pageIndex = 0, pageSize = 10) {
+        const allData = await this.getData(key) || [];
+        return allData.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize);
+    }
+
     static async storeClients(clients) {
         await this.storeData('clients', clients);
     }
 
-    static async getClients() {
-        return this.getData('clients') || [];
+    static async searchClientsByName(name) {
+        const allClients = await this.getData('clients') || [];
+        const filteredClients = allClients.filter(client => client.nom_client.toLowerCase().includes(name.toLowerCase()));
+        return filteredClients;
+    }
+
+    static async getClients(pageIndex = 0, pageSize = 10) {
+        // return this.getData('clients') || [];
+        return this.paginateData('clients', pageIndex, pageSize);
     }
 
     static async storeProspects(prospects) {

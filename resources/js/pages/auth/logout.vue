@@ -2,9 +2,11 @@
     
 </template>
 <script>
+import AppStorage from "../../utils/helpers/AppStorage";
 export default {
     created() {
-        localStorage.clear()
+        AppStorage.clear()
+        AppStorage.deleteIndexedDB()
         this.$router.push({ name: 'welcome' })
     },
 
