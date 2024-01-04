@@ -119,6 +119,8 @@ export default {
       q: "",
       clientoedit: '',
       isConnected: false,
+      itemsPerPage: 5, // Nombre d'éléments par page
+      currentPage: 1, // Page actuelle
     };
   },
   created() {

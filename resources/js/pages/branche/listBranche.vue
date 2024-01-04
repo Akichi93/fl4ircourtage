@@ -65,9 +65,12 @@
               </table>
             </div>
 
-            <pagination align="center" :data="paginations" :limit="5" :current_page="paginations.current_page"
+            <!-- <pagination align="center" :data="paginations" :limit="5" :current_page="paginations.current_page"
               :last_page="paginations.last_page" @pagination-change-page="getBranches">
-            </pagination>
+            </pagination> -->
+
+          
+
           </div>
         </div>
       </div>
@@ -80,13 +83,14 @@
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import { getBranchesList } from "../../services/brancheservice";
+import { getbrancheExport } from "../../services/brancheservice";
 import { getRoleActif } from "../../services/roleservice";
 import editbranche from "./editbranche.vue";
 import deletebranche from "./deletebranche.vue";
 import searchbranche from "../../components/search/searchbranche.vue";
 import pagination from "laravel-vue-pagination";
-import brancheexport from "../../components/export/brancheexport.vue"
+import brancheexport from "../../components/export/brancheexport.vue";
+import AppStorage from "../../utils/helpers/AppStorage";
 export default {
   data() {
     return {
@@ -94,7 +98,6 @@ export default {
       branchetoedit: "",
       q: "",
       roleactif: "",
-      paginations: {},
     };
   },
   created() {
@@ -102,12 +105,67 @@ export default {
     this.getRoleconnect();
   },
   methods: {
-    getBranches(page) {
-      getBranchesList(page).then((result) => {
-        this.branches = result.data;
-        this.paginations = result;
-      });
+    async getBranches() {
+
+      const response = await fetch(
+        "/api/check-internet-connection"
+      );
+      const data = await response.json();
+
+      this.isConnected = data.connected;
+      if (this.isConnected) {
+        getbrancheExport().then((result) => {
+          // Mettre à jour IndexedDB avec les branches récupérés
+          AppStorage.storeDataInIndexedDB("branches", result.data);
+
+          AppStorage.getBranches().then((result) => {
+            this.branches = result;
+
+            this.branches.sort((a, b) => {
+              // Comparaison alphabétique des propriétés 'nom_branche'
+              const nameA = a.nom_branche.toUpperCase(); // Ignorer la casse
+              const nameB = b.nom_branche.toUpperCase(); // Ignorer la casse
+              if (nameA < nameB) {
+                return -1;
+              }
+              if (nameA > nameB) {
+                return 1;
+              }
+              return 0; // Les noms sont identiques
+            });
+          });
+
+          // this.paginations = result;
+        });
+      } else {
+        AppStorage.getBranches().then((result) => {
+          this.branches = result;
+
+          this.branches.sort((a, b) => {
+            // Comparaison alphabétique des propriétés 'nom_branche'
+            const nameA = a.nom_branche.toUpperCase(); // Ignorer la casse
+            const nameB = b.nom_branche.toUpperCase(); // Ignorer la casse
+            if (nameA < nameB) {
+              return -1;
+            }
+            if (nameA > nameB) {
+              return 1;
+            }
+            return 0; // Les noms sont identiques
+          });
+
+        });
+      }
     },
+
+
+
+    // getBranches(page) {
+    //   getBranchesList(page).then((result) => {
+    //     this.branches = result.data;
+    //     this.paginations = result;
+    //   });
+    // },
 
     getRoleconnect() {
       getRoleActif().then((result) => {
@@ -125,33 +183,51 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    searchtask() {
-      const token = localStorage.getItem("token");
+    // searchtask() {
+    //   const token = localStorage.getItem("token");
 
-      // Configurez les en-têtes de la requête
-      const headers = {
-        Authorization: "Bearer " + token,
-        "x-access-token": token,
-      };
-      if (this.q.length > 0) {
-        axios
-          .get("/api/auth/branchesList/" + this.q, { headers })
-          .then((response) => (
-            this.branches = response.data.data
-          ))
-          .catch((error) => console.log(error));
+    //   // Configurez les en-têtes de la requête
+    //   const headers = {
+    //     Authorization: "Bearer " + token,
+    //     "x-access-token": token,
+    //   };
+    //   if (this.q.length > 0) {
+    //     axios
+    //       .get("/api/auth/branchesList/" + this.q, { headers })
+    //       .then((response) => (
+    //         this.branches = response.data.data
+    //       ))
+    //       .catch((error) => console.log(error));
+    //   } else {
+    //     axios
+    //       .get("/api/auth/branchesList/", { headers })
+    //       .then((response) => (this.branches = response.data))
+    //       .catch((error) => console.log(error));
+    //   }
+    // },
+
+    searchtask() {
+      if (this.q.length > 3) {
+        AppStorage.searchBranchesByName(this.q).then((result) => {
+          this.branches = result;
+        });
       } else {
-        axios
-          .get("/api/auth/branchesList/", { headers })
-          .then((response) => (this.branches = response.data))
-          .catch((error) => console.log(error));
+        this.getBranches();
       }
     },
 
-    refresh(branches) {
-      this.branches = branches.data;
-    },
+    // refresh(branches) {
+    //   this.branches = branches.data;
+    // },
+
+    refresh() {
+      // Récupérer les clients depuis IndexedDB après l'ajout d'un nouveau client
+      AppStorage.getBranches().then((result) => {
+        this.branches = result;
+      });
+    }
   },
+
   components: {
     Header,
     Sidebar,

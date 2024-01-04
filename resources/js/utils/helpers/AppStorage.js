@@ -165,6 +165,12 @@ class AppStorage {
         await this.storeData('branches', branches);
     }
 
+    static async searchBranchesByName(name) {
+        const allBranches = await this.getData('branches') || [];
+        const filteredBranches = allBranches.filter(branche => branche.nom_branche.toLowerCase().includes(name.toLowerCase()));
+        return filteredBranches;
+    }
+
     static async getBranches() {
         return this.getData('branches') || [];
     }

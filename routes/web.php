@@ -19,7 +19,7 @@ Route::get('/{any}', function () {
     return view('welcome');
 })->where('any', '.*');
 
-Route::get('/service-worker.js', function () {
-    return response()->file(public_path('service-worker.js'));
-});
+// Route::get('/service-worker.js', function () {
+//     return response()->file(public_path('service-worker.js'));
+// });
                                                                                                                                          
