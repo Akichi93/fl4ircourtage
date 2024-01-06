@@ -143,8 +143,9 @@
                                                         <Multiselect v-model="profession_prospect" :options="professions"
                                                             :custom-label="({ id_profession, profession }) =>
                                                                 `${id_profession} - [${profession}]`
-                                                                " valueProp="profession" placeholder="Choisir une profession"
-                                                            label="profession" track-by="profession" :searchable="true">
+                                                                " valueProp="profession"
+                                                            placeholder="Choisir une profession" label="profession"
+                                                            track-by="profession" :searchable="true">
                                                         </Multiselect>
                                                         <p style="color: red" class="text-red"
                                                             v-if="errors.profession_prospect"
@@ -240,50 +241,61 @@ export default {
                 this.professions = result;
             });
         },
-        storeProspect() {
+        async storeProspect() {
+            const response = await fetch(
+                "/api/check-internet-connection"
+            );
 
-            const userId = AppStorage.getId();
-            const entrepriseId = AppStorage.getEntreprise();
+            const data = await response.json();
 
-            axios
-                .post("/api/auth/postProspect", {
-                    civilite: this.civilite,
-                    nom_prospect: this.nom_prospect,
-                    postal_prospect: this.postal_prospect,
-                    adresse_prospect: this.adresse_prospect,
-                    tel_prospect: this.tel_prospect,
-                    profession_prospect: this.profession_prospect,
-                    email_prospect: this.email_prospect,
-                    fax_prospect: this.fax_prospect,
-                    etat: this.etat,
-                    id_entreprise: entrepriseId,
-                    id: userId,
-                })
-                .then(async (response) => {
-                    const newProspect = response.data; // Assurez-vous que votre serveur renvoie le prospect nouvellement créé
+            this.isConnected = data.connected;
+            if (this.isConnected) {
+                const userId = AppStorage.getId();
+                const entrepriseId = AppStorage.getEntreprise();
+                
 
-                    // Mettre à jour IndexedDB avec les clients récupérés
-                    await AppStorage.storeDataInIndexedDB("prospects", newProspect);
+                axios
+                    .post("/api/auth/postProspect", {
+                        civilite: this.civilite,
+                        nom_prospect: this.nom_prospect,
+                        postal_prospect: this.postal_prospect,
+                        adresse_prospect: this.adresse_prospect,
+                        tel_prospect: this.tel_prospect,
+                        profession_prospect: this.profession_prospect,
+                        email_prospect: this.email_prospect,
+                        fax_prospect: this.fax_prospect,
+                        etat: this.etat,
+                        id_entreprise: entrepriseId,
+                        id: userId,
+                    })
+                    .then(async (response) => {
+                        const newProspect = response.data; // Assurez-vous que votre serveur renvoie le prospect nouvellement créé
 
-                    toaster.success(`Prospect ajouté avec succès`, {
-                        position: "top-right",
+                        // Mettre à jour IndexedDB avec les clients récupérés
+                        await AppStorage.storeDataInIndexedDB("prospects", newProspect);
+
+                        toaster.success(`Prospect ajouté avec succès`, {
+                            position: "top-right",
+                        });
+
+                        // Redirect to the listprospect page
+                        this.$router.push("/listprospect");
+
+                    })
+                    .catch((error) => {
+                        // if (error.response.status === 422) {
+                        //     this.errors = error.response.data.errors;
+                        // } else if (error.request) {
+                        //     // The request was made but no response was received
+                        //     console.log(error.request);
+                        // } else {
+                        //     // Something happened in setting up the request that triggered an Error
+                        //     console.log("Error", error.message);
+                        // }
                     });
+            }
 
-                    // Redirect to the listprospect page
-                    this.$router.push("/listprospect");
 
-                })
-                .catch((error) => {
-                    // if (error.response.status === 422) {
-                    //     this.errors = error.response.data.errors;
-                    // } else if (error.request) {
-                    //     // The request was made but no response was received
-                    //     console.log(error.request);
-                    // } else {
-                    //     // Something happened in setting up the request that triggered an Error
-                    //     console.log("Error", error.message);
-                    // }
-                });
         },
 
         handleClientsChange(localisations) {

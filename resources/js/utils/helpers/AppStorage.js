@@ -141,9 +141,21 @@ class AppStorage {
         await this.storeData('contrats', contrats);
     }
 
+    static async searchContratsByName(name) {
+        const allContrats = await this.getData('contrats') || [];
+        const filteredContrats = allContrats.filter(contrat => contrat.nom_contrat.toLowerCase().includes(name.toLowerCase()));
+        return filteredContrats;
+    }
+
     static async getContrats() {
         return this.getData('contrats') || [];
     }
+
+    static async getContratById(id) {
+        const contrats = await this.getData('contrats') || [];
+        return contrats.find(contrat => contrat.id === id);
+    }
+    
 
     static async storeCompagnies(compagnies) {
         await this.storeData('compagnies', compagnies);

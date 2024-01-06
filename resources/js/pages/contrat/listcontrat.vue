@@ -104,7 +104,7 @@
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import { getContratsList } from "../../services/contratservice";
+import { getContratsExport } from "../../services/contratservice";
 import { getRoleActif } from "../../services/roleservice";
 import deletecontrat from "../contrat/deletecontrat.vue";
 import pagination from "laravel-vue-pagination";
@@ -132,6 +132,7 @@ export default {
     this.getContrat();
     this.getRoleconnect();
   },
+  
   methods: {
     editContrat(id_contrat) {
       axios
@@ -143,7 +144,7 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    async getContrat(page) {
+    async getContrat() {
       const response = await fetch(
         "/api/check-internet-connection"
       );
@@ -151,13 +152,24 @@ export default {
 
       this.isConnected = data.connected;
       if (this.isConnected) {
-        getContratsList(page).then((result) => {
-          this.contrats = result;
+        getContratsExport().then((result) => {
+          // Mettre à jour IndexedDB avec les contrats récupérés
+          AppStorage.storeDataInIndexedDB("contrats", result.data);
+
+          AppStorage.getContrats().then((result) => {
+            this.contrats = result;
+            console.log(result);
+          });
+
+          // this.paginations = result;
         });
+
+        // getContratsList(page).then((result) => {
+        //   this.contrats = result;
+        // });
       } else {
-        AppStorage.getContrats(page).then((result) => {
+        AppStorage.getContrats().then((result) => {
           this.contrats = result;
-          console.log(result);
         });
       }
     },
@@ -167,26 +179,36 @@ export default {
       });
     },
 
-    searchtask() {
-      const token = localStorage.getItem("token");
+    // searchtask() {
+    //   const token = localStorage.getItem("token");
 
-      // Configurez les en-têtes de la requête
-      const headers = {
-        Authorization: "Bearer " + token,
-        "x-access-token": token,
-      };
-      if (this.q.length > 0) {
-        axios
-          .get("/api/auth/contratList/" + this.q, { headers })
-          .then((response) => (
-            this.contrats = response.data.data
-          ))
-          .catch((error) => console.log(error));
+    //   // Configurez les en-têtes de la requête
+    //   const headers = {
+    //     Authorization: "Bearer " + token,
+    //     "x-access-token": token,
+    //   };
+    //   if (this.q.length > 0) {
+    //     axios
+    //       .get("/api/auth/contratList/" + this.q, { headers })
+    //       .then((response) => (
+    //         this.contrats = response.data.data
+    //       ))
+    //       .catch((error) => console.log(error));
+    //   } else {
+    //     axios
+    //       .get("/api/auth/contratList/", { headers })
+    //       .then((response) => (this.contrats = response.data))
+    //       .catch((error) => console.log(error));
+    //   }
+    // },
+
+    searchtask() {
+      if (this.q.length > 3) {
+        AppStorage.searchContratsByName(this.q).then((result) => {
+          this.contrats = result;
+        });
       } else {
-        axios
-          .get("/api/auth/contratList/", { headers })
-          .then((response) => (this.contrats = response.data))
-          .catch((error) => console.log(error));
+        this.getContrat();
       }
     },
   },

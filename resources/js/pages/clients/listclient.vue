@@ -77,9 +77,9 @@
             <addclient @client-added="refresh"></addclient>
             <editclient v-bind:clientoedit="clientoedit" @client-updated="refresh"></editclient>
 
-            <pagination align="center" :data="paginations" :limit="5" :current_page="paginations.current_page"
+            <!-- <pagination align="center" :data="paginations" :limit="5" :current_page="paginations.current_page"
               :last_page="paginations.last_page" @pagination-change-page="getClients">
-            </pagination>
+            </pagination> -->
           </div>
         </div>
       </div>
