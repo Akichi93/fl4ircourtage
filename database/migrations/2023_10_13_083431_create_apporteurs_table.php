@@ -15,7 +15,7 @@ class CreateApporteursTable extends Migration
     {
         Schema::create('apporteurs', function (Blueprint $table) {
             $table->bigIncrements('id_apporteur');
-            $table->uuid('id');
+            $table->uuid('uuid');
             $table->string('nom_apporteur');
             $table->string('email_apporteur')->nullable();
             $table->string('adresse_apporteur');
@@ -23,7 +23,7 @@ class CreateApporteursTable extends Migration
             $table->string('code_apporteur');
             $table->string('code_postal')->nullable();
             $table->string('apporteur_url')->nullable();
-            $table->boolean('sync')->default(true);
+            $table->boolean('sync')->default(false);
             $table->string('supprimer_apporteur')->comment('0 = encours, 1 = supprimé')->default(0);
             $table->timestamps();
         });

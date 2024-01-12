@@ -15,6 +15,7 @@ class CreateTauxCompagniesTable extends Migration
     {
         Schema::create('taux_compagnies', function (Blueprint $table) {
             $table->bigIncrements('id_tauxcomp');
+            $table->uuid('uuid');
 
             $table->foreignId('id_compagnie');
             $table->foreign('id_compagnie')
@@ -29,7 +30,7 @@ class CreateTauxCompagniesTable extends Migration
                 ->onDelete('cascade');
 
             $table->integer('tauxcomp');
-            $table->boolean('sync')->default(true);
+            $table->boolean('sync')->default(false);
             $table->timestamps();
         });
     }

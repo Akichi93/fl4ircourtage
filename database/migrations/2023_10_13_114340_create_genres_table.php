@@ -15,8 +15,9 @@ class CreateGenresTable extends Migration
     {
         Schema::create('genres', function (Blueprint $table) {
             $table->bigIncrements('id_genre');
+            // $table->uuid('uuid');
             $table->string('genre');
-            $table->boolean('sync')->default(true);
+            $table->boolean('sync')->default(false);
             $table->timestamps();
         });
     }

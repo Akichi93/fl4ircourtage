@@ -28,7 +28,7 @@ class CreateCategorieTypesTable extends Migration
                 ->references('id_typedep')
                 ->on('type_depenses')
                 ->onDelete('cascade');
-                $table->boolean('sync')->default(true);
+                $table->boolean('sync')->default(false);
 
             $table->timestamps();
         });

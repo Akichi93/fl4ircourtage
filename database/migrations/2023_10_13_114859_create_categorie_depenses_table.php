@@ -16,7 +16,7 @@ class CreateCategorieDepensesTable extends Migration
         Schema::create('categorie_depenses', function (Blueprint $table) {
             $table->bigIncrements('id_catdep');
             $table->string('nom_secteur');
-            $table->boolean('sync')->default(true);
+            $table->boolean('sync')->default(false);
             $table->timestamps();
         });
     }

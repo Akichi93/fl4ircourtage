@@ -19,6 +19,7 @@ use App\Http\Controllers\CompagnieController;
 use App\Http\Controllers\ProspectsController;
 use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\RhController;
+use App\Http\Controllers\SyncController;
 
 /*
 |--------------------------------------------------------------------------
@@ -315,5 +316,19 @@ Route::group([
         Route::post('importcontrat', 'importcontrat');
         Route::post('importsinistre', 'importsinistre');
         Route::post('importautomobile', 'importautomobile');
+    });
+
+
+      // Import de fichier
+      Route::controller(SyncController::class)->group(function () {
+        Route::post('sync-branches', 'syncBranche');
+        Route::post('sync-prospects', 'syncProspect');
+        Route::post('sync-clients', 'syncClient');
+        // Route::post('importauxapporteur', 'importauxapporteur');
+        // Route::post('importcompagnie', 'importcompagnie');
+        // Route::post('importauxcompagnie', 'importauxcompagnie');
+        // Route::post('importcontrat', 'importcontrat');
+        // Route::post('importsinistre', 'importsinistre');
+        // Route::post('importautomobile', 'importautomobile');
     });
 });

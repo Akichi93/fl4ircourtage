@@ -70,35 +70,76 @@ export default {
     return {
       form: {
         nom_branche: null,
+        uuid: null,
       },
     };
   },
   methods: {
     async storeBranche() {
       const branchesStore = useBranchesStore();
-      try {
-        const response = await postBranche(this.form);
-        console.log(response);
+      const response = await fetch(
+        "/api/check-internet-connection"
+      );
 
-        // Utilisez le magasin Pinia pour ajouter la branche
-        branchesStore.addBranch(response);
+      const data = await response.json();
+
+      this.isConnected = data.connected;
+      if (this.isConnected) {
+
+        try {
+          // Generate UUID using the 'uuid' library
+          const { v4: uuidv4 } = require('uuid');
+          this.form.uuid = uuidv4(); // Assign the generated UUID to the form
+
+          const response = await postBranche(this.form);
+
+          // Utilisez le magasin Pinia pour ajouter la branche
+          branchesStore.addBranch(response);
 
 
-        // Appeler fetchClients pour récupérer la liste mise à jour après l'insertion
-        const updatedBranches = await this.fetchBranches();
+          // Appeler fetchClients pour récupérer la liste mise à jour après l'insertion
+          const updatedBranches = await this.fetchBranches();
 
-        // Mettre à jour IndexedDB avec les clients récupérés
-        await AppStorage.storeDataInIndexedDB("branches", updatedBranches);
+          // Mettre à jour IndexedDB avec les clients récupérés
+          await AppStorage.storeDataInIndexedDB("branches", updatedBranches);
+
+          this.$router.push("/listbranche");
+          toaster.success(`Branche ajoutée avec succès`, {
+            position: "top-right",
+          });
+
+
+        } catch (error) {
+          console.error("Erreur lors de l'ajout de la branche", error);
+        }
+      } else {
+
+        const { v4: uuidv4 } = require('uuid');
+        const uuid = uuidv4();
+
+        // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
+        const newBrancheData = [{
+          nom_branche: this.form.nom_branche,
+          sync: 0,
+          uuid: uuid,
+        }];
+
+
+        // Ajouter la nouvelle donnée dans IndexedDB
+        await AppStorage.storeDataInIndexedDB("branches", newBrancheData);
+
+        // Récuperer les données dans IndexedDB et actualiser le table
+        // AppStorage.getClients().then((result) => {
+        //   this.$emit("client-add", result);
+        // });
 
         this.$router.push("/listbranche");
-        toaster.success(`Branche ajoutée avec succès`, {
+
+        toaster.info(`Client ajouté localement (hors ligne)`, {
           position: "top-right",
         });
-
-
-      } catch (error) {
-        console.error("Erreur lors de l'ajout de la branche", error);
       }
+
     },
 
     // Votre méthode actuelle fetchClients

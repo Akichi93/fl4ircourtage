@@ -129,6 +129,11 @@ class AppStorage {
         return this.paginateData('clients', pageIndex, pageSize);
     }
 
+    static async getClientById(clientId) {
+        const allClients = await this.getData('clients') || [];
+        return allClients.find(client => client.id_client === clientId);
+    }
+
     static async storeProspects(prospects) {
         await this.storeData('prospects', prospects);
     }
@@ -151,11 +156,7 @@ class AppStorage {
         return this.getData('contrats') || [];
     }
 
-    static async getContratById(id) {
-        const contrats = await this.getData('contrats') || [];
-        return contrats.find(contrat => contrat.id === id);
-    }
-    
+
 
     static async storeCompagnies(compagnies) {
         await this.storeData('compagnies', compagnies);

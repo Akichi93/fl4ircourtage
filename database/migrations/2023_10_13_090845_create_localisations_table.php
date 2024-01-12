@@ -15,8 +15,9 @@ class CreateLocalisationsTable extends Migration
     {
         Schema::create('localisations', function (Blueprint $table) {
             $table->bigIncrements('id_localisation');
+            // $table->uuid('uuid');
             $table->string('nom_ville');
-            $table->boolean('sync')->default(true);
+            $table->boolean('sync')->default(false);
             $table->timestamps();
         });
     }

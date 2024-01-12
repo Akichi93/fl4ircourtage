@@ -15,7 +15,7 @@ class CreateReglementsTable extends Migration
     {
         Schema::create('reglements', function (Blueprint $table) {
             $table->bigIncrements('id_reglement');
-            $table->uuid('id');
+            $table->uuid('uuid');
 
             $table->unsignedBigInteger('id_sinistre');
             $table->foreign('id_sinistre')
@@ -34,7 +34,7 @@ class CreateReglementsTable extends Migration
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
-            $table->boolean('sync')->default(true);
+            $table->boolean('sync')->default(false);
 
             $table->string('supprimer_reglement')->comment('0 = encours, 1 = supprimé')->default(0);
             $table->timestamps();

@@ -74,7 +74,7 @@
                 </tbody>
               </table>
             </div>
-            <addclient @client-added="refresh"></addclient>
+            <addclient @client-add="refresh"></addclient>
             <editclient v-bind:clientoedit="clientoedit" @client-updated="refresh"></editclient>
 
             <!-- <pagination align="center" :data="paginations" :limit="5" :current_page="paginations.current_page"
@@ -135,16 +135,21 @@ export default {
 
       this.isConnected = data.connected;
       if (this.isConnected) {
+
+        // Verifier Si les données IndexedDB et synchroniser ce qui n'a pas été synchro 
+
         getClientSelect().then((result) => {
           // Mettre à jour IndexedDB avec les clients récupérés
           AppStorage.storeDataInIndexedDB("clients", result.data);
 
+
+
+          //Insertion des données
           AppStorage.getClients().then((result) => {
             this.clients = result;
-            console.log(result);
           });
 
-          // this.paginations = result;
+
         });
       } else {
         AppStorage.getClients().then((result) => {
@@ -154,37 +159,18 @@ export default {
       }
     },
 
-    editClient(id_client) {
-      axios
-        .get("/api/auth/editClient/" + id_client)
-        .then((response) => {
-          this.clientoedit = response.data;
-        })
-        .catch((error) => console.log(error));
+
+
+    async editClient(id_client) {
+      try {
+        this.clientoedit = await AppStorage.getClientById(id_client);
+      } catch (error) {
+        console.log(error);
+      }
     },
 
-    // searchtask() {
-    //   const token = localStorage.getItem("token");
 
-    //   // Configurez les en-têtes de la requête
-    //   const headers = {
-    //     Authorization: "Bearer " + token,
-    //     "x-access-token": token,
-    //   };
-    //   if (this.q.length > 0) {
-    //     axios
-    //       .get("/api/auth/clientList/" + this.q, { headers })
-    //       .then((response) => (
-    //         this.clients = response.data.data
-    //       ))
-    //       .catch((error) => console.log(error));
-    //   } else {
-    //     axios
-    //       .get("/api/auth/clientList/", { headers })
-    //       .then((response) => (this.clients = response.data))
-    //       .catch((error) => console.log(error));
-    //   }
-    // },
+
 
     searchtask() {
       if (this.q.length > 3) {
@@ -196,9 +182,55 @@ export default {
       }
     },
 
-    // refresh(clients) {
-    //   this.clients = clients.data;
-    // }
+    // async syncClient() {
+    //   const queue = await AppStorage.getClients();
+    //   if (queue && queue.length > 0) {
+    //     // Envoie des données au serveur pour synchronisation
+    //     fetch('/api/sync-tasks', {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //       body: JSON.stringify(queue),
+    //     })
+    //       .then((response) => {
+    //         if (response.ok) {
+    //           // Vide la file d'attente après une synchronisation réussie
+    //           console.log('Sync successful');
+    //         } else {
+    //           console.error('Sync failed');
+    //         }
+    //       })
+    //       .catch((error) => {
+    //         console.error('Error syncing:', error);
+    //       });
+    //   }
+    // },
+
+    // async syncProspect() {
+    //   const queue = await AppStorage.getProspects();
+    //   if (queue && queue.length > 0) {
+    //     // Envoie des données au serveur pour synchronisation
+    //     fetch('/api/sync-tasks', {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //       body: JSON.stringify(queue),
+    //     })
+    //       .then((response) => {
+    //         if (response.ok) {
+    //           // Vide la file d'attente après une synchronisation réussie
+    //           console.log('Sync successful');
+    //         } else {
+    //           console.error('Sync failed');
+    //         }
+    //       })
+    //       .catch((error) => {
+    //         console.error('Error syncing:', error);
+    //       });
+    //   }
+    // },
 
     refresh() {
       // Récupérer les clients depuis IndexedDB après l'ajout d'un nouveau client

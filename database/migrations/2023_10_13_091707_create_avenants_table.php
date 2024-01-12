@@ -15,6 +15,7 @@ class CreateAvenantsTable extends Migration
     {
         Schema::create('avenants', function (Blueprint $table) {
             $table->bigIncrements('id_avenant');
+            $table->uuid('uuid');
 
             $table->foreignId('id_contrat');
             $table->foreign('id_contrat')
@@ -43,7 +44,7 @@ class CreateAvenantsTable extends Migration
             $table->string('code_avenant')->nullable();
             $table->string('solder')->default(0);
             $table->string('reverser')->default(0);
-            $table->boolean('sync')->default(true);
+            $table->boolean('sync')->default(false);
             $table->timestamps();
         });
     }

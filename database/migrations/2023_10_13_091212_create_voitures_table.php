@@ -15,8 +15,9 @@ class CreateVoituresTable extends Migration
     {
         Schema::create('voitures', function (Blueprint $table) {
             $table->bigIncrements('id_voiture');
+            // $table->uuid('uuid');
             $table->string('marque');
-            $table->boolean('sync')->default(true);
+            $table->boolean('sync')->default(false);
             $table->timestamps();
         });
     }

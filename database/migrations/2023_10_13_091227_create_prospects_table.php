@@ -15,6 +15,7 @@ class CreateProspectsTable extends Migration
     {
         Schema::create('prospects', function (Blueprint $table) {
             $table->bigIncrements('id_prospect');
+            $table->uuid('uuid');
             $table->string('civilite');
             $table->string('nom_prospect');
             $table->string('postal_prospect')->nullable();
@@ -25,7 +26,7 @@ class CreateProspectsTable extends Migration
             $table->string('email_prospect')->nullable();
             $table->string('etat')->default(0);
             $table->string('statut')->nullable();
-            $table->boolean('sync')->default(true);
+            $table->boolean('sync')->default(false);
             $table->string('supprimer_prospect')->comment('0 = encours, 1 = supprimé')->default(0);
             $table->timestamps();
         });

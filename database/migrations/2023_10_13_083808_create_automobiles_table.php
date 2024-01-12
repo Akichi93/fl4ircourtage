@@ -15,7 +15,7 @@ class CreateAutomobilesTable extends Migration
     {
         Schema::create('automobiles', function (Blueprint $table) {
             $table->bigIncrements('id_automobile');
-            $table->uuid('id');
+            $table->uuid('uuid');
             $table->string('numero_immatriculation')->nullable();
             $table->string('identification_proprietaire')->nullable();
             $table->date('date_circulation')->nullable();
@@ -47,7 +47,7 @@ class CreateAutomobilesTable extends Migration
             $table->string('commission_apporteur')->nullable();
             $table->string('type_garantie')->nullable();
             $table->string('zone')->nullable();
-            $table->boolean('sync')->default(true);
+            $table->boolean('sync')->default(false);
 
             $table->foreignId('id_contrat');
 

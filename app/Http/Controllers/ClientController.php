@@ -39,7 +39,7 @@ class ClientController extends Controller
         //validation
         $rules = [
             'civilite' => 'required',
-            'name_client' => 'required',
+            'nom_client' => 'required',
             'tel_client' => 'required|numeric',
             'adresse_client' => 'required',
             'profession_client' => 'required',
@@ -48,7 +48,7 @@ class ClientController extends Controller
 
         $customMessages = [
             'civilite.required' => 'Selectionnez la civilité',
-            'name_client.required' => 'Veuillez entrer le nom du client',
+            'nom_client.required' => 'Veuillez entrer le nom du client',
             'tel_client.required' => 'Veuillez entrer le contact de l\'apporteur',
             'tel_client.numeric' => 'Veuillez entrer un contact de',
             'adresse_client.required' => 'Veuillez entrer l\'adresse du client',
@@ -95,7 +95,7 @@ class ClientController extends Controller
             $clients->save();
 
             if ($clients) {
-                $clients = Client::where('id_entreprise', $request->id_entreprise)->latest()->paginate(10);
+                $clients = Client::where('id_entreprise', $request->id_entreprise)->latest();
 
                 return response()->json($clients);
             }

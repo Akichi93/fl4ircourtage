@@ -15,7 +15,7 @@ class CreateSinistresTable extends Migration
     {
         Schema::create('sinistres', function (Blueprint $table) {
             $table->bigIncrements('id_sinistre');
-            $table->uuid('id');
+            $table->uuid('uuid');
 
             $table->unsignedBigInteger('id_contrat');
             $table->foreign('id_contrat')
@@ -43,7 +43,7 @@ class CreateSinistresTable extends Migration
             $table->integer('etat')->comment('0 = encours, 2 = terminer')->default(0);
             $table->string('supprimer_sinistre')->comment('0 = encours, 1 = supprimé')->default(0);
             $table->string('sinistre_url')->nullable();
-            $table->boolean('sync')->default(true);
+            $table->boolean('sync')->default(false);
             $table->timestamps();
         });
     }

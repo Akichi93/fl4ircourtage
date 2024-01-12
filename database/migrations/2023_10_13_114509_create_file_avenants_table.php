@@ -25,7 +25,7 @@ class CreateFileAvenantsTable extends Migration
                 ->references('id_avenant')
                 ->on('avenants')
                 ->onDelete('cascade');
-                $table->boolean('sync')->default(true);
+                $table->boolean('sync')->default(false);
 
             $table->timestamps();
         });

@@ -110,6 +110,7 @@ export default {
       tel_client: "",
       profession_client: "",
       fax_client: "",
+      clients: []
     };
   },
   methods: {
@@ -147,10 +148,10 @@ export default {
           // Appeler fetchClients pour récupérer la liste mise à jour après l'insertion
           const updatedClients = await this.fetchClients();
 
-          // const updatedListClients = await this.fetchListClients();
-
           this.$emit("client-added", response);
-          this.$emit("client-add", response.data);
+          this.$emit("client-add", updatedClients);
+
+          console.log(updatedClients)
 
           if (response.status === 200) {
             toaster.success(`Client ajouté avec succès`, {
@@ -158,10 +159,28 @@ export default {
             });
           }
 
-          // Mettre à jour IndexedDB avec les clients récupérés
-          await AppStorage.storeDataInIndexedDB("clients", updatedClients);
+          // Mettre à jour IndexedDB avec les clients récupérés après comparaison
+          AppStorage.getClients().then((existingClients) => {
+            if (existingClients && updatedClients) {
+              // Comparaison des nouveaux clients avec ceux déjà existants
+              const newClients = updatedClients.filter((client) => {
+                return !existingClients.some((existingClient) => existingClient.id_client === client.id_client);
+              });
 
-          // await AppStorage.storeDataInIndexedDB("clientList", updatedListClients);
+              console.log('Nouveaux clients à insérer dans IndexedDB :', newClients);
+
+              // Insérer uniquement les nouveaux clients dans IndexedDB
+              if (newClients.length > 0) {
+                AppStorage.storeDataInIndexedDB('clients', newClients);
+              }
+            }
+          });
+
+          // Récuperer les données dans IndexedDB et actualiser le table
+          AppStorage.getClients().then((result) => {
+            this.$emit("client-add", result);
+          });
+
 
         } catch (error) {
           console.error("Erreur lors de l'ajout du client sur le serveur", error);
@@ -170,7 +189,6 @@ export default {
 
         const { v4: uuidv4 } = require('uuid');
         const uuid = uuidv4();
-
 
         // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
         const newClientData = [{
@@ -186,12 +204,15 @@ export default {
           uuid: uuid,
         }];
 
-       
+
 
         // Ajouter la nouvelle donnée dans IndexedDB
         await AppStorage.storeDataInIndexedDB("clients", newClientData);
 
-        // await AppStorage.storeDataInIndexedDB("clientList", newClientData);
+        // Récuperer les données dans IndexedDB et actualiser le table
+        AppStorage.getClients().then((result) => {
+          this.$emit("client-add", result);
+        });
 
         toaster.info(`Client ajouté localement (hors ligne)`, {
           position: "top-right",
@@ -221,28 +242,6 @@ export default {
         console.error("Erreur lors de la récupération des clients sur le serveur", error);
       }
     },
-
-    // async fetchListClients(page = 1) {
-    //   const token = AppStorage.getToken();
-
-    //   // Configurez les en-têtes de la requête
-    //   const headers = {
-    //     Authorization: "Bearer " + token,
-    //     "x-access-token": token,
-    //   };
-
-    //   try {
-    //     const response = await axios.get("/api/auth/clientList?page=" + page, { headers })
-
-    //     // Vous pouvez traiter les données comme vous le souhaitez
-    //     const clients = response.data;
-
-    //     // Retourner les clients pour une utilisation éventuelle
-    //     return clients;
-    //   } catch (error) {
-    //     console.error("Erreur lors de la récupération des clients sur le serveur", error);
-    //   }
-    // },
   },
 };
 </script>

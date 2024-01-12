@@ -23,7 +23,7 @@ class CreateSalariesTable extends Migration
             $table->string('renumeration');
             $table->date('date_embauche')->nullable();
             $table->integer('etat')->default(0);
-            $table->boolean('sync')->default(true);
+            $table->boolean('sync')->default(false);
             $table->timestamps();
         });
     }

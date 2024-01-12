@@ -197,16 +197,20 @@ export default {
     this.getCategory();
     this.getTypes();
     this.getData();
+  
+
     // Vérification initiale de la connexion
     this.checkInternetConnectivity();
   },
   name: "dashboard",
 
   components: { Header, Sidebar, Bar },
-  mounted() {
-    this.checkInternetConnectivity();
-  },
-  
+  // mounted() {
+  //   this.checkInternetConnectivity();
+  // },
+
+ 
+
   methods: {
     async checkInternetConnectivity() {
       try {
@@ -227,6 +231,9 @@ export default {
         this.showNotification("Pas de connexion Internet", "error");
       }
     },
+
+
+    
 
     showNotification(message, type) {
       // Configuration du toaster

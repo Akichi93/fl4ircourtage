@@ -15,8 +15,9 @@ class CreateEnergiesTable extends Migration
     {
         Schema::create('energies', function (Blueprint $table) {
             $table->bigIncrements('id_energie');
+            // $table->uuid('uuid');
             $table->string('energie');
-            $table->boolean('sync')->default(true);
+            $table->boolean('sync')->default(false);
             $table->timestamps();
         });
     }

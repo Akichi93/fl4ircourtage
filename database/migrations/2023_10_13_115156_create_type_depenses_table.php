@@ -16,7 +16,7 @@ class CreateTypeDepensesTable extends Migration
         Schema::create('type_depenses', function (Blueprint $table) {
             $table->bigIncrements('id_typedep');
             $table->string('nom_type');
-            $table->boolean('sync')->default(true);
+            $table->boolean('sync')->default(false);
             $table->timestamps();
         });
     }

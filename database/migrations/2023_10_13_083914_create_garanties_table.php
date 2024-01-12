@@ -15,14 +15,14 @@ class CreateGarantiesTable extends Migration
     {
         Schema::create('garanties', function (Blueprint $table) {
             $table->bigIncrements('id_garantie');
-            $table->uuid('id');
+            $table->uuid('uuid');
             $table->unsignedBigInteger('id_contrat');
             $table->foreign('id_contrat')
                 ->references('id_contrat')
                 ->on('contrats')
                 ->onDelete('cascade');
             $table->string('nom_garantie');
-            $table->boolean('sync')->default(true);
+            $table->boolean('sync')->default(false);
             $table->timestamps();
         });
     }

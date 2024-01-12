@@ -17,7 +17,7 @@ class CreateRelancesTable extends Migration
             $table->bigIncrements('id_relance');
             $table->date('date_relance');
             $table->longText('message');
-            $table->boolean('sync')->default(true);
+            $table->boolean('sync')->default(false);
             $table->timestamps();
         });
     }
