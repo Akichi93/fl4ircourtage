@@ -66,6 +66,7 @@ class ApporteurRepository extends BaseRepository
             $apporteurs->code_postal = $data['code_postal'];
             $apporteurs->code_apporteur =   $ref;
             $apporteurs->id_entreprise = $data['id_entreprise'];
+            $apporteurs->uuidApporteur = $data['uuidApporteur'];
             $apporteurs->user_id = $data['id'];
             $apporteurs->apporteur_url = bcrypt($ref);
             $apporteurs->save();

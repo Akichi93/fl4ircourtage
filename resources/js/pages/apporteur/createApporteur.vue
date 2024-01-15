@@ -12,7 +12,8 @@
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="admin-dashboard.html">Tableau de bord</a>
+                    <router-link to="/">Tableau de bord</router-link>
+
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Apporteur
@@ -174,6 +175,7 @@ export default {
       accidents: [],
       ids: [],
       errors: {},
+      isConnected: false,
     };
   },
   created() {
@@ -182,68 +184,80 @@ export default {
   },
 
   methods: {
-    storeApporteur() {
-      const token = AppStorage.getToken();
-      const userId = AppStorage.getId();
-      const entrepriseId = AppStorage.getEntreprise();
+    async storeApporteur() {
+      const response = await fetch(
+        "/api/check-internet-connection"
+      );
 
-      // Configurez les en-têtes de la requête
-      const headers = {
-        Authorization: "Bearer " + token,
-        "x-access-token": token,
-      };
-      let test = JSON.parse(JSON.stringify(this.branches));
-      let donnees = [];
+      const data = await response.json();
 
-      for (let i = 0; i < Object.keys(test).length; i++) {
-        donnees.push(test[i]["value"]);
-      }
+      this.isConnected = data.connected;
+      if (this.isConnected) {
+        const { v4: uuidv4 } = require('uuid');
+        const uuid = uuidv4();
+        const token = AppStorage.getToken();
+        const userId = AppStorage.getId();
+        const entrepriseId = AppStorage.getEntreprise();
 
-      let testing = JSON.parse(JSON.stringify(this.branches));
-      let datas = [];
+        // Configurez les en-têtes de la requête
+        const headers = {
+          Authorization: "Bearer " + token,
+          "x-access-token": token,
+        };
+        let test = JSON.parse(JSON.stringify(this.branches));
+        let donnees = [];
 
-      for (let i = 0; i < Object.keys(testing).length; i++) {
-        datas.push(testing[i]["id_branche"]);
-      }
-      axios
-        .post("/api/auth/postApporteur", {
-          nom_apporteur: this.nom_apporteur,
-          contact_apporteur: this.contact_apporteur,
-          email_apporteur: this.email_apporteur,
-          adresse_apporteur: this.adresse_apporteur,
-          code_postal: this.code_postal,
-          accidents: donnees,
-          ids: datas,
-          id_entreprise: entrepriseId,
-          id: userId,
-        })
-        .then((response) => {
-          AppStorage.storeApporteurs(response.data)
-          this.$router.push("/listapporteur");
-          if (response.status === 200) {
-            toaster.success(`Apporteur ajouté avec succès`, {
-              position: "top-right",
-            });
-          }
-        })
-        .catch((error) => {
-          // console.log(error.response.headers);
-          // if (error.response.status === 422) {
-          //   this.errors = error.response.data.errors;
-          //   toaster.error(`Veuillez remplir tous les champs`, {
-          //     position: "top-right",
-          //   });
-          // } else if (error.request) {
-          //   // The request was made but no response was received
-          //   console.log(error.request);
-          //   toaster.error(`Veuillez remplir les champs`, {
-          //     position: "top-right",
-          //   });
-          // } else {
-          //   // Something happened in setting up the request that triggered an Error
-          //   console.log("Error", error.message);
-          // }
-        });
+        for (let i = 0; i < Object.keys(test).length; i++) {
+          donnees.push(test[i]["value"]);
+        }
+
+        let testing = JSON.parse(JSON.stringify(this.branches));
+        let datas = [];
+
+        for (let i = 0; i < Object.keys(testing).length; i++) {
+          datas.push(testing[i]["id_branche"]);
+        }
+        axios
+          .post("/api/auth/postApporteur", {
+            nom_apporteur: this.nom_apporteur,
+            contact_apporteur: this.contact_apporteur,
+            email_apporteur: this.email_apporteur,
+            adresse_apporteur: this.adresse_apporteur,
+            code_postal: this.code_postal,
+            accidents: donnees,
+            ids: datas,
+            id_entreprise: entrepriseId,
+            id: userId,
+          })
+          .then((response) => {
+            AppStorage.storeApporteurs(response.data)
+            this.$router.push("/listapporteur");
+            if (response.status === 200) {
+              toaster.success(`Apporteur ajouté avec succès`, {
+                position: "top-right",
+              });
+            }
+          })
+          .catch((error) => {
+            // console.log(error.response.headers);
+            // if (error.response.status === 422) {
+            //   this.errors = error.response.data.errors;
+            //   toaster.error(`Veuillez remplir tous les champs`, {
+            //     position: "top-right",
+            //   });
+            // } else if (error.request) {
+            //   // The request was made but no response was received
+            //   console.log(error.request);
+            //   toaster.error(`Veuillez remplir les champs`, {
+            //     position: "top-right",
+            //   });
+            // } else {
+            //   // Something happened in setting up the request that triggered an Error
+            //   console.log("Error", error.message);
+            // }
+          });
+      } else { }
+
     },
     getAdresse() {
       getAdresseList().then((result) => {

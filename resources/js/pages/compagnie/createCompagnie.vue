@@ -172,6 +172,7 @@ export default {
       accidents: [],
       ids: [],
       errors: {},
+      isConnected: false,
     };
   },
   created() {
@@ -274,6 +275,22 @@ export default {
         const userId = parseInt(AppStorage.getId(), 10);
         const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
 
+
+        let test = JSON.parse(JSON.stringify(this.branches));
+        let donnees = [];
+
+        for (let i = 0; i < Object.keys(test).length; i++) {
+          donnees.push(test[i]["value"]);
+        }
+
+        let testing = JSON.parse(JSON.stringify(this.branches));
+        let datas = [];
+
+        for (let i = 0; i < Object.keys(testing).length; i++) {
+          datas.push(testing[i]["id_branche"]);
+        }
+
+
         // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
         const newCompagnieData = [{
           nom_compagnie: this.nom_compagnie,
@@ -292,6 +309,23 @@ export default {
 
         // Ajouter la nouvelle donnée dans IndexedDB
         await AppStorage.storeDataInIndexedDB("compagnies", newCompagnieData);
+
+        const branchesMap = await YourClassName.getBranches();
+        for (let i = 0; i < datas.length; i++) {
+          // Use the branchesMap to get nom_branche corresponding to id_branche
+          const nom_branche = branchesMap[datas[i]];
+
+          let newTauxCompagnie = {
+            uuidCompagnie: uuid,
+            sync: 0,
+            tauxcomp: donnees[i],
+            nom_branche: nom_branche, // Use the retrieved nom_branche value
+            id_branche: datas[i],
+            // Add other properties as needed
+          };
+
+          await AppStorage.storeDataInIndexedDB("tauxcompagnies", newTauxCompagnie);
+        }
 
         toaster.info(`Compagnie ajouté localement (hors ligne)`, {
           position: "top-right",

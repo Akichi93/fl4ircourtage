@@ -60,9 +60,10 @@
                       <td v-text="compagnie.contact_compagnie"></td>
                       <td v-text="compagnie.adresse_compagnie"></td>
                       <td class="text-end ico-sec d-flex justify-content-end">
-                        <router-link :to="{ name: 'tauxcompagnie', params: { uuidCompagnie: compagnie.uuid } }">
+                        <router-link :to="{ name: 'tauxcompagnie', params: { uuidCompagnie: compagnie.uuidCompagnie } }">
                           <i class="fa fa-pen-fancy"></i>
                         </router-link>
+
 
 
                         <!-- <a href="#" data-bs-toggle="modal" data-bs-target="#edit_compagnie"

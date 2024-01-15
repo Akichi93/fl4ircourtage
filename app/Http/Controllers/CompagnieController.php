@@ -149,7 +149,9 @@ class CompagnieController extends Controller
 
     public function getTauxCompagnies()
     {
-        $compagnies = TauxCompagnie::join("branches", 'taux_compagnies.id_branche', '=', 'branches.id_branche')->get();
+        $compagnies = TauxCompagnie::join("branches", 'taux_compagnies.id_branche', '=', 'branches.id_branche')
+            ->join("compagnies", 'taux_compagnies.id_compagnie', '=', 'compagnies.id_compagnie')
+            ->get();
 
         return response()->json($compagnies);
     }

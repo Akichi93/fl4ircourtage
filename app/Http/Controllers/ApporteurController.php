@@ -195,6 +195,7 @@ class ApporteurController extends Controller
     public function getTauxApporteurs()
     {
         $apporteurs = TauxApporteur::join("branches", 'taux_apporteurs.id_branche', '=', 'branches.id_branche')
+            ->join("apporteurs", 'taux_apporteurs.id_apporteur', '=', 'apporteurs.id_apporteur')
             ->get();
         return response()->json($apporteurs);
     }

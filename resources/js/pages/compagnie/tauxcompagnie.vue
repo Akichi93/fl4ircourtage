@@ -99,7 +99,7 @@ export default {
     methods: {
 
         async fetchData() {
-            const uuidCompagnie = this.$route.params.uuid;
+            const uuidCompagnie = this.$route.params.uuidCompagnie;
 
             try {
                 const tauxCompagnies = await AppStorage.getTauxCompagniesByIdCompagnie(uuidCompagnie);

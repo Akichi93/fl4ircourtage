@@ -26,7 +26,7 @@ export async function getClientSelect() {
         "x-access-token": token,
     };
 
-    const response = await axios.get("/api/auth/getClient", { headers })
+    const response = await axios.get("/api/auth/getClients", { headers })
     return response.data;
 
 }

@@ -202,12 +202,10 @@ class AppStorage {
 
         const allTauxCompagnies = await this.fetchDataFromIndexedDB('tauxcompagnies') || [];
 
-        console.log(allTauxCompagnies)
-
         const tauxCompagniesByIdCompagnie = allTauxCompagnies.filter(tauxcompagnie => {
 
         
-            return tauxcompagnie.uuid === uuidCompagnie;
+            return tauxcompagnie.uuidCompagnie === uuidCompagnie;
         });
 
         return tauxCompagniesByIdCompagnie;
