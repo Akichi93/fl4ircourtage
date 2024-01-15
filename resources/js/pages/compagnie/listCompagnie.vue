@@ -12,7 +12,7 @@
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="/home">Tableau de bord</a>
+                    <router-link to="/home">Tableau de bord</router-link>
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Compagnie
@@ -60,19 +60,18 @@
                       <td v-text="compagnie.contact_compagnie"></td>
                       <td v-text="compagnie.adresse_compagnie"></td>
                       <td class="text-end ico-sec d-flex justify-content-end">
-                        <router-link :to="{
-                          name: 'tauxcompagnie',
-                          params: { id_compagnie: compagnie.id_compagnie },
-                        }">
+                        <router-link :to="{ name: 'tauxcompagnie', params: { uuidCompagnie: compagnie.uuid } }">
                           <i class="fa fa-pen-fancy"></i>
                         </router-link>
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#edit_compagnie"
+
+
+                        <!-- <a href="#" data-bs-toggle="modal" data-bs-target="#edit_compagnie"
                           @click="editCompagnie(compagnie.id_compagnie)" title="Modifier"><i class="fas fa-pen"></i>
                         </a>
                         <a href="#" v-if="roleactif == 'ADMIN'" data-bs-toggle="modal" data-bs-target="#delete_compagnie"
                           @click="editCompagnie(compagnie.id_compagnie)" title="supprimer"><i
                             class="fas fa-trash-alt"></i>
-                        </a>
+                        </a> -->
                       </td>
                     </tr>
                   </template>
@@ -94,13 +93,14 @@
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import { getCompagniesList } from "../../services/compagnieservice";
+import { getCompagniesExport } from "../../services/compagnieservice";
 import { getRoleActif } from "../../services/roleservice";
 import searchbranche from "../../components/search/searchbranche.vue";
 import editCompagnie from "./editCompagnie.vue";
 import deleteCompagnie from "./deleteCompagnie.vue";
 import pagination from "laravel-vue-pagination";
 import compagniexport from "../../components/export/compagniexport.vue";
+import AppStorage from "../../utils/helpers/AppStorage";
 export default {
   name: "compagnie",
   components: {
@@ -126,6 +126,36 @@ export default {
     this.getRoleconnect();
   },
   methods: {
+
+    async getCompagnies() {
+
+      const response = await fetch(
+        "/api/check-internet-connection"
+      );
+      const data = await response.json();
+
+      this.isConnected = data.connected;
+      if (this.isConnected) {
+        // Verifier Si les données IndexedDB et synchroniser ce qui n'a pas été synchro 
+        getCompagniesExport().then((result) => {
+          // Mettre à jour IndexedDB avec les compagnies récupérés
+          AppStorage.storeDataInIndexedDB("compagnies", result.data);
+
+          //Insertion des données
+          AppStorage.getCompagnies().then((result) => {
+            this.compagnies = result;
+          });
+
+
+        });
+      } else {
+        getCompagniesExport().then((result) => {
+          this.compagnies = result;
+        });
+      }
+
+    },
+
     editCompagnie(id_compagnie) {
       axios
         .get("/api/auth/editCompagnie/" + id_compagnie)
@@ -138,11 +168,8 @@ export default {
         this.roleactif = result;
       });
     },
-    getCompagnies(page) {
-      getCompagniesList(page).then((result) => {
-        this.compagnies = result.data;
-      });
-    },
+
+
 
     searchtask() {
       const token = localStorage.getItem("token");

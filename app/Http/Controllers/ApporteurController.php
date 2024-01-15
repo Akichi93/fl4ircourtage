@@ -69,8 +69,8 @@ class ApporteurController extends Controller
 
         // Insertion dans la bdd
         $Data = $this->apporteur->postApporteur($data);
-        
-        if($Data){
+
+        if ($Data) {
             $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->where('id_entreprise', $data['id_entreprise'])->latest()->paginate(10);
             return response()->json($apporteurs);
         }
@@ -107,7 +107,7 @@ class ApporteurController extends Controller
       |
      */
 
-    public function deleteApporteur(Request $request,$id_apporteur)
+    public function deleteApporteur(Request $request, $id_apporteur)
     {
 
         $apporteurs = Apporteur::find($id_apporteur);
@@ -152,7 +152,7 @@ class ApporteurController extends Controller
       |
      */
 
-    public function updateApporteur(Request $request,$id_apporteur)
+    public function updateApporteur(Request $request, $id_apporteur)
     {
 
         $apporteurs = Apporteur::find($id_apporteur);
@@ -189,6 +189,13 @@ class ApporteurController extends Controller
     {
         $apporteurs = TauxApporteur::join("branches", 'taux_apporteurs.id_branche', '=', 'branches.id_branche')
             ->where('taux_apporteurs.id_apporteur', $id_apporteur)->get();
+        return response()->json($apporteurs);
+    }
+
+    public function getTauxApporteurs()
+    {
+        $apporteurs = TauxApporteur::join("branches", 'taux_apporteurs.id_branche', '=', 'branches.id_branche')
+            ->get();
         return response()->json($apporteurs);
     }
 

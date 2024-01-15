@@ -9,18 +9,15 @@ class User {
         await AppStorage.store(access_token, name, user_id, id_entreprise, role);
 
         const apiCalls = [
-            { endpoint: 'getClient', storageKey: 'clients' },
-            { endpoint: 'getProspect', storageKey: 'prospects' },
-            { endpoint: 'getContrat', storageKey: 'contrats' },
-            { endpoint: 'getCompagnie', storageKey: 'compagnies' },
-            { endpoint: 'getApporteur', storageKey: 'apporteurs' },
+            { endpoint: 'getClients', storageKey: 'clients' },
+            { endpoint: 'getProspects', storageKey: 'prospects' },
+            { endpoint: 'getContrats', storageKey: 'contrats' },
+            { endpoint: 'getCompagnies', storageKey: 'compagnies' },
+            { endpoint: 'getApporteurs', storageKey: 'apporteurs' },
             { endpoint: 'getBranches', storageKey: 'branches' },
-            { endpoint: 'clientList', storageKey: 'clientList' },
-            { endpoint: 'branchesList', storageKey: 'branchesList' },
-            { endpoint: 'apporteurList', storageKey: 'apporteurList' },
-            { endpoint: 'compagnieList', storageKey: 'compagnieList' },
-            { endpoint: 'contratList', storageKey: 'contratList' },
-            { endpoint: 'prospectList', storageKey: 'prospectList' },
+
+            { endpoint: 'getTauxCompagnies', storageKey: 'tauxcompagnies' },
+            { endpoint: 'getTauxApporteurs', storageKey: 'tauxapporteurs' },
         ];
 
         const accessToken = AppStorage.getToken();
@@ -32,9 +29,9 @@ class User {
         console.log('Toutes les données ont été récupérées et stockées avec succès.');
     }
 
-    static async storeDataInIndexedDB(endpoint, storageKey, accessToken, page = 1) {
+    static async storeDataInIndexedDB(endpoint, storageKey, accessToken) {
         try {
-            const response = await axios.get(`/api/auth/${endpoint}?page=${page}`, {
+            const response = await axios.get(`/api/auth/${endpoint}`, {
                 headers: { Authorization: `Bearer ${accessToken}` },
             });
 
@@ -44,35 +41,6 @@ class User {
         }
     }
 
-    static async getClientList(page) {
-        const accessToken = AppStorage.getToken();
-        await User.storeDataInIndexedDB('clientList', 'clientList', accessToken, page);
-    }
-
-    static async getBranchesList(page) {
-        const accessToken = AppStorage.getToken();
-        await User.storeDataInIndexedDB('branchesList', 'branchesList', accessToken, page);
-    }
-
-    static async getApporteurList(page) {
-        const accessToken = AppStorage.getToken();
-        await User.storeDataInIndexedDB('apporteurList', 'apporteurList', accessToken, page);
-    }
-
-    static async getCompagnieList(page) {
-        const accessToken = AppStorage.getToken();
-        await User.storeDataInIndexedDB('compagnieList', 'compagnieList', accessToken, page);
-    }
-
-    static async getContratList(page) {
-        const accessToken = AppStorage.getToken();
-        await User.storeDataInIndexedDB('contratList', 'contratList', accessToken, page);
-    }
-
-    static async getProspectList(page) {
-        const accessToken = AppStorage.getToken();
-        await User.storeDataInIndexedDB('prospectList', 'prospectList', accessToken, page);
-    }
 
     static hasToken() {
         return AppStorage.getToken() !== null;

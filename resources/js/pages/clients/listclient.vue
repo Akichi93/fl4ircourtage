@@ -142,8 +142,6 @@ export default {
           // Mettre à jour IndexedDB avec les clients récupérés
           AppStorage.storeDataInIndexedDB("clients", result.data);
 
-
-
           //Insertion des données
           AppStorage.getClients().then((result) => {
             this.clients = result;
@@ -181,56 +179,6 @@ export default {
         this.getClients();
       }
     },
-
-    // async syncClient() {
-    //   const queue = await AppStorage.getClients();
-    //   if (queue && queue.length > 0) {
-    //     // Envoie des données au serveur pour synchronisation
-    //     fetch('/api/sync-tasks', {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //       body: JSON.stringify(queue),
-    //     })
-    //       .then((response) => {
-    //         if (response.ok) {
-    //           // Vide la file d'attente après une synchronisation réussie
-    //           console.log('Sync successful');
-    //         } else {
-    //           console.error('Sync failed');
-    //         }
-    //       })
-    //       .catch((error) => {
-    //         console.error('Error syncing:', error);
-    //       });
-    //   }
-    // },
-
-    // async syncProspect() {
-    //   const queue = await AppStorage.getProspects();
-    //   if (queue && queue.length > 0) {
-    //     // Envoie des données au serveur pour synchronisation
-    //     fetch('/api/sync-tasks', {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //       body: JSON.stringify(queue),
-    //     })
-    //       .then((response) => {
-    //         if (response.ok) {
-    //           // Vide la file d'attente après une synchronisation réussie
-    //           console.log('Sync successful');
-    //         } else {
-    //           console.error('Sync failed');
-    //         }
-    //       })
-    //       .catch((error) => {
-    //         console.error('Error syncing:', error);
-    //       });
-    //   }
-    // },
 
     refresh() {
       // Récupérer les clients depuis IndexedDB après l'ajout d'un nouveau client

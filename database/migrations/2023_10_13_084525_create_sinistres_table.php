@@ -15,7 +15,7 @@ class CreateSinistresTable extends Migration
     {
         Schema::create('sinistres', function (Blueprint $table) {
             $table->bigIncrements('id_sinistre');
-            $table->uuid('uuid');
+            $table->uuid('uuidSinistre');
 
             $table->unsignedBigInteger('id_contrat');
             $table->foreign('id_contrat')

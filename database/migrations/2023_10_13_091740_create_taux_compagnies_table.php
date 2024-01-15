@@ -15,7 +15,7 @@ class CreateTauxCompagniesTable extends Migration
     {
         Schema::create('taux_compagnies', function (Blueprint $table) {
             $table->bigIncrements('id_tauxcomp');
-            $table->uuid('uuid');
+            // $table->uuid('uuid');
 
             $table->foreignId('id_compagnie');
             $table->foreign('id_compagnie')

@@ -68,7 +68,7 @@ export default {
   },
   mounted() {
     // Check connection status every 2 seconds
-    setInterval(this.checkConnection, 2000);
+    setInterval(this.checkConnection, 15 * 60 * 1000);
   },
   methods: {
     async checkConnection() {
@@ -83,9 +83,6 @@ export default {
 
         // Check if the response status is okay (e.g., 200)
         if (this.isConnected) {
-          console.log("Connection ")
-
-
           // Execute checkAndSyncData service
           await syncservice.checkAndSyncData(); // Assuming syncservice is an async function that returns a promise
         } else {

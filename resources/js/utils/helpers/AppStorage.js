@@ -142,6 +142,8 @@ class AppStorage {
         return this.getData('prospects') || [];
     }
 
+    // Contrats
+
     static async storeContrats(contrats) {
         await this.storeData('contrats', contrats);
     }
@@ -157,7 +159,7 @@ class AppStorage {
     }
 
 
-
+    // Compagnies
     static async storeCompagnies(compagnies) {
         await this.storeData('compagnies', compagnies);
     }
@@ -166,6 +168,60 @@ class AppStorage {
         return this.getData('compagnies') || [];
     }
 
+    static async searchCompagniesByName(name) {
+        const allCompagnies = await this.getData('compagnies') || [];
+        const filteredCompagnies = allCompagnies.filter(compagnie => compagnie.nom_compagnie.toLowerCase().includes(name.toLowerCase()));
+        return filteredCompagnies;
+    }
+
+    static async storeTauxCompagnies(tauxcompagnies) {
+        await this.storeData('tauxcompagnies', tauxcompagnies);
+    }
+
+    static async getCompanyNameById(idCompagnie) {
+        // Convertir l'ID de compagnie en entier
+        idCompagnie = +idCompagnie;
+        try {
+            const compagniesData = await this.getData('compagnies') || [];
+            const compagnie = compagniesData.find(compagnie => compagnie.id_compagnie === idCompagnie);
+
+            return compagnie ? compagnie.nom_compagnie : null;
+        } catch (error) {
+            console.error("Une erreur s'est produite lors de la récupération des données de la compagnie :", error);
+            return null;
+        }
+    }
+
+    static async getTauxCompagnies() {
+        return this.getData('tauxcompagnies') || [];
+    }
+
+    static async getTauxCompagniesByIdCompagnie(uuidCompagnie) {
+        // Convertir l'ID de compagnie en entier
+        // uuidCompagnie = +uuidCompagnie; 
+
+        const allTauxCompagnies = await this.fetchDataFromIndexedDB('tauxcompagnies') || [];
+
+        console.log(allTauxCompagnies)
+
+        const tauxCompagniesByIdCompagnie = allTauxCompagnies.filter(tauxcompagnie => {
+
+        
+            return tauxcompagnie.uuid === uuidCompagnie;
+        });
+
+        return tauxCompagniesByIdCompagnie;
+    }
+
+    static async getTauxCompagnieById(tauxcompagnieId) {
+        const allTauxCompagnies = await this.getData('tauxcompagnies') || [];
+        return allTauxCompagnies.find(tauxcompagnie => tauxcompagnie.id_tauxcomp === tauxcompagnieId);
+    }
+
+
+
+
+    // Apporteurs
     static async storeApporteurs(apporteurs) {
         await this.storeData('apporteurs', apporteurs);
     }
@@ -174,6 +230,21 @@ class AppStorage {
         return this.getData('apporteurs') || [];
     }
 
+    static async searchApporteursByName(name) {
+        const allApporteurs = await this.getData('compagnies') || [];
+        const filteredApporteurs = allApporteurs.filter(apporteur => apporteur.nom_apporteur.toLowerCase().includes(name.toLowerCase()));
+        return filteredApporteurs;
+    }
+
+    static async storeTauxApporteurs(tauxapporteurs) {
+        await this.storeData('tauxapporteurs', tauxapporteurs);
+    }
+
+    static async getTauxApporteurs() {
+        return this.getData('tauxapporteurs') || [];
+    }
+
+    // Branches
     static async storeBranches(branches) {
         await this.storeData('branches', branches);
     }
@@ -188,53 +259,10 @@ class AppStorage {
         return this.getData('branches') || [];
     }
 
-    static async storeClientList(clientList) {
-        await this.storeData('clientList', clientList);
-    }
-
-    static async getClientList() {
-        return this.getData('clientList') || [];
-    }
-
-    static async storeBranchesList(branchesList) {
-        await this.storeData('branchesList', branchesList);
-    }
-
-    static async getBranchesList() {
-        return this.getData('branchesList') || [];
-    }
-
-    static async storeCompagnieList(compagnieList) {
-        await this.storeData('compagnieList', compagnieList);
-    }
-
-    static async getCompagnieList() {
-        return this.getData('compagnieList') || [];
-    }
-
-    static async storeApporteurList(apporteurList) {
-        await this.storeData('apporteurList', apporteurList);
-    }
-
-    static async getApporteurList() {
-        return this.getData('apporteurList') || [];
-    }
-
-    static async storeContratList(contratList) {
-        await this.storeData('contratList', contratList);
-    }
-
-    static async getContratList() {
-        return this.getData('contratList') || [];
-    }
-
-    static async storeProspectList(prospectList) {
-        await this.storeData('prospectList', prospectList);
-    }
-
-    static async getProspectList() {
-        return this.getData('prospectList') || [];
-    }
+    // static async getBranches(pageIndex = 0, pageSize = 10) {
+    //     // return this.getData('branches') || [];
+    //     return this.paginateData('branches', pageIndex, pageSize);
+    // }
 
 
     static async store(token, user, id, entreprise, role) {

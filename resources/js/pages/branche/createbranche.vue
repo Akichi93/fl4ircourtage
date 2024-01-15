@@ -58,6 +58,7 @@ import Sidebar from "../../layout/Sidebar.vue";
 import { postBranche } from "../../services/brancheservice";
 import { useBranchesStore } from "../../store/branche";
 import { createToaster } from "@meforma/vue-toaster";
+import AppStorage from "../../utils/helpers/AppStorage";
 
 const toaster = createToaster({
   /* options */
@@ -89,7 +90,7 @@ export default {
         try {
           // Generate UUID using the 'uuid' library
           const { v4: uuidv4 } = require('uuid');
-          this.form.uuid = uuidv4(); // Assign the generated UUID to the form
+          this.form.uuidBranche = uuidv4(); // Assign the generated UUID to the form
 
           const response = await postBranche(this.form);
 
@@ -100,8 +101,23 @@ export default {
           // Appeler fetchClients pour récupérer la liste mise à jour après l'insertion
           const updatedBranches = await this.fetchBranches();
 
-          // Mettre à jour IndexedDB avec les clients récupérés
-          await AppStorage.storeDataInIndexedDB("branches", updatedBranches);
+
+          // Mettre à jour IndexedDB avec les branc récupérés après comparaison
+          AppStorage.getBranches().then((existingBranches) => {
+            if (existingBranches && updatedBranches) {
+              // Comparaison des nouveaux clients avec ceux déjà existants
+              const newBranches = updatedBranches.filter((branche) => {
+                return !existingBranches.some((existingBranches) => existingBranches.id_branche === branche.id_branche);
+              });
+
+              console.log('Nouvelles branches à insérer dans IndexedDB :', newBranches);
+
+              // Insérer uniquement les nouveaux branches dans IndexedDB
+              if (newBranches.length > 0) {
+                AppStorage.storeDataInIndexedDB('branches', newBranches);
+              }
+            }
+          });
 
           this.$router.push("/listbranche");
           toaster.success(`Branche ajoutée avec succès`, {
@@ -117,21 +133,19 @@ export default {
         const { v4: uuidv4 } = require('uuid');
         const uuid = uuidv4();
 
+        const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+
         // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
         const newBrancheData = [{
+          uuidBranche: uuid,
           nom_branche: this.form.nom_branche,
+          id_entreprise: entrepriseId,
           sync: 0,
-          uuid: uuid,
         }];
 
 
         // Ajouter la nouvelle donnée dans IndexedDB
         await AppStorage.storeDataInIndexedDB("branches", newBrancheData);
-
-        // Récuperer les données dans IndexedDB et actualiser le table
-        // AppStorage.getClients().then((result) => {
-        //   this.$emit("client-add", result);
-        // });
 
         this.$router.push("/listbranche");
 

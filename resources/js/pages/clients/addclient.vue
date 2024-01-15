@@ -142,16 +142,14 @@ export default {
             email_client: this.email_client,
             id: userId,
             id_entreprise: entrepriseId,
-            uuid: uuid,
+            uuidClient: uuid,
           });
 
           // Appeler fetchClients pour récupérer la liste mise à jour après l'insertion
           const updatedClients = await this.fetchClients();
 
-          this.$emit("client-added", response);
-          this.$emit("client-add", updatedClients);
-
-          console.log(updatedClients)
+          // this.$emit("client-added", response);
+          // this.$emit("client-add", updatedClients);
 
           if (response.status === 200) {
             toaster.success(`Client ajouté avec succès`, {
@@ -166,8 +164,6 @@ export default {
               const newClients = updatedClients.filter((client) => {
                 return !existingClients.some((existingClient) => existingClient.id_client === client.id_client);
               });
-
-              console.log('Nouveaux clients à insérer dans IndexedDB :', newClients);
 
               // Insérer uniquement les nouveaux clients dans IndexedDB
               if (newClients.length > 0) {
@@ -190,6 +186,9 @@ export default {
         const { v4: uuidv4 } = require('uuid');
         const uuid = uuidv4();
 
+        const userId = parseInt(AppStorage.getId(), 10);
+        const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+
         // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
         const newClientData = [{
           civilite: this.civilite,
@@ -201,10 +200,10 @@ export default {
           fax_client: this.fax_client,
           email_client: this.email_client,
           sync: 0,
-          uuid: uuid,
+          uuidClient: uuid,
+          id_entreprise: entrepriseId,
+          user_id: userId,
         }];
-
-
 
         // Ajouter la nouvelle donnée dans IndexedDB
         await AppStorage.storeDataInIndexedDB("clients", newClientData);

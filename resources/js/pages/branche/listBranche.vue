@@ -98,6 +98,9 @@ export default {
       branchetoedit: "",
       q: "",
       roleactif: "",
+      isConnected: false,
+      itemsPerPage: 5, // Nombre d'éléments par page
+      currentPage: 1, // Page actuelle
     };
   },
   created() {
@@ -134,8 +137,6 @@ export default {
               return 0; // Les noms sont identiques
             });
           });
-
-          // this.paginations = result;
         });
       } else {
         AppStorage.getBranches().then((result) => {
@@ -157,15 +158,6 @@ export default {
         });
       }
     },
-
-
-
-    // getBranches(page) {
-    //   getBranchesList(page).then((result) => {
-    //     this.branches = result.data;
-    //     this.paginations = result;
-    //   });
-    // },
 
     getRoleconnect() {
       getRoleActif().then((result) => {
@@ -215,10 +207,6 @@ export default {
         this.getBranches();
       }
     },
-
-    // refresh(branches) {
-    //   this.branches = branches.data;
-    // },
 
     refresh() {
       // Récupérer les clients depuis IndexedDB après l'ajout d'un nouveau client

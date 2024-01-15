@@ -9,11 +9,15 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="page-head-box">
-                            <h3>Listes des taux de la compagnie <em>{{ names.nom_compagnie }}</em></h3>
+                            <h3>Listes des taux de la compagnie <em>{{ names }}</em></h3>
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="/home">Tableau de bord</a></li>
-                                    <li class="breadcrumb-item"><a href="/compagnie">Listes des compagnies</a></li>
+                                    <li class="breadcrumb-item">
+                                        <router-link to="/home">Tableau de bord</router-link>
+                                    </li>
+                                    <li class="breadcrumb-item">
+                                        <router-link to="/listcompagnie">Listes des compagnies</router-link>
+                                    </li>
                                     <li class="breadcrumb-item active" aria-current="page">Taux compagnies</li>
                                 </ol>
                             </nav>
@@ -44,16 +48,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <template v-for="compagnie in compagnies" :key="compagnie.id_tauxcomp">
+                                    <template v-for="(compagnie, i) in tauxCompagnies" :key="i">
                                         <tr>
                                             <td v-text="compagnie.nom_branche"></td>
                                             <td v-text="compagnie.tauxcomp"></td>
-                                            <td class="text-end ico-sec d-flex justify-content-end">
+                                            <!-- <td class="text-end ico-sec d-flex justify-content-end">
                                                 <a href="#" data-bs-toggle="modal" data-bs-target="#edit_tauxcompagnie"
                                                     @click="getTaux(compagnie.id_tauxcomp)" title="Modifier"><i
                                                         class="fas fa-pen"></i>
                                                 </a>
-                                            </td>
+                                            </td> -->
                                         </tr>
                                     </template>
                                 </tbody>
@@ -68,7 +72,6 @@
 
     <addtauxcompagnie v-bind:tauxcompagnietoedit="tauxcompagnietoedit" @tauxcompagnie-add="refresh"></addtauxcompagnie>
     <edittauxcompagnie v-bind:tauxtoedit="tauxtoedit" @tauxcompagnie-updated="refresh"></edittauxcompagnie>
-
 </template>
 <script>
 import Header from "../../layout/Header.vue";
@@ -76,6 +79,7 @@ import Sidebar from "../../layout/Sidebar.vue";
 import { createToaster } from "@meforma/vue-toaster";
 import addtauxcompagnie from "./addtauxcompagnie.vue";
 import edittauxcompagnie from "./edittauxcompagnie.vue";
+import AppStorage from "../../utils/helpers/AppStorage";
 const toaster = createToaster({
     /* options */
 });
@@ -85,64 +89,100 @@ export default {
     data() {
         return {
             value: null,
-            compagnies: [],
             branches: [],
             tauxtoedit: "",
-            names: "",
-            tauxcompagnietoedit: ""
+            names: null,
+            // tauxcompagnietoedit: ""
+            tauxCompagnies: [],
         };
     },
     methods: {
-        getCompagnie() {
-            axios
-                .get(`/api/auth/getNameCompagnie/${this.$route.params.id_compagnie}`)
-                .then((response) => (this.tauxcompagnietoedit = response.data))
-                .catch((error) => console.log(error));
+
+        async fetchData() {
+            const uuidCompagnie = this.$route.params.uuid;
+
+            try {
+                const tauxCompagnies = await AppStorage.getTauxCompagniesByIdCompagnie(uuidCompagnie);
+
+                this.tauxCompagnies = tauxCompagnies;
+            } catch (error) {
+                console.error("Erreur lors de la récupération des données :", error);
+            }
         },
 
-        getTaux(id_tauxcomp) {
-            axios
-                .get("/api/auth/editTauxCompagnie/" + id_tauxcomp)
-                .then((response) => (
-                    this.tauxtoedit = response.data))
-                .catch((error) => console.log(error));
-        },
+        // async fetchName() {
+        //     const idCompagnie = this.$route.params.id_compagnie;
 
-        fetchTask() {
-            this.error = this.names = null;
-            this.loading = true;
-            var that = this;
-            axios
-                .all([
-                    axios.get(
-                        `/api/auth/getNameCompagnie/${this.$route.params.id_compagnie}`
-                    ),
-                    axios.get(
-                        `/api/auth/getTauxCompagnie/${this.$route.params.id_compagnie}`
-                    ),
-                    axios.get(
-                        `/api/auth/getBrancheDiffCompagnie/${this.$route.params.id_compagnie}`
-                    ),
-                    
-                ])
-                .then(
-                    axios.spread(function (names, compagnies, branches) {
-                        that.names = names.data;
-                        that.compagnies = compagnies.data;
-                        that.branches = branches.data;
-                    })
-                );
-        },
-        refresh(compagnies) {
-            this.compagnies = compagnies.data;
-        },
+        //     try {
+        //         const names = await AppStorage.getCompanyNameById(idCompagnie);
+        //         this.names = names;
+        //     } catch (error) {
+        //         console.error("Erreur lors de la récupération des données :", error);
+        //     }
+        // },
+
+
+        // async getTaux(id_tauxcomp) {
+        //     try {
+        //         this.tauxtoedit = await AppStorage.getTauxCompagnieById(id_tauxcomp);
+        //     } catch (error) {
+        //         console.log(error);
+        //     }
+        // },
+
+        // async getCompagnie() {
+        //     // axios
+        //     //     .get(`/api/auth/getNameCompagnie/${this.$route.params.id_compagnie}`)
+        //     //     .then((response) => (this.tauxcompagnietoedit = response.data))
+        //     //     .catch((error) => console.log(error));
+
+        //     const tauxCompagnie = await AppStorage.getTauxCompagnieById(this.$route.params.id_compagnie);
+        //     console.log(tauxCompagnie)
+        // },
+
+        // getTaux(id_tauxcomp) {
+        //     axios
+        //         .get("/api/auth/editTauxCompagnie/" + id_tauxcomp)
+        //         .then((response) => (
+        //             this.tauxtoedit = response.data))
+        //         .catch((error) => console.log(error));
+        // },
+
+        // fetchTask() {
+        //     this.error = this.names = null;
+        //     this.loading = true;
+        //     var that = this;
+        //     axios
+        //         .all([
+        //             axios.get(
+        //                 `/api/auth/getNameCompagnie/${this.$route.params.id_compagnie}`
+        //             ),
+        //             axios.get(
+        //                 `/api/auth/getTauxCompagnie/${this.$route.params.id_compagnie}`
+        //             ),
+        //             axios.get(
+        //                 `/api/auth/getBrancheDiffCompagnie/${this.$route.params.id_compagnie}`
+        //             ),
+
+        //         ])
+        //         .then(
+        //             axios.spread(function (names, compagnies, branches) {
+        //                 that.names = names.data;
+        //                 that.compagnies = compagnies.data;
+        //                 that.branches = branches.data;
+        //             })
+        //         );
+        // },
+        // refresh(compagnies) {
+        //     this.compagnies = compagnies.data;
+        // },
 
 
     },
     created() {
-        this.getCompagnie();
-        this.getTaux();
-        this.fetchTask();
+        // this.getTaux();
+        this.fetchData();
+        // this.fetchName()
     },
 };
 </script>

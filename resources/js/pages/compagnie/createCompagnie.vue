@@ -12,7 +12,7 @@
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="admin-dashboard.html">Tableau de bord</a>
+                    <router-link to="/home">Tableau de bord</router-link>
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Compagnies
@@ -192,63 +192,137 @@ export default {
       });
     },
 
-    storeCompagnie() {
-      const token = localStorage.getItem("token");
-      const userId = AppStorage.getId();
-      const entrepriseId = AppStorage.getEntreprise();
+    async storeCompagnie() {
+      const response = await fetch(
+        "/api/check-internet-connection"
+      );
+
+      const data = await response.json();
+
+      this.isConnected = data.connected;
+      if (this.isConnected) {
+        const { v4: uuidv4 } = require('uuid');
+        const uuid = uuidv4();
+
+        const token = AppStorage.getToken();
+        const userId = AppStorage.getId();
+        const entrepriseId = AppStorage.getEntreprise();
 
 
-      let test = JSON.parse(JSON.stringify(this.branches));
-      let donnees = [];
+        let test = JSON.parse(JSON.stringify(this.branches));
+        let donnees = [];
 
-      for (let i = 0; i < Object.keys(test).length; i++) {
-        donnees.push(test[i]["value"]);
-      }
+        for (let i = 0; i < Object.keys(test).length; i++) {
+          donnees.push(test[i]["value"]);
+        }
 
-      let testing = JSON.parse(JSON.stringify(this.branches));
-      let datas = [];
+        let testing = JSON.parse(JSON.stringify(this.branches));
+        let datas = [];
 
-      for (let i = 0; i < Object.keys(testing).length; i++) {
-        datas.push(testing[i]["id_branche"]);
-      }
-      axios
-        .post("/api/auth/postCompagnie", {
-          nom_compagnie: this.nom_compagnie,
-          contact_compagnie: this.contact_compagnie,
-          email_compagnie: this.email_compagnie,
-          adresse_compagnie: this.adresse_compagnie,
-          accidents: donnees,
-          ids: datas,
-          id_entreprise: entrepriseId,
-          id: userId,
-        })
-        .then((response) => {
-          AppStorage.storeCompagnies(response.data)
-          // if (response.status === 200) {
-          toaster.success(`Compagnie ajouté avec succès`, {
-            position: "top-right",
+        for (let i = 0; i < Object.keys(testing).length; i++) {
+          datas.push(testing[i]["id_branche"]);
+        }
+
+        try {
+          const response = await axios.post("/api/auth/postCompagnie", {
+            nom_compagnie: this.nom_compagnie,
+            contact_compagnie: this.contact_compagnie,
+            email_compagnie: this.email_compagnie,
+            adresse_compagnie: this.adresse_compagnie,
+            accidents: donnees,
+            ids: datas,
+            id_entreprise: entrepriseId,
+            id: userId,
+            uuidCompagnie: uuid,
           });
-          this.$router.push("/listcompagnie");
-        })
-        .catch((error) => {
-          // console.log(error.response.headers);
 
-          if (error.response.status === 422) {
-            this.errors = error.response.data.errors;
-            // console.log(error.response.data.errors);
-            toaster.error(`Veuillez remplir tous les champs`, {
+          const updatedCompagnies = await this.fetchCompagnies();
+
+          if (response.status === 200) {
+            toaster.success(`Compagnie ajouté avec succès`, {
               position: "top-right",
             });
-
-            // console.log("Message non enregisté")
-          } else if (error.request) {
-            // The request was made but no response was received
-            console.log(error.request);
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            console.log("Error", error.message);
           }
+
+          // Mettre à jour IndexedDB avec les compagnies récupérés après comparaison
+          AppStorage.getCompagnies().then((existingCompagnies) => {
+            if (existingCompagnies && updatedCompagnies) {
+              // Comparaison des nouvelles compagnies avec ceux déjà existants
+              const newCompagnies = updatedCompagnies.filter((compagnie) => {
+                return !existingCompagnies.some((existingCompagnie) => existingCompagnie.id_compagnie === compagnie.id_compagnie);
+              });
+
+              // Insérer uniquement les nouvelles compagnies dans IndexedDB
+              if (newCompagnies.length > 0) {
+                AppStorage.storeDataInIndexedDB('compagnies', newCompagnies);
+              }
+            }
+          });
+
+
+          this.$router.push("/listcompagnie");
+
+
+
+        } catch (error) {
+          console.error("Erreur lors de l'ajout de la compagnie sur le serveur", error);
+        }
+      } else {
+        const { v4: uuidv4 } = require('uuid');
+        const uuid = uuidv4();
+
+        const userId = parseInt(AppStorage.getId(), 10);
+        const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+
+        // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
+        const newCompagnieData = [{
+          nom_compagnie: this.nom_compagnie,
+          adresse_compagnie: this.adresse_compagnie,
+          email_compagnie: this.email_compagnie,
+          postal_compagnie: this.postal_compagnie,
+          contact_compagnie: this.contact_compagnie,
+          code_compagnie: this.code_compagnie,
+          postal_compagnie: this.postal_compagnie,
+          sync: 0,
+          uuid: uuid,
+          id_entreprise: entrepriseId,
+          user_id: userId,
+          uuidCompagnie: uuid,
+        }];
+
+        // Ajouter la nouvelle donnée dans IndexedDB
+        await AppStorage.storeDataInIndexedDB("compagnies", newCompagnieData);
+
+        toaster.info(`Compagnie ajouté localement (hors ligne)`, {
+          position: "top-right",
         });
+
+        this.$router.push("/listcompagnie");
+      }
+
+    },
+
+    // fetchCompagnies
+    async fetchCompagnies() {
+      const token = AppStorage.getToken();
+
+      // Configurez les en-têtes de la requête
+      const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+      };
+
+      try {
+        const response = await axios.get("/api/auth/getCompagnies", { headers });
+
+        // Vous pouvez traiter les données comme vous le souhaitez
+        const compagnies = response.data;
+
+        // Retourner les compagnies pour une utilisation éventuelle
+        return compagnies;
+      } catch (error) {
+        console.error("Erreur lors de la récupération des clients sur le serveur", error);
+      }
     },
 
 

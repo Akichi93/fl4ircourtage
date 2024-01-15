@@ -251,6 +251,8 @@ class FormRepository extends BaseRepository
     {
         $user =  JWTAuth::parseToken()->authenticate();
 
+        
+
         $branche = $data['nom_branche'];
         if (Branche::where('nom_branche', '=', $branche)->where('id_entreprise', '=', $user->id_entreprise)->count() > 0) {
             return response()->json(['message' => 'Branche existante'], 422);
@@ -259,6 +261,8 @@ class FormRepository extends BaseRepository
 
         $branches = new Branche();
         $branches->nom_branche = $min;
+        $branches->sync = 1;
+        $branches->uuid = $data['uuid'];
         $branches->id_entreprise = $user->id_entreprise;
         $branches->save();
 

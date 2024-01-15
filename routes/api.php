@@ -111,12 +111,13 @@ Route::group([
         Route::patch('deleteApporteur/{id_apporteur}', 'deleteApporteur'); // Supprimer un apporteur
         Route::patch('updateApporteur/{id_apporteur}', 'updateApporteur'); // Update d'un apporteur
         Route::get('getTauxApporteur/{id_apporteur}', 'getTauxApporteur'); // Obtenir les taux d'un apporteur
+        Route::get('getTauxApporteurs', 'getTauxApporteurs'); // Obtenir les taux d'un apporteur
         Route::get('getNameApporteur/{id_apporteur}', 'getNameApporteur'); // Obtenir le nom de l'apporteur choisi
         Route::get('editTauxApporteur/{id_tauxapp}', 'editTauxApporteur'); //Recuperer les infos d'un taux
         Route::get('getBrancheDiffApporteur/{id_tauxapp}', 'getBrancheDiffApporteur'); // Obtenir branche
         Route::post('postTauxApporteur', 'postTauxApporteur');
         Route::post('updateTauxApporteur', 'updateTauxApporteur');
-        Route::get('getApporteur', 'getApporteur'); // Obtenir les compagnies
+        Route::get('getApporteurs', 'getApporteur'); // Obtenir les compagnies
     });
 
     // Compagnies
@@ -127,12 +128,13 @@ Route::group([
         Route::patch('deleteCompagnie/{id_compagnie}',  'deleteCompagnie'); // Supprimer une compagnie
         Route::patch('updateCompagnie/{id_compagnie}',  'updateCompagnie'); // Update d'une compagnie
         Route::get('getTauxCompagnie/{id_compagnie}',  'getTauxCompagnie'); // Obtenir les taux d'une compagnie
+        Route::get('getTauxCompagnies',  'getTauxCompagnies'); // Obtenir les taux des compagnies
         Route::get('getNameCompagnie/{id_compagnie}',  'getNameCompagnie'); // Obtenir le nom de la compagnie choisi
         Route::get('editTauxCompagnie/{id_tauxcomp}',  'editTauxCompagnie'); //Recuperer les infos d'un taux
         Route::get('getBrancheDiffCompagnie/{id_compagnie}',  'getBrancheDiffCompagnie'); // Obtenir branche
         Route::post('postTauxCompagnie',  'postTauxCompagnie');
         Route::post('updateTauxCompagnie',  'updateTauxCompagnie');
-        Route::get('getCompagnie',  'getCompagnie'); // Obtenir les compagnies
+        Route::get('getCompagnies',  'getCompagnie'); // Obtenir les compagnies
     });
 
 
@@ -149,7 +151,7 @@ Route::group([
         Route::post('postBrancheProspect',  'postBrancheProspect');
         Route::get('getNameProspect',  'getNameProspect'); // Obtenir le nom de l'apporteur choisi
         Route::get('getBrancheProspect',  'getBrancheProspect');
-        Route::get('getProspect',  'getProspect'); // Obtenir les prospects
+        Route::get('getProspects',  'getProspect'); // Obtenir les prospects
     });
 
 
@@ -159,7 +161,7 @@ Route::group([
         Route::post('postClient', 'postClient'); // Ajouter un apporteur
         Route::get('editClient/{id_client}', 'editClient');
         Route::patch('updateClient/{id_client}', 'updateClient');
-        Route::get('getClient', 'getClient');
+        Route::get('getClients', 'getClient');
         Route::get('editRelance/{id_relance}', 'editRelance');
         Route::get('getRelance', 'getRelance');
         Route::get('getOneExpiration', 'getOneExpiration');
@@ -198,7 +200,7 @@ Route::group([
         Route::get('getViewContrat', 'getViewContrat');
         Route::post('updateContrat', 'updateContrat'); // Update d'un contrat
         Route::get('getFactures/{id_avenant}', 'getFactures');
-        Route::get('getContrat',  'getContrat'); // Obtenir les contrats
+        Route::get('getContrats',  'getContrat'); // Obtenir les contrats
         Route::post('payeAvenant', 'payeAvenant'); // Update d'un contrat
     });
 
@@ -324,6 +326,8 @@ Route::group([
         Route::post('sync-branches', 'syncBranche');
         Route::post('sync-prospects', 'syncProspect');
         Route::post('sync-clients', 'syncClient');
+        Route::post('sync-compagnies', 'syncCompagnie');
+        Route::post('sync-apporteurs', 'syncApporteur');
         // Route::post('importauxapporteur', 'importauxapporteur');
         // Route::post('importcompagnie', 'importcompagnie');
         // Route::post('importauxcompagnie', 'importauxcompagnie');

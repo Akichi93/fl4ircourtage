@@ -146,7 +146,7 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/tauxcompagnie/:id_compagnie',
+    path: '/tauxcompagnie/:uuidCompagnie',
     name: 'tauxcompagnie',
     component: tauxcompagnie,
     props: true,

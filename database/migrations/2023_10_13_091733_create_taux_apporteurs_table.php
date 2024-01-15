@@ -15,7 +15,7 @@ class CreateTauxApporteursTable extends Migration
     {
         Schema::create('taux_apporteurs', function (Blueprint $table) {
             $table->bigIncrements('id_tauxapp');
-            $table->uuid('uuid');
+            // $table->uuid('uuid');
 
             $table->foreignId('id_apporteur');
             $table->foreign('id_apporteur')

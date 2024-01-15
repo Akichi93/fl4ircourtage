@@ -45,7 +45,7 @@ export default {
   async syncData(endpoint, dataToSync, dataType) {
     try {
       // Retrieve token from local storage
-      const token = AppStorage.getToken(); // Replace 'yourTokenKey' with your actual key
+      const token = AppStorage.getToken();
 
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -58,7 +58,8 @@ export default {
 
       if (response.ok) {
         // AppStorage.clearSyncedData(dataType);
-        console.log("Merci");
+        const updatedData = await this.fetchDataFromDatabase(dataType);
+        await AppStorage.storeDataInIndexedDB(dataType, updatedData);
       } else {
         console.error(`La synchronisation des ${dataType} a échoué. Statut : ${response.status}`);
       }
@@ -66,7 +67,39 @@ export default {
       console.error(`Erreur lors de la synchronisation des ${dataType} :`, error.message || error);
     }
   },
+
+  async fetchDataFromDatabase(dataType) {
+    try {
+      const token = AppStorage.getToken();
+
+      const response = await fetch(`/api/auth/get${capitalize(dataType)}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const fetchedData = await response.json();
+        return fetchedData;
+      } else {
+        console.error(`La récupération des données de ${dataType} a échoué. Statut : ${response.status}`);
+        return null;
+      }
+    } catch (error) {
+      console.error(`Erreur lors de la récupération des données de ${dataType} :`, error.message || error);
+      return null;
+    }
+  },
+
+
+  async updateIndexedDB(dataType, updatedData) {
+    await AppStorage[`update${capitalize(dataType)}`](updatedData);
+  },
 };
+
+
 
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);

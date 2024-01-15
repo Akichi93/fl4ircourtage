@@ -26,7 +26,7 @@ export async function getCompagniesExport() {
         "x-access-token": token,
     };
 
-    const response = await axios.get("/api/auth/getCompagnie", { headers })
+    const response = await axios.get("/api/auth/getCompagnies", { headers })
     return response.data;
 
 }

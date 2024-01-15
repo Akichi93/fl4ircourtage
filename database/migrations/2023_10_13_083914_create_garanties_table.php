@@ -15,7 +15,7 @@ class CreateGarantiesTable extends Migration
     {
         Schema::create('garanties', function (Blueprint $table) {
             $table->bigIncrements('id_garantie');
-            $table->uuid('uuid');
+            $table->uuid('uuidGarantie');
             $table->unsignedBigInteger('id_contrat');
             $table->foreign('id_contrat')
                 ->references('id_contrat')

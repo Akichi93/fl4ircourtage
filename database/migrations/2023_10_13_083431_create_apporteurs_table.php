@@ -15,7 +15,7 @@ class CreateApporteursTable extends Migration
     {
         Schema::create('apporteurs', function (Blueprint $table) {
             $table->bigIncrements('id_apporteur');
-            $table->uuid('uuid');
+            $table->uuid('uuidApporteur');
             $table->string('nom_apporteur');
             $table->string('email_apporteur')->nullable();
             $table->string('adresse_apporteur');
