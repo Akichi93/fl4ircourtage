@@ -262,7 +262,7 @@ class FormRepository extends BaseRepository
         $branches = new Branche();
         $branches->nom_branche = $min;
         $branches->sync = 1;
-        $branches->uuid = $data['uuid'];
+        $branches->uuidBranche = $data['uuidBranche'];
         $branches->id_entreprise = $user->id_entreprise;
         $branches->save();
 

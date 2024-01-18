@@ -48,9 +48,11 @@ class CompagnieRepository extends BaseRepository
             $compagnies->id_entreprise =   $data['id_entreprise'];
             $compagnies->uuidCompagnie =  $data['uuidCompagnie'];
             $compagnies->user_id =  $data['id'];
+            $compagnies->sync =  1;
             $compagnies->save();
 
             $id = $compagnies['id_compagnie'];
+            $uuidCompagnie = $compagnies['uuidCompagnie'];
 
             $leads = $all['accidents'];  // valeur
             $firsts = $all['ids']; // id
@@ -62,6 +64,8 @@ class CompagnieRepository extends BaseRepository
                 $taux->tauxcomp = $value;
                 $taux->id_branche = $key;
                 $taux->id_compagnie = $compagnies['id_compagnie'];
+                $taux->uuidCompagnie = $compagnies['uuidCompagnie'];
+                $taux->sync = 1;
                 $taux->save();
             }
 

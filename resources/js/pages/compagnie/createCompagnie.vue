@@ -240,6 +240,7 @@ export default {
           const updatedCompagnies = await this.fetchCompagnies();
 
           if (response.status === 200) {
+            console.log(response.data)
             toaster.success(`Compagnie ajouté avec succès`, {
               position: "top-right",
             });
@@ -259,6 +260,18 @@ export default {
               }
             }
           });
+
+          // Mettre à jour IndexedDB avec les taux compagnies récupérés 
+
+          const newCompanyId = response.data.id_compagnie;
+
+          const ratesEndpoint = `/api/auth/getTauxCompagnie/${newCompanyId}`;
+
+          const ratesResponse = await axios.get(ratesEndpoint);
+
+          const rates = ratesResponse.data;
+
+          AppStorage.storeDataInIndexedDB('tauxcompagnies', rates);
 
 
           this.$router.push("/listcompagnie");
@@ -310,7 +323,7 @@ export default {
         // Ajouter la nouvelle donnée dans IndexedDB
         await AppStorage.storeDataInIndexedDB("compagnies", newCompagnieData);
 
-        const branchesMap = await YourClassName.getBranches();
+        const branchesMap = await AppStorage.getBranches();
         for (let i = 0; i < datas.length; i++) {
           // Use the branchesMap to get nom_branche corresponding to id_branche
           const nom_branche = branchesMap[datas[i]];

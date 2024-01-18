@@ -77,7 +77,7 @@ class CompagnieController extends Controller
         if ($Data) {
             $compagnies = Compagnie::where('id_entreprise', $data['id_entreprise'])
                 ->where('supprimer_compagnie', '=', '0')->latest()->paginate(10);
-            return response()->json($compagnies);
+            return response()->json($Data);
         }
 
         // return response()->json([

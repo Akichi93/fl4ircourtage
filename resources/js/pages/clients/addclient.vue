@@ -148,9 +148,6 @@ export default {
           // Appeler fetchClients pour récupérer la liste mise à jour après l'insertion
           const updatedClients = await this.fetchClients();
 
-          // this.$emit("client-added", response);
-          // this.$emit("client-add", updatedClients);
-
           if (response.status === 200) {
             toaster.success(`Client ajouté avec succès`, {
               position: "top-right",
@@ -230,7 +227,7 @@ export default {
       };
 
       try {
-        const response = await axios.get("/api/auth/getClient", { headers });
+        const response = await axios.get("/api/auth/getClients", { headers });
 
         // Vous pouvez traiter les données comme vous le souhaitez
         const clients = response.data;

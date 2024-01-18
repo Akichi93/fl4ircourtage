@@ -90,7 +90,7 @@ class ClientController extends Controller
             $clients->fax_client = $request->fax_client;
             $clients->email_client = $request->email_client;
             $clients->id_entreprise = $request->id_entreprise;
-            $clients->uuid = $request->uuid;
+            $clients->uuidClient = $request->uuidClient;
             $clients->user_id = $request->id;
             $clients->save();
 

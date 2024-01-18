@@ -195,6 +195,7 @@ export default {
       if (this.isConnected) {
         const { v4: uuidv4 } = require('uuid');
         const uuid = uuidv4();
+
         const token = AppStorage.getToken();
         const userId = AppStorage.getId();
         const entrepriseId = AppStorage.getEntreprise();
@@ -228,6 +229,7 @@ export default {
             ids: datas,
             id_entreprise: entrepriseId,
             id: userId,
+            uuidApporteur: uuid,
           })
           .then((response) => {
             AppStorage.storeApporteurs(response.data)
