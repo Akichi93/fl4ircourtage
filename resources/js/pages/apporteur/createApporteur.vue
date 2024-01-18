@@ -153,7 +153,6 @@ import inputText from "../../components/input/inputText.vue";
 import { getBrancheList, getAdresseList } from "../../services/formservice";
 import addadresse from "../../pages/form/addadresse.vue";
 import { createToaster } from "@meforma/vue-toaster";
-
 import AppStorage from '../../utils/helpers/AppStorage';
 const toaster = createToaster({
   /* options */
@@ -218,8 +217,9 @@ export default {
         for (let i = 0; i < Object.keys(testing).length; i++) {
           datas.push(testing[i]["id_branche"]);
         }
-        axios
-          .post("/api/auth/postApporteur", {
+
+        try {
+          const response = await axios.post("/api/auth/postApporteur", {
             nom_apporteur: this.nom_apporteur,
             contact_apporteur: this.contact_apporteur,
             email_apporteur: this.email_apporteur,
@@ -230,36 +230,138 @@ export default {
             id_entreprise: entrepriseId,
             id: userId,
             uuidApporteur: uuid,
-          })
-          .then((response) => {
-            AppStorage.storeApporteurs(response.data)
-            this.$router.push("/listapporteur");
-            if (response.status === 200) {
-              toaster.success(`Apporteur ajouté avec succès`, {
-                position: "top-right",
-              });
-            }
-          })
-          .catch((error) => {
-            // console.log(error.response.headers);
-            // if (error.response.status === 422) {
-            //   this.errors = error.response.data.errors;
-            //   toaster.error(`Veuillez remplir tous les champs`, {
-            //     position: "top-right",
-            //   });
-            // } else if (error.request) {
-            //   // The request was made but no response was received
-            //   console.log(error.request);
-            //   toaster.error(`Veuillez remplir les champs`, {
-            //     position: "top-right",
-            //   });
-            // } else {
-            //   // Something happened in setting up the request that triggered an Error
-            //   console.log("Error", error.message);
-            // }
           });
-      } else { }
 
+          const updatedApporteurs = await this.fetchApporteurs();
+
+          if (response.status === 200) {
+            console.log(response.data)
+            toaster.success(`Compagnie ajouté avec succès`, {
+              position: "top-right",
+            });
+          }
+
+          // Mettre à jour IndexedDB avec les apporteurs récupérés après comparaison
+          AppStorage.getApporteurs().then((existingApporteurs) => {
+            if (existingApporteurs && updatedApporteurs) {
+              // Comparaison des nouvelles compagnies avec ceux déjà existants
+              const newApporteurs = updatedApporteurs.filter((compagnie) => {
+                return !existingApporteurs.some((existingApporteur) => existingApporteur.id_apporteur === apporteur.id_apporteur);
+              });
+
+              // Insérer uniquement les nouvelles compagnies dans IndexedDB
+              if (newApporteurs.length > 0) {
+                AppStorage.storeDataInIndexedDB('apporteurs', newApporteurs);
+              }
+            }
+          });
+
+          // Mettre à jour IndexedDB avec les taux compagnies récupérés 
+
+          const newApporteurId = response.data.id_apporteur;
+
+          const ratesEndpoint = `/api/auth/getTauxApporteur/${newApporteurId}`;
+
+          const ratesResponse = await axios.get(ratesEndpoint);
+
+          const rates = ratesResponse.data;
+
+          AppStorage.storeDataInIndexedDB('tauxapporteurs', rates);
+
+
+          this.$router.push("/listapporteur");
+
+
+
+        } catch (error) {
+          console.error("Erreur lors de l'ajout de la compagnie sur le serveur", error);
+        }
+
+      } else {
+        const { v4: uuidv4 } = require('uuid');
+        const uuid = uuidv4();
+
+        const userId = parseInt(AppStorage.getId(), 10);
+        const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+
+        let test = JSON.parse(JSON.stringify(this.branches));
+        let donnees = [];
+
+        for (let i = 0; i < Object.keys(test).length; i++) {
+          donnees.push(test[i]["value"]);
+        }
+
+        let testing = JSON.parse(JSON.stringify(this.branches));
+        let datas = [];
+
+        for (let i = 0; i < Object.keys(testing).length; i++) {
+          datas.push(testing[i]["id_branche"]);
+        }
+
+
+        // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
+        const newApporteurData = [{
+          nom_apporteur: this.nom_apporteur,
+          contact_apporteur: this.contact_apporteur,
+          email_apporteur: this.email_apporteur,
+          adresse_apporteur: this.adresse_apporteur,
+          code_postal: this.code_postal,
+          accidents: donnees,
+          ids: datas,
+          sync: 0,
+          id_entreprise: entrepriseId,
+          id: userId,
+          uuidApporteur: uuid,
+        }];
+
+        // Ajouter la nouvelle donnée dans IndexedDB
+        await AppStorage.storeDataInIndexedDB("apporteurs", newApporteurData);
+
+        const branchesMap = await AppStorage.getBranches();
+        for (let i = 0; i < datas.length; i++) {
+          const nom_branche = branchesMap[datas[i]];
+
+          let newTauxApporteur = {
+            uuidApporteur: uuid,
+            sync: 0,
+            taux: donnees[i],
+            nom_branche: nom_branche,
+            id_branche: datas[i],
+          };
+
+          await AppStorage.storeDataInIndexedDB("tauxapporteurs", newTauxApporteur);
+        }
+
+        toaster.info(`Apporteur ajouté localement (hors ligne)`, {
+          position: "top-right",
+        });
+
+        this.$router.push("/listapporteur");
+      }
+
+    },
+
+    // fetchApporteurs
+    async fetchApporteurs() {
+      const token = AppStorage.getToken();
+
+      // Configurez les en-têtes de la requête
+      const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+      };
+
+      try {
+        const response = await axios.get("/api/auth/getApporteurs", { headers });
+
+        // Vous pouvez traiter les données comme vous le souhaitez
+        const apporteurs = response.data;
+
+        // Retourner les apporteurs pour une utilisation éventuelle
+        return apporteurs;
+      } catch (error) {
+        console.error("Erreur lors de la récupération des clients sur le serveur", error);
+      }
     },
     getAdresse() {
       getAdresseList().then((result) => {

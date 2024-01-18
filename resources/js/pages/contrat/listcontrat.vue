@@ -161,12 +161,8 @@ export default {
             console.log(result);
           });
 
-          // this.paginations = result;
-        });
 
-        // getContratsList(page).then((result) => {
-        //   this.contrats = result;
-        // });
+        });
       } else {
         AppStorage.getContrats().then((result) => {
           this.contrats = result;

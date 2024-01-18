@@ -238,7 +238,7 @@ export default {
           });
 
           const updatedCompagnies = await this.fetchCompagnies();
-
+ b
           if (response.status === 200) {
             console.log(response.data)
             toaster.success(`Compagnie ajouté avec succès`, {
@@ -260,6 +260,8 @@ export default {
               }
             }
           });
+
+          
 
           // Mettre à jour IndexedDB avec les taux compagnies récupérés 
 
@@ -314,7 +316,6 @@ export default {
           code_compagnie: this.code_compagnie,
           postal_compagnie: this.postal_compagnie,
           sync: 0,
-          uuid: uuid,
           id_entreprise: entrepriseId,
           user_id: userId,
           uuidCompagnie: uuid,

@@ -127,7 +127,7 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/tauxapporteur/:id_apporteur',
+    path: '/tauxapporteur/:uuidApporteur',
     name: 'tauxapporteur',
     component: tauxapporteur,
     props: true,

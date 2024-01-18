@@ -15,7 +15,7 @@ class CreateProspectsTable extends Migration
     {
         Schema::create('prospects', function (Blueprint $table) {
             $table->bigIncrements('id_prospect');
-            $table->uuid('uuid');
+            $table->uuid('uuidProspect');
             $table->string('civilite');
             $table->string('nom_prospect');
             $table->string('postal_prospect')->nullable();

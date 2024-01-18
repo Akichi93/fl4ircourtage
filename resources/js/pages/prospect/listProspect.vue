@@ -13,7 +13,7 @@
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="/home">Tableau de bord</a>
+                    <router-link to="/home">Tableau de bord</router-link>
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Prospect
@@ -57,7 +57,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="(prospect, index) in prospects" :key="index">
+                  <template v-for="(prospect, i) in prospects" :key="i">
                     <tr>
                       <td v-text="prospect.nom_prospect"></td>
                       <td v-text="prospect.adresse_prospect"></td>
@@ -103,9 +103,9 @@
             <changeProspect v-bind:prospectoedit="prospectoedit" @prospect-change="refresh"></changeProspect>
             <deleteProspect v-bind:prospectoedit="prospectoedit" @prospect-deleted="refresh"></deleteProspect>
 
-            <pagination align="center" :data="paginations" :limit="5" :current_page="paginations.current_page"
+            <!-- <pagination align="center" :data="paginations" :limit="5" :current_page="paginations.current_page"
               :last_page="paginations.last_page" @pagination-change-page="getProspects">
-            </pagination>
+            </pagination> -->
           </div>
         </div>
       </div>
@@ -116,13 +116,14 @@
 import pagination from "laravel-vue-pagination";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import { getProspectsList } from "../../services/prospectservice";
+import { getProspectsExport } from "../../services/prospectservice";
 import { getRoleActif } from "../../services/roleservice";
 import admettreProspect from "./admettreProspect.vue";
 import deleteProspect from "./deleteProspect.vue";
 import editProspect from "./editProspect.vue";
 import changeProspect from "./changeProspect.vue";
 import prospectexport from "../../components/export/prospectexport.vue";
+import AppStorage from "../../utils/helpers/AppStorage";
 export default {
   name: "listprospect",
   components: {
@@ -150,11 +151,33 @@ export default {
   },
 
   methods: {
-    getProspects(page) {
-      getProspectsList(page).then((result) => {
-        this.prospects = result.data;
-        this.paginations = result;
-      });
+    async getProspects() {
+
+      const response = await fetch(
+        "/api/check-internet-connection"
+      );
+      const data = await response.json();
+
+      this.isConnected = data.connected;
+      if (this.isConnected) {
+        // Verifier Si les données IndexedDB et synchroniser ce qui n'a pas été synchro 
+        getProspectsExport().then((result) => {
+          // Mettre à jour IndexedDB avec les compagnies récupérés
+          AppStorage.storeDataInIndexedDB("prospects", result.data);
+
+          //Insertion des données
+          AppStorage.getProspects().then((result) => {
+            this.prospects = result;
+          });
+
+
+        });
+      } else {
+        getCompagniesExport().then((result) => {
+          this.prospects = result;
+        });
+      }
+
     },
     getRoleconnect() {
       getRoleActif().then((result) => {

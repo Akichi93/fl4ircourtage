@@ -250,12 +250,15 @@ export default {
 
             this.isConnected = data.connected;
             if (this.isConnected) {
+                const { v4: uuidv4 } = require('uuid');
+                const uuid = uuidv4();
+
                 const userId = AppStorage.getId();
                 const entrepriseId = AppStorage.getEntreprise();
-                
 
-                axios
-                    .post("/api/auth/postProspect", {
+
+                try {
+                    const response = await axios.post("/api/auth/postProspect", {
                         civilite: this.civilite,
                         nom_prospect: this.nom_prospect,
                         postal_prospect: this.postal_prospect,
@@ -267,35 +270,95 @@ export default {
                         etat: this.etat,
                         id_entreprise: entrepriseId,
                         id: userId,
-                    })
-                    .then(async (response) => {
-                        const newProspect = response.data; // Assurez-vous que votre serveur renvoie le prospect nouvellement créé
+                        uuidProspect: uuid,
+                    });
 
-                        // Mettre à jour IndexedDB avec les clients récupérés
-                        await AppStorage.storeDataInIndexedDB("prospects", newProspect);
+                    const updatedProspects = await this.fetchProspects();
 
+                    if (response.status === 200) {
                         toaster.success(`Prospect ajouté avec succès`, {
                             position: "top-right",
                         });
+                    }
 
-                        // Redirect to the listprospect page
-                        this.$router.push("/listprospect");
 
-                    })
-                    .catch((error) => {
-                        // if (error.response.status === 422) {
-                        //     this.errors = error.response.data.errors;
-                        // } else if (error.request) {
-                        //     // The request was made but no response was received
-                        //     console.log(error.request);
-                        // } else {
-                        //     // Something happened in setting up the request that triggered an Error
-                        //     console.log("Error", error.message);
-                        // }
+                    // Mettre à jour IndexedDB avec les prospects récupérés après comparaison
+                    AppStorage.getProspects().then((existingProspects) => {
+                        if (existingProspects && updatedProspects) {
+                            // Comparaison des nouvelles prospects avec ceux déjà existants
+                            const newProspects = updatedProspects.filter((prospect) => {
+                                return !existingProspects.some((existingProspect) => existingProspect.id_prospect === prospect.id_prospect);
+                            });
+
+                            // Insérer uniquement les nouvelles prospects dans IndexedDB
+                            if (newProspects.length > 0) {
+                                AppStorage.storeDataInIndexedDB('prospects', newProspects);
+                            }
+                        }
                     });
+
+                    this.$router.push("/listprospect");
+                } catch (error) {
+                    console.error("Erreur lors de l'ajout du prospect sur le serveur", error);
+                }
+            } else {
+                const { v4: uuidv4 } = require('uuid');
+                const uuid = uuidv4();
+
+                const userId = parseInt(AppStorage.getId(), 10);
+                const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+
+
+                // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
+                const newProspectData = [{
+                    nom_prospect: this.nom_prospect,
+                    adresse_prospect: this.adresse_prospect,
+                    email_compagnie: this.email_compagnie,
+                    tel_prospect: this.tel_prospect,
+                    contact_compagnie: this.contact_compagnie,
+                    profession_prospect: this.profession_prospect,
+                    postal_prospect: this.postal_prospect,
+                    etat: this.etat,
+                    sync: 0,
+                    id_entreprise: entrepriseId,
+                    user_id: userId,
+                    uuidProspect: uuid,
+                }];
+
+                await AppStorage.storeDataInIndexedDB("prospects", newProspectData);
+
+                toaster.info(`Prospect ajouté localement (hors ligne)`, {
+                    position: "top-right",
+                });
+
+                this.$router.push("/listprospect");
             }
 
 
+        },
+
+
+        // fetchProspects
+        async fetchProspects() {
+            const token = AppStorage.getToken();
+
+            // Configurez les en-têtes de la requête
+            const headers = {
+                Authorization: "Bearer " + token,
+                "x-access-token": token,
+            };
+
+            try {
+                const response = await axios.get("/api/auth/getProspects", { headers });
+
+                // Vous pouvez traiter les données comme vous le souhaitez
+                const prospects = response.data;
+
+                // Retourner les prospects pour une utilisation éventuelle
+                return prospects;
+            } catch (error) {
+                console.error("Erreur lors de la récupération des clients sur le serveur", error);
+            }
         },
 
         handleClientsChange(localisations) {

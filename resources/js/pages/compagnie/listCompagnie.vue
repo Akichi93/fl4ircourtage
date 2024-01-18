@@ -173,26 +173,12 @@ export default {
 
 
     searchtask() {
-      const token = localStorage.getItem("token");
-
-      // Configurez les en-têtes de la requête
-      const headers = {
-        Authorization: "Bearer " + token,
-        "x-access-token": token,
-      };
-
-      if (this.q.length > 0) {
-        axios
-          .get("/api/auth/compagnieList/" + this.q, { headers })
-          .then((response) => (
-            this.compagnies = response.data.data
-          ))
-          .catch((error) => console.log(error));
+      if (this.q.length > 3) {
+        AppStorage.searchCompagniesByName(this.q).then((result) => {
+          this.compagnies = result;
+        });
       } else {
-        axios
-          .get("/api/auth/compagnieList/", { headers })
-          .then((response) => (this.compagnies = response.data))
-          .catch((error) => console.log(error));
+        this.getClients();
       }
     },
 
