@@ -12,7 +12,8 @@
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="/home">Tableau de bord</a>
+                    <router-link to="/home">Tableau de bord</router-link>
+
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Contrats
@@ -48,7 +49,7 @@
                             <label>Branche</label>
                             <select class="form-select mb-3" name="type" @change="onChange($event)" id="type"
                               v-model="branche_id">
-                              <option v-for="branche in branches" :value="branche" :key="branche.id_branche">
+                              <option v-for="branche in branches" :value="branche" :key="branche.uuidBranche">
                                 {{ branche.nom_branche }}
                               </option>
                             </select>
@@ -103,7 +104,7 @@
                           <div class="form-group">
                             <label>Client:</label>
                             <Multiselect v-model="client_id" :options="clients" :custom-label="({ id_client, nom_client }) =>
-                                `${id_client} - [${nom_client}]`
+                              `${id_client} - [${nom_client}]`
                               " valueProp="id_client" :placeholder="placeholder" label="nom_client"
                               track-by="nom_client" :searchable="true">
                             </Multiselect>
@@ -214,7 +215,7 @@
                               <div class="form-group">
                                 <label>Zone de circulation:</label>
                                 <Multiselect v-model="zone" :options="localisations" :custom-label="({ id_localisation, nom_ville }) =>
-                                    `${id_localisation} - [${nom_ville}]`
+                                  `${id_localisation} - [${nom_ville}]`
                                   " valueProp="nom_ville" placeholder="Selectionnez zone" label="nom_ville"
                                   track-by="nom_ville" :searchable="true">
                                 </Multiselect>
@@ -234,7 +235,7 @@
                               <div class="form-group">
                                 <label>Catégorie d'usage:</label>
                                 <Multiselect v-model="categorie_id" :options="categories" :custom-label="({ id_categorie, categorie }) =>
-                                    `${id_categorie} - [${categorie}]`
+                                  `${id_categorie} - [${categorie}]`
                                   " valueProp="categorie" placeholder="Selectionnez une catégorie" label="categorie"
                                   track-by="categorie" :searchable="true">
                                 </Multiselect>
@@ -254,7 +255,7 @@
                               <div class="form-group">
                                 <label>Marque:</label>
                                 <Multiselect v-model="marque_id" :options="marques" :custom-label="({ id_marque, marque }) =>
-                                    `${id_marque} - [${marque}]`
+                                  `${id_marque} - [${marque}]`
                                   " valueProp="marque" placeholder="Selectionnez une marque" label="marque"
                                   track-by="marque" :searchable="true">
                                 </Multiselect>
@@ -274,7 +275,7 @@
                               <div class="form-group">
                                 <label>Genre:</label>
                                 <Multiselect v-model="genre_id" :options="genres" :custom-label="({ id_genre, genre }) =>
-                                    `${id_genre} - [${genre}]`
+                                  `${id_genre} - [${genre}]`
                                   " valueProp="genre" placeholder="Selectionnez un genre" label="genre"
                                   track-by="genre" :searchable="true">
                                 </Multiselect>
@@ -303,7 +304,7 @@
                               <div class="form-group">
                                 <label>Couleur:</label>
                                 <Multiselect v-model="couleur_id" :options="couleurs" :custom-label="({ id_couleur, couleur }) =>
-                                    `${id_couleur} - [${couleur}]`
+                                  `${id_couleur} - [${couleur}]`
                                   " valueProp="couleur" placeholder="Selectionnez une couleur" label="couleur"
                                   track-by="couleur" :searchable="true">
                                 </Multiselect>
@@ -326,7 +327,7 @@
                               <div class="form-group">
                                 <label>Energie:</label>
                                 <Multiselect v-model="energie_id" :options="energies" :custom-label="({ id_energie, energie }) =>
-                                    `${id_energie} - [${energie}]`
+                                  `${id_energie} - [${energie}]`
                                   " valueProp="energie" placeholder="Selectionnez une energie" label="energie"
                                   track-by="energie" :searchable="true">
                                 </Multiselect>
@@ -791,9 +792,9 @@ import addgenre from "../../pages/form/addgenre.vue";
 import addcouleur from "../../pages/form/addcouleur.vue";
 import addmarque from "../../pages/form/addmarque.vue";
 import addclient from "../../pages/clients/addclient.vue";
-
+import AppStorage from '../../utils/helpers/AppStorage';
 import {
-  getBrancheList,
+  // getBrancheList,
   getAdresseList,
   getCategoriesList,
   getMarquesList,
@@ -801,7 +802,7 @@ import {
   getCouleursList,
   getEnergiesList
 } from "../../services/formservice";
-import { getClientSelect } from "../../services/clientservice";
+// import { getClientSelect } from "../../services/clientservice";
 
 import { createToaster } from "@meforma/vue-toaster";
 const toaster = createToaster({
@@ -902,15 +903,16 @@ export default {
     this.getEnergie();
   },
   methods: {
-    getBranche() {
-      getBrancheList().then((result) => {
+    async getBranche() {
+      AppStorage.getBranches().then((result) => {
         this.branches = result;
       });
     },
 
     getClients() {
-      getClientSelect().then((result) => {
+      AppStorage.getClients().then((result) => {
         this.clients = result;
+
       });
     },
 
@@ -955,50 +957,80 @@ export default {
       // alert(event.target.value)
     },
 
-    optionSelected(option) {
-      axios
-        .get(
-          "api/auth/getTauxBrancheCompagnie?branche=" +
-          this.branche_id.id_branche +
-          "&compagnie=" +
-          option
-        )
-        .then((response) => {
-          this.tauxcomp = response.data;
-        })
+    async optionSelected(option) {
+      // Récupérer les identifiants de la branche
+      const id_branche = this.branche_id.uuidBranche;
 
-        .catch((error) => console.log(error));
+      try {
+        // Utiliser la méthode pour obtenir le taux en fonction de l'id de la branche et de l'option sélectionnée
+        const taux = await AppStorage.getTauxParIdBrancheEtCompagnie(id_branche, option);
+
+        // Faire quelque chose avec le taux récupéré
+        if (taux) {
+          // Faire quelque chose avec le taux trouvé, par exemple, affecter à une propriété
+          this.tauxcomp = taux;
+        } else {
+          // Gérer le cas où aucun taux correspondant n'est trouvé
+          console.log("Aucun taux trouvé pour la branche et la compagnie sélectionnées.");
+        }
+
+        // Autres actions que vous souhaitez effectuer après avoir obtenu le taux
+      } catch (error) {
+        // Gérer les erreurs potentielles lors de la résolution de la promesse
+        console.error("Erreur lors de la récupération du taux :", error);
+      }
     },
 
-    optionSelect(optional) {
-      axios
-        .get(
-          "/api/auth/getTauxBrancheApporteur?branche=" +
-          this.branche_id.id_branche +
-          "&apport=" +
-          optional
-        )
-        .then((response) => {
-          this.taux = response.data;
-        })
+    async optionSelect(optional) {
 
-        .catch((error) => console.log(error));
+      // Récupérer les identifiants de la branche
+      const id_branche = this.branche_id.uuidBranche;
+
+      try {
+        // Utiliser la méthode pour obtenir le taux en fonction de l'id de la branche et de l'option sélectionnée
+        const taux = await AppStorage.getTauxParIdBrancheEtApporteur(id_branche, optional);
+
+        // Faire quelque chose avec le taux récupéré
+        if (taux) {
+          // Faire quelque chose avec le taux trouvé, par exemple, affecter à une propriété
+          this.taux = taux;
+        } else {
+          // Gérer le cas où aucun taux correspondant n'est trouvé
+          console.log("Aucun taux trouvé pour la branche et l'apporteur sélectionnés.");
+        }
+      } catch (error) {
+        // Gérer les erreurs potentielles lors de la résolution de la promesse
+        console.error("Erreur lors de la récupération du taux :", error);
+      }
     },
 
-    storeContrat() {
+    async checkInternetConnection() {
+      const response = await fetch("/api/check-internet-connection");
+      const data = await response.json();
+      return data.connected;
+    },
 
-      const { v4: uuidv4 } = require('uuid');
-      const uuid = uuidv4();
-      const userId = localStorage.getItem("id");
-      const entrepriseId = localStorage.getItem("entreprise");
+    async storeContrat() {
+      const isConnected = await this.checkInternetConnection();
 
-      axios
-        .post("/api/auth/postContrat", {
-          //Contrat
+      if (isConnected) {
+        await this.storeContratOnline();
+      } else {
+        await this.storeContratOffline();
+      }
+    },
+
+    async storeContratOnline() {
+      try {
+        const uuid = require('uuid').v4();
+        const userId = AppStorage.getId();
+        const entrepriseId = AppStorage.getEntreprise();
+
+        const response = await axios.post("/api/auth/postContrat", {
           id: userId,
           uuidContrat: uuid,
           id_entreprise: entrepriseId,
-          id_branche: this.branche_id.id_branche,
+          id_branche: this.branche_id.uuidBranche,
           branche: this.branche_id.nom_branche,
           id_client: this.client_id,
           id_compagnie: this.compagnie_id,
@@ -1053,32 +1085,295 @@ export default {
             this.accessoires +
             this.cfga +
             this.taxes_totales,
-        })
-        .then((response) => {
-          if (response.status === 200) {
-            toaster.success(`Contrat ajouté avec succès`, {
-              position: "top-right",
-            });
-            this.contrats = response.data;
-          }
-          this.$router.push("/listcontrat");
-        })
-        .catch((error) => {
-          if (error.response.status === 422) {
-            toaster.error(`Veuillez remplir les champs indiqués`, {
-              position: "top-right",
-            });
-            this.errors = error.response.data.errors;
-            // console.log("Message non enregisté")
-          } else if (error.request) {
-            // The request was made but no response was received
-            console.log(error.request);
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            console.log("Error", error.message);
-          }
         });
+
+        if (response.status === 200) {
+          toaster.success(`Contrat ajouté avec succès`, { position: "top-right" });
+          this.contrats = response.data;
+          this.$router.push("/listcontrat");
+        }
+      } catch (error) {
+        this.handleStoreContratError(error);
+      }
     },
+
+    async storeContratOffline() {
+      try {
+        const uuid = require('uuid').v4();
+        const userId = parseInt(AppStorage.getId(), 10);
+        const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+
+        const newContratData = [{
+          id: userId,
+          uuidContrat: uuid,
+          id_entreprise: entrepriseId,
+          uuidBranche: this.branche_id.uuidBranche,
+          nom_branche: this.branche_id.nom_branche,
+          id_client: this.client_id,
+          uuidCompagnie: this.compagnie_id,
+          uuidApporteur: this.apporteur_id,
+          numero_police: this.numero_police,
+          effet_police: this.effet_police,
+          heure_police: this.heure_police,
+          expire_le: this.expire_le,
+          souscrit_le: this.souscrit_le,
+          reconduction: this.reconduction,
+          prime_nette: this.primes_nette,
+          accessoires: this.accessoires,
+          frais_courtier: this.frais_courtier,
+          cfga: this.cfga,
+          taxes_totales: this.taxes_totales,
+          commission_courtier:
+            this.primes_nette * this.tauxcomp.tauxcomp * 0.01,
+          commission_apporteur:
+            this.primes_nette *
+            this.taux.taux *
+            0.01 *
+            this.tauxcomp.tauxcomp *
+            0.01,
+          gestion: this.gestion,
+          primes_ttc:
+            this.primes_nette +
+            this.frais_courtier +
+            this.accessoires +
+            this.cfga +
+            this.taxes_totales,
+          sync: 0,
+        }];
+
+        // Enregistré les contrats dans IndexedDB
+        await AppStorage.storeDataInIndexedDB("contrats", newContratData);
+
+        // Enregistré les automobiles dans IndexedDB
+
+        // const newAutoData = [{
+        //   uuidContrat: uuid,
+        //   numero_immatriculation: this.numero_immatriculation,
+        //   date_circulation: this.date_circulation,
+        //   identification_proprietaire: this.identification_proprietaire,
+        //   adresse_proprietaire: this.adresse_proprietaire,
+        //   zone: this.zone,
+        //   categorie_id: this.categorie_id,
+        //   marque_id: this.marque_id,
+        //   genre_id: this.genre_id,
+        //   type: this.type,
+        //   carosserie: this.carosserie,
+        //   couleur_id: this.couleur_id,
+        //   energie_id: this.energie_id,
+        //   place: this.place,
+        //   puissance: this.puissance,
+        //   charge: this.charge,
+        //   valeur_neuf: this.valeur_neuf,
+        //   valeur_venale: this.valeur_venale,
+        //   categorie_socio_pro: this.categorie_socio_pro,
+        //   permis: this.permis,
+        //   option: this.option_garantie,
+        //   entree: this.entree_le,
+        //   garantie: this.typegarantie,
+        //   tierce: this.tierce,
+        //   prime_nette: this.primes_nette,
+        //   accessoires: this.accessoires,
+        //   frais_courtier: this.frais_courtier,
+        //   cfga: this.cfga,
+        //   taxes_totales: this.taxes_totales,
+        //   commission_courtier:
+        //     this.primes_nette * this.tauxcomp.tauxcomp * 0.01,
+        //   commission_apporteur:
+        //     this.primes_nette *
+        //     this.taux.taux *
+        //     0.01 *
+        //     this.tauxcomp.tauxcomp *
+        //     0.01,
+        //   gestion: this.gestion,
+        //   primes_ttc:
+        //     this.primes_nette +
+        //     this.frais_courtier +
+        //     this.accessoires +
+        //     this.cfga +
+        //     this.taxes_totales,
+        //   sync: 0
+        // }];
+
+        // await AppStorage.storeDataInIndexedDB("automobiles", newAutoData);
+
+
+        toaster.info(`Contrat ajouté localement (hors ligne)`, { position: "top-right" });
+
+        this.$router.push("/listcontrat");
+
+      } catch (error) {
+        console.error("Error storing contract offline:", error);
+      }
+    },
+
+    handleStoreContratError(error) {
+      if (error.response && error.response.status === 422) {
+        toaster.error(`Veuillez remplir les champs indiqués`, { position: "top-right" });
+        this.errors = error.response.data.errors;
+      } else if (error.request) {
+        console.log("Request error:", error.request);
+      } else {
+        console.log("Error:", error.message);
+      }
+    },
+
+
+    // async storeContrat() {
+    //   alert(this.branche_id.uuidBranche)
+    //   const response = await fetch(
+    //     "/api/check-internet-connection"
+    //   );
+
+    //   const data = await response.json();
+
+    //   this.isConnected = data.connected;
+
+    //   if (this.isConnected) {
+
+    //     const { v4: uuidv4 } = require('uuid');
+    //     const uuid = uuidv4();
+    //     const userId = AppStorage.getId();
+    //     const entrepriseId = AppStorage.getEntreprise();
+
+    //     axios
+    //       .post("/api/auth/postContrat", {
+    //         //Contrat
+    //         id: userId,
+    //         uuidContrat: uuid,
+    //         id_entreprise: entrepriseId,
+    //         id_branche: this.branche_id.uuidBranche,
+    //         branche: this.branche_id.nom_branche,
+    //         id_client: this.client_id,
+    //         id_compagnie: this.compagnie_id,
+    //         id_apporteur: this.apporteur_id,
+    //         numero_police: this.numero_police,
+    //         effet_police: this.effet_police,
+    //         heure_police: this.heure_police,
+    //         expire_le: this.expire_le,
+    //         souscrit_le: this.souscrit_le,
+    //         reconduction: this.reconduction,
+    //         //Automobile
+    //         numero_immatriculation: this.numero_immatriculation,
+    //         date_circulation: this.date_circulation,
+    //         identification_proprietaire: this.identification_proprietaire,
+    //         adresse_proprietaire: this.adresse_proprietaire,
+    //         zone: this.zone,
+    //         categorie_id: this.categorie_id,
+    //         marque_id: this.marque_id,
+    //         genre_id: this.genre_id,
+    //         type: this.type,
+    //         carosserie: this.carosserie,
+    //         couleur_id: this.couleur_id,
+    //         energie_id: this.energie_id,
+    //         place: this.place,
+    //         puissance: this.puissance,
+    //         charge: this.charge,
+    //         valeur_neuf: this.valeur_neuf,
+    //         valeur_venale: this.valeur_venale,
+    //         categorie_socio_pro: this.categorie_socio_pro,
+    //         permis: this.permis,
+    //         option: this.option_garantie,
+    //         entree: this.entree_le,
+    //         garantie: this.typegarantie,
+    //         tierce: this.tierce,
+    //         prime_nette: this.primes_nette,
+    //         accessoires: this.accessoires,
+    //         frais_courtier: this.frais_courtier,
+    //         cfga: this.cfga,
+    //         taxes_totales: this.taxes_totales,
+    //         commission_courtier:
+    //           this.primes_nette * this.tauxcomp.tauxcomp * 0.01,
+    //         commission_apporteur:
+    //           this.primes_nette *
+    //           this.taux.taux *
+    //           0.01 *
+    //           this.tauxcomp.tauxcomp *
+    //           0.01,
+    //         gestion: this.gestion,
+    //         primes_ttc:
+    //           this.primes_nette +
+    //           this.frais_courtier +
+    //           this.accessoires +
+    //           this.cfga +
+    //           this.taxes_totales,
+    //       })
+    //       .then((response) => {
+    //         if (response.status === 200) {
+    //           toaster.success(`Contrat ajouté avec succès`, {
+    //             position: "top-right",
+    //           });
+    //           this.contrats = response.data;
+    //         }
+    //         this.$router.push("/listcontrat");
+    //       })
+    //       .catch((error) => {
+    //         if (error.response.status === 422) {
+    //           toaster.error(`Veuillez remplir les champs indiqués`, {
+    //             position: "top-right",
+    //           });
+    //           this.errors = error.response.data.errors;
+    //           // console.log("Message non enregisté")
+    //         } else if (error.request) {
+    //           // The request was made but no response was received
+    //           console.log(error.request);
+    //         } else {
+    //           // Something happened in setting up the request that triggered an Error
+    //           console.log("Error", error.message);
+    //         }
+    //       });
+    //   } else {
+    //     const { v4: uuidv4 } = require('uuid');
+    //     const uuid = uuidv4();
+
+    //     const userId = parseInt(AppStorage.getId(), 10);
+    //     const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+
+    //     // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
+    //     const newContratData = [{
+    //       id: userId,
+    //       uuidContrat: uuid,
+    //       id_entreprise: entrepriseId,
+    //       id_branche: this.branche_id.uuidBranche,
+    //       branche: this.branche_id.nom_branche,
+    //       id_client: this.client_id,
+    //       id_compagnie: this.compagnie_id,
+    //       id_apporteur: this.apporteur_id,
+    //       numero_police: this.numero_police,
+    //       effet_police: this.effet_police,
+    //       heure_police: this.heure_police,
+    //       expire_le: this.expire_le,
+    //       souscrit_le: this.souscrit_le,
+    //       reconduction: this.reconduction,
+    //       prime_nette: this.primes_nette,
+    //       accessoires: this.accessoires,
+    //       frais_courtier: this.frais_courtier,
+    //       cfga: this.cfga,
+    //       taxes_totales: this.taxes_totales,
+    //       commission_courtier:
+    //         this.primes_nette * this.tauxcomp.tauxcomp * 0.01,
+    //       commission_apporteur:
+    //         this.primes_nette *
+    //         this.taux.taux *
+    //         0.01 *
+    //         this.tauxcomp.tauxcomp *
+    //         0.01,
+    //       gestion: this.gestion,
+    //       primes_ttc:
+    //         this.primes_nette +
+    //         this.frais_courtier +
+    //         this.accessoires +
+    //         this.cfga +
+    //         this.taxes_totales,
+    //     }];
+
+    //     // Ajouter la nouvelle donnée dans IndexedDB
+    //     await AppStorage.storeDataInIndexedDB("contrats", newContratData);
+
+    //     toaster.info(`Contrat ajouté localement (hors ligne)`, {
+    //       position: "top-right",
+    //     });
+    //   }
+    // },
 
     calculttc: function (event) {
       alert(this.event.target.value);

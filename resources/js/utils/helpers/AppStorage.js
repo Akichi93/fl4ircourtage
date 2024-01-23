@@ -142,6 +142,12 @@ class AppStorage {
         return this.getData('prospects') || [];
     }
 
+    static async searchProspectsByName(name) {
+        const allProspects = await this.getData('prospects') || [];
+        const filteredProspects = allProspects.filter(prospect => prospect.nom_prospect.toLowerCase().includes(name.toLowerCase()));
+        return filteredProspects;
+    }
+
     // Contrats
 
     static async storeContrats(contrats) {
@@ -196,6 +202,15 @@ class AppStorage {
         return this.getData('tauxcompagnies') || [];
     }
 
+    static async getTauxParIdBrancheEtCompagnie(uuidBranche, uuidCompagnie) {
+        const tauxCompagnies = await this.getTauxCompagnies();
+    
+        // Recherche du taux en fonction des identifiants de branche et de compagnie
+        const tauxTrouve = tauxCompagnies.find(tauxcomp => tauxcomp.uuidBranche === uuidBranche && tauxcomp.uuidCompagnie === uuidCompagnie);
+    
+        return tauxTrouve || null; // Retourne le taux trouvé ou null si aucun taux correspondant n'est trouvé
+    }
+    
     static async getTauxCompagniesByIdCompagnie(uuidCompagnie) {
         // Convertir l'ID de compagnie en entier
         // uuidCompagnie = +uuidCompagnie; 
@@ -240,6 +255,29 @@ class AppStorage {
 
     static async getTauxApporteurs() {
         return this.getData('tauxapporteurs') || [];
+    }
+
+    static async getTauxApporteursByIdApporteur(uuidApporteur) {
+        // Convertir l'ID de compagnie en entier
+        // uuidCompagnie = +uuidCompagnie; 
+
+        const allTauxApporteurs = await this.fetchDataFromIndexedDB('tauxapporteurs') || [];
+
+        const tauxApporteursByIdApporteur = allTauxApporteurs.filter(tauxApporteur => {
+     
+            return tauxApporteur.uuidApporteur === uuidApporteur;
+        });
+
+        return tauxApporteursByIdApporteur;
+    }
+
+    static async getTauxParIdBrancheEtApporteur(uuidBranche, uuidApporteur) {
+        const tauxapporteurs = await this.getTauxApporteurs();
+    
+        // Recherche du taux en fonction des identifiants de branche et de la branche
+        const tauxTrouve = tauxapporteurs.find(taux => taux.uuidBranche === uuidBranche && taux.uuidApporteur === uuidApporteur);
+    
+        return tauxTrouve || null; // Retourne le taux trouvé ou null si aucun taux correspondant n'est trouvé
     }
 
     // Branches

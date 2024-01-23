@@ -48,14 +48,14 @@
     <script src="{{ asset('assets/plugins/raphael/raphael.min.js') }}"></script>
 
 
-    @stack('graph')
+    {{-- @stack('graph') --}}
 
 
 
 
 
     <!-- Hide and show-->
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             $(".ajout").click(function() {
                 $(".form1").show();
@@ -88,7 +88,7 @@
                 $(".zone").hide();
             });
         });
-    </script>
+    </script> --}}
 
     <script src="{{ asset('assets/js/app.js') }}"></script>
 </body>

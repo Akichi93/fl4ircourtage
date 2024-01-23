@@ -1,23 +1,13 @@
 <template>
-  <Multiselect
-    :value="company"
-    :options="compagnies"
-    :custom-label="
-      ({ id_compagnie, nom_compagnie }) =>
-        `${id_compagnie} - [${nom_compagnie}]`
-    "
-    valueProp="id_compagnie"
-    :placeholder="placeholder"
-    label="nom_compagnie"
-    track-by="nom_compagnie"
-    :searchable="true"
-  >
+  <Multiselect :value="company" :options="compagnies" :custom-label="({ uuidCompagnie, nom_compagnie }) =>
+    `${uuidCompagnie} - [${nom_compagnie}]`
+    " valueProp="uuidCompagnie" :placeholder="placeholder" label="nom_compagnie" track-by="nom_compagnie"
+    :searchable="true">
   </Multiselect>
- 
 </template>
-  <script>
+<script>
 import Multiselect from "@vueform/multiselect";
-import { getCompagnieList } from "../../services/formservice";
+import AppStorage from '../../utils/helpers/AppStorage';
 
 export default {
   name: "compagniecomponent",
@@ -32,14 +22,14 @@ export default {
   },
 
   methods: {
-    getCompagnie: function () {
-        getCompagnieList().then((result) => {
-        this.compagnies = result;
-      });
+    async getCompagnie() {
+      AppStorage.getCompagnies().then((result) => {
+          this.compagnies = result;
+        });
     },
   },
   components: { Multiselect },
 };
 </script>
         
-  <style src="@vueform/multiselect/themes/default.css"></style>
+<style src="@vueform/multiselect/themes/default.css"></style>

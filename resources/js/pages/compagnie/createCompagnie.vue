@@ -112,10 +112,10 @@
                 <h3 class="card-title">Taux</h3>
                 <form>
                   <div class="row">
-                    <div class="col-md-6" v-for="branche in branches" :key="branche.id_branche">
+                    <div class="col-md-6" v-for="branche in branches" :key="branche.uuidBranche">
                       <div class="form-group">
                         <label>{{ branche.nom_branche }}</label>
-                        <input type="number" class="form-control" placeholder="Entrez le taux" :key="branche.id_branche"
+                        <input type="number" class="form-control" placeholder="Entrez le taux" :key="branche.uuidBranche"
                           step="0.01" min="0" max="1000" v-model="branche.value" />
                       </div>
                     </div>
@@ -181,8 +181,8 @@ export default {
   },
 
   methods: {
-    getBranche: function () {
-      getBrancheList().then((result) => {
+    async getBranche() {
+      AppStorage.getBranches().then((result) => {
         this.branches = result;
       });
     },
@@ -221,7 +221,7 @@ export default {
         let datas = [];
 
         for (let i = 0; i < Object.keys(testing).length; i++) {
-          datas.push(testing[i]["id_branche"]);
+          datas.push(testing[i]["uuidBranche"]);
         }
 
         try {
@@ -238,7 +238,7 @@ export default {
           });
 
           const updatedCompagnies = await this.fetchCompagnies();
- b
+          
           if (response.status === 200) {
             console.log(response.data)
             toaster.success(`Compagnie ajouté avec succès`, {
@@ -261,7 +261,7 @@ export default {
             }
           });
 
-          
+
 
           // Mettre à jour IndexedDB avec les taux compagnies récupérés 
 
@@ -302,7 +302,7 @@ export default {
         let datas = [];
 
         for (let i = 0; i < Object.keys(testing).length; i++) {
-          datas.push(testing[i]["id_branche"]);
+          datas.push(testing[i]["uuidBranche"]);
         }
 
 
@@ -334,8 +334,8 @@ export default {
             sync: 0,
             tauxcomp: donnees[i],
             nom_branche: nom_branche, // Use the retrieved nom_branche value
-            id_branche: datas[i],
-            // Add other properties as needed
+            uuidBranche: datas[i],
+
           };
 
           await AppStorage.storeDataInIndexedDB("tauxcompagnies", newTauxCompagnie);

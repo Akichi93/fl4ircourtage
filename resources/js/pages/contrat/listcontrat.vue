@@ -55,15 +55,14 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="contrat in contrats.data" :key="contrat.id_contrat">
-                    <tr>
+                    <tr v-for="(contrat, i) in contrats" :key="i">
                       <td v-text="contrat.numero_client"></td>
                       <td v-text="contrat.nom_client"></td>
                       <td v-text="contrat.nom_compagnie"></td>
                       <td v-text="contrat.nom_branche"></td>
                       <td v-text="contrat.effet_police"></td>
                       <td v-text="contrat.expire_le"></td>
-                      <td class="text-end ico-sec d-flex justify-content-end">
+                      <!-- <td class="text-end ico-sec d-flex justify-content-end">
                         <router-link :to="{
                           name: 'detailscontrat',
                           params: { id_contrat: contrat.id_contrat },
@@ -83,9 +82,8 @@
                           data-bs-toggle="modal" data-bs-target="#delete_contrat" title="Supprimer"><i
                             class="fas fa-trash-alt"></i>
                         </a>
-                      </td>
+                      </td> -->
                     </tr>
-                  </template>
                 </tbody>
               </table>
             </div>
@@ -158,7 +156,6 @@ export default {
 
           AppStorage.getContrats().then((result) => {
             this.contrats = result;
-            console.log(result);
           });
 
 

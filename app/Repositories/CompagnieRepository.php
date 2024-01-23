@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Branche;
 use App\Models\Compagnie;
 use App\Models\TauxCompagnie;
 use Illuminate\Support\Facades\Auth;
@@ -51,11 +52,19 @@ class CompagnieRepository extends BaseRepository
             $compagnies->sync =  1;
             $compagnies->save();
 
-            $id = $compagnies['id_compagnie'];
+            // $id = $compagnies['id_compagnie'];
             $uuidCompagnie = $compagnies['uuidCompagnie'];
 
             $leads = $all['accidents'];  // valeur
-            $firsts = $all['ids']; // id
+            $id = $all['ids']; // id
+
+            $branches = Branche::whereIn('uuidBranche', $id)->get();
+            $firsts = [];
+
+            foreach ($branches as $branche) {
+                $idBranche = $branche->id_branche;
+                $firsts[] = $idBranche;
+            }
 
             $array = array_combine($firsts, $leads);
 

@@ -123,10 +123,10 @@
                 <h3 class="card-title">Taux</h3>
 
                 <div class="row">
-                  <div class="col-md-6" v-for="branche in branches" :key="branche.id_branche">
+                  <div class="col-md-6" v-for="branche in branches" :key="branche.uuidBranche">
                     <div class="form-group">
                       <label>{{ branche.nom_branche }}</label>
-                      <input type="number" class="form-control" placeholder="Entrez le taux" :key="branche.id_branche"
+                      <input type="number" class="form-control" placeholder="Entrez le taux" :key="branche.uuidBranche"
                         step="0.01" min="0" max="1000" v-model="branche.value" />
                     </div>
                   </div>
@@ -215,8 +215,10 @@ export default {
         let datas = [];
 
         for (let i = 0; i < Object.keys(testing).length; i++) {
-          datas.push(testing[i]["id_branche"]);
+          datas.push(testing[i]["uuidBranche"]);
         }
+
+        // alert(datas)
 
         try {
           const response = await axios.post("/api/auth/postApporteur", {
@@ -295,7 +297,7 @@ export default {
         let datas = [];
 
         for (let i = 0; i < Object.keys(testing).length; i++) {
-          datas.push(testing[i]["id_branche"]);
+          datas.push(testing[i]["uuiBranche"]);
         }
 
 
@@ -326,7 +328,7 @@ export default {
             sync: 0,
             taux: donnees[i],
             nom_branche: nom_branche,
-            id_branche: datas[i],
+            uuidBranche: datas[i],
           };
 
           await AppStorage.storeDataInIndexedDB("tauxapporteurs", newTauxApporteur);

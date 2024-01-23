@@ -3,10 +3,10 @@
     :value="apporteur"
     :options="apporteurs"
     :custom-label="
-      ({ id_apporteur, nom_apporteur }) =>
-        `${id_apporteur} - [${nom_apporteur}]`
+      ({ uuidApporteur, nom_apporteur }) =>
+        `${uuidApporteur} - [${nom_apporteur}]`
     "
-    valueProp="id_apporteur"
+    valueProp="uuidApporteur"
     :placeholder="placeholder"
     label="nom_apporteur"
     track-by="nom_apporteur"
@@ -16,7 +16,7 @@
 </template>
   <script>
 import Multiselect from "@vueform/multiselect";
-import { getApporteurList } from "../../services/formservice";
+import AppStorage from '../../utils/helpers/AppStorage';
 
 export default {
   name: "clientcomponent",
@@ -31,8 +31,8 @@ export default {
   },
 
   methods: {
-    getApporteur: function () {
-      getApporteurList().then((result) => {
+    getApporteur() {
+     AppStorage.getApporteurs().then((result) => {
         this.apporteurs = result;
       });
     },

@@ -173,7 +173,7 @@ export default {
 
         });
       } else {
-        getCompagniesExport().then((result) => {
+        AppStorage.getProspects().then((result) => {
           this.prospects = result;
         });
       }
@@ -194,25 +194,12 @@ export default {
     },
 
     searchtask() {
-      const token = localStorage.getItem("token");
-
-      // Configurez les en-têtes de la requête
-      const headers = {
-        Authorization: "Bearer " + token,
-        "x-access-token": token,
-      };
-      if (this.q.length > 0) {
-        axios
-          .get("/api/auth/prospectList/" + this.q, { headers })
-          .then((response) => (
-            this.prospects = response.data.data
-          ))
-          .catch((error) => console.log(error));
+      if (this.q.length > 3) {
+        AppStorage.searchApporteursByName(this.q).then((result) => {
+          this.apporteurs = result;
+        });
       } else {
-        axios
-          .get("/api/auth/prospectList/", { headers })
-          .then((response) => (this.prospects = response.data))
-          .catch((error) => console.log(error));
+        this.getProspects();
       }
     },
 

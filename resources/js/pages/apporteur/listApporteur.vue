@@ -152,7 +152,7 @@ export default {
 
         });
       } else {
-        getApporteursExport().then((result) => {
+        AppStorage.getApporteurs().then((result) => {
           this.apporteurs = result;
         });
       }

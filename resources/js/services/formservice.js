@@ -74,7 +74,7 @@ export async function getCompagnieList() {
         "x-access-token": token,
     };
 
-    const response = await axios.get("/api/auth/getCompagnie", { headers })
+    const response = await axios.get("/api/auth/getCompagnies", { headers })
     return response.data;
 
 }
@@ -90,7 +90,7 @@ export async function getApporteurList() {
         "x-access-token": token,
     };
 
-    const response = await axios.get("/api/auth/getApporteur", { headers })
+    const response = await axios.get("/api/auth/getApporteurs", { headers })
     return response.data;
 
 }

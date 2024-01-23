@@ -150,7 +150,7 @@ export default {
 
         });
       } else {
-        getCompagniesExport().then((result) => {
+        AppStorage.getCompagnies().then((result) => {
           this.compagnies = result;
         });
       }

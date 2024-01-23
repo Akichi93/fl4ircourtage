@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Branche;
 use App\Models\Apporteur;
 use App\Models\TauxApporteur;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +33,6 @@ class ApporteurRepository extends BaseRepository
     public function postApporteur(array $data)
     {
         // try {
-
         $apporteur = $data['nom_apporteur'];
         if (Apporteur::where('nom_apporteur', '=', $apporteur)->count() > 0) {
             return response()->json(['message' => 'Apporteur existant'], 422);
@@ -56,7 +56,6 @@ class ApporteurRepository extends BaseRepository
             // $ref = "AB@#$";
 
 
-
             $all = $data;
             $apporteurs = new Apporteur();
             $apporteurs->nom_apporteur = $data['nom_apporteur'];
@@ -69,12 +68,26 @@ class ApporteurRepository extends BaseRepository
             $apporteurs->uuidApporteur = $data['uuidApporteur'];
             $apporteurs->user_id = $data['id'];
             $apporteurs->apporteur_url = bcrypt($ref);
+            $apporteurs->sync = 1;
             $apporteurs->save();
 
             $id = $apporteurs->id_apporteur;
 
             $leads = $all['accidents'];  // valeur
-            $firsts = $all['ids']; // id
+            $id = $all['ids']; // id
+
+            // recuperer id_branche à travers uuidBranche
+
+            $branches = Branche::whereIn('uuidBranche', $id)->get();
+            $firsts = [];
+
+            foreach ($branches as $branche) {
+                $idBranche = $branche->id_branche;
+                $firsts[] = $idBranche;
+            }
+
+            // Utilisation de la fonction dd() pour afficher le tableau
+
 
             $array = array_combine($firsts, $leads);
 
