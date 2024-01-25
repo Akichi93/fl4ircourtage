@@ -202,21 +202,21 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/detailscontrat/:id_contrat',
+    path: '/detailscontrat/:uuidContrat',
     name: 'detailscontrat',
     component: detailscontrat,
     props: true,
     meta: { requiresAuth: true }
   },
   {
-    path: '/avenants/:id_contrat',
+    path: '/avenants/:uuidContrat',
     name: 'avenants',
     component: avenants,
     props: true,
     meta: { requiresAuth: true }
   },
   {
-    path: '/editcontrat/:id_contrat',
+    path: '/editcontrat/:uuidContrat',
     name: 'editcontrat',
     component: editcontrat,
     props: true,

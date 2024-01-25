@@ -62,27 +62,27 @@
                       <td v-text="contrat.nom_branche"></td>
                       <td v-text="contrat.effet_police"></td>
                       <td v-text="contrat.expire_le"></td>
-                      <!-- <td class="text-end ico-sec d-flex justify-content-end">
+                      <td class="text-end ico-sec d-flex justify-content-end">
                         <router-link :to="{
                           name: 'detailscontrat',
-                          params: { id_contrat: contrat.id_contrat },
+                          params: { uuidContrat: contrat.uuidContrat },
                         }"><i class="fas fa-info"></i></router-link>
 
                         <router-link :to="{
                           name: 'avenants',
-                          params: { id_contrat: contrat.id_contrat },
+                          params: { uuidContrat: contrat.uuidContrat },
                         }"><i class="fas fa-paper-plane"></i></router-link>
 
                         <router-link :to="{
                           name: 'editcontrat',
-                          params: { id_contrat: contrat.id_contrat },
+                          params: { uuidContrat: contrat.uuidContrat },
                         }"><i class="fas fa-pen"></i></router-link>
 
-                        <a href="#" v-if="roleactif == 'ADMIN'" @click="editContrat(contrat.id_contrat)"
+                        <!-- <a href="#" v-if="roleactif == 'ADMIN'" @click="editContrat(contrat.id_contrat)"
                           data-bs-toggle="modal" data-bs-target="#delete_contrat" title="Supprimer"><i
                             class="fas fa-trash-alt"></i>
-                        </a>
-                      </td> -->
+                        </a> -->
+                      </td>
                     </tr>
                 </tbody>
               </table>

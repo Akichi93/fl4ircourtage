@@ -15,6 +15,7 @@ class User {
             { endpoint: 'getCompagnies', storageKey: 'compagnies' },
             { endpoint: 'getApporteurs', storageKey: 'apporteurs' },
             { endpoint: 'getBranches', storageKey: 'branches' },
+            { endpoint: 'getAvenants', storageKey: 'avenants' },
 
             { endpoint: 'getTauxCompagnies', storageKey: 'tauxcompagnies' },
             { endpoint: 'getTauxApporteurs', storageKey: 'tauxapporteurs' },

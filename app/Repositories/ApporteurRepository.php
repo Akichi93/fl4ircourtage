@@ -37,25 +37,6 @@ class ApporteurRepository extends BaseRepository
         if (Apporteur::where('nom_apporteur', '=', $apporteur)->count() > 0) {
             return response()->json(['message' => 'Apporteur existant'], 422);
         } else {
-            $lastID = Apporteur::max('id_apporteur');
-            if ($lastID == null) {
-                $id = 1;
-                $day = date('d');
-                $month = date('m');
-                $year = date('Y');
-                $a = "AP";
-                $ref = $a . '-' . $id . '-' . intval($month) . intval($day) . $year;
-            } else {
-                $id = intval($lastID) + 1;
-                $day = date('d');
-                $month = date('m');
-                $year = date('Y');
-                $a = "AP";
-                $ref = $a . '-' . $id . '-' . $month . $day . $year;
-            }
-            // $ref = "AB@#$";
-
-
             $all = $data;
             $apporteurs = new Apporteur();
             $apporteurs->nom_apporteur = $data['nom_apporteur'];
@@ -63,11 +44,11 @@ class ApporteurRepository extends BaseRepository
             $apporteurs->email_apporteur = $data['email_apporteur'];
             $apporteurs->adresse_apporteur = $data['adresse_apporteur'];
             $apporteurs->code_postal = $data['code_postal'];
-            $apporteurs->code_apporteur =   $ref;
+            $apporteurs->code_apporteur =   $data['code_apporteur'];
             $apporteurs->id_entreprise = $data['id_entreprise'];
             $apporteurs->uuidApporteur = $data['uuidApporteur'];
             $apporteurs->user_id = $data['id'];
-            $apporteurs->apporteur_url = bcrypt($ref);
+            $apporteurs->apporteur_url = bcrypt($data['code_apporteur']);
             $apporteurs->sync = 1;
             $apporteurs->save();
 
@@ -87,8 +68,6 @@ class ApporteurRepository extends BaseRepository
             }
 
             // Utilisation de la fonction dd() pour afficher le tableau
-
-
             $array = array_combine($firsts, $leads);
 
             foreach ($array as $key => $value) {

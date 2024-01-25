@@ -202,6 +202,7 @@ Route::group([
         Route::get('getFactures/{id_avenant}', 'getFactures');
         Route::get('getContrats',  'getContrat'); // Obtenir les contrats
         Route::post('payeAvenant', 'payeAvenant'); // Update d'un contrat
+        Route::get('getAvenants', 'getAvenants'); // Update d'un contrat
     });
 
     // Sinistres

@@ -37,7 +37,7 @@ class CompagnieRepository extends BaseRepository
             return response()->json(['message' => 'Apporteur existant'], 422);
         } else {
             $length = 12;
-            $token = bin2hex(random_bytes($length));
+            // $token = bin2hex(random_bytes($length));
 
             $all = $data;
             $compagnies = new Compagnie();
@@ -45,7 +45,7 @@ class CompagnieRepository extends BaseRepository
             $compagnies->contact_compagnie = $data['contact_compagnie'];
             $compagnies->email_compagnie = $data['email_compagnie'];
             $compagnies->adresse_compagnie = $data['adresse_compagnie'];
-            $compagnies->code_compagnie = $token;
+            $compagnies->code_compagnie = $data['code_compagnie'];
             $compagnies->id_entreprise =   $data['id_entreprise'];
             $compagnies->uuidCompagnie =  $data['uuidCompagnie'];
             $compagnies->user_id =  $data['id'];

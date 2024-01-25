@@ -103,9 +103,9 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Client:</label>
-                            <Multiselect v-model="client_id" :options="clients" :custom-label="({ id_client, nom_client }) =>
-                              `${id_client} - [${nom_client}]`
-                              " valueProp="id_client" :placeholder="placeholder" label="nom_client"
+                            <Multiselect v-model="client_id" :options="clients" :custom-label="({ uuidClient, nom_client }) =>
+                              `${uuidClient} - [${nom_client}]`
+                              " valueProp="uuidClient" :placeholder="placeholder" label="nom_client"
                               track-by="nom_client" :searchable="true">
                             </Multiselect>
                             <p style="color: red" class="text-red" v-if="errors.id_compagnie"
@@ -1103,6 +1103,10 @@ export default {
         const userId = parseInt(AppStorage.getId(), 10);
         const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
 
+        const clientName = await AppStorage.getClientNameByUUID(this.client_id);
+        const clientCode = await AppStorage.getClientCodeByUUID(this.client_id);
+        const compagnieName = await AppStorage.getCompagnieNameByUUID(this.compagnie_id);
+
         const newContratData = [{
           id: userId,
           uuidContrat: uuid,
@@ -1110,6 +1114,9 @@ export default {
           uuidBranche: this.branche_id.uuidBranche,
           nom_branche: this.branche_id.nom_branche,
           id_client: this.client_id,
+          nom_client: clientName,
+          numero_client: clientCode,
+          nom_compagnie: compagnieName,
           uuidCompagnie: this.compagnie_id,
           uuidApporteur: this.apporteur_id,
           numero_police: this.numero_police,

@@ -218,10 +218,26 @@ export default {
           datas.push(testing[i]["uuidBranche"]);
         }
 
-        // alert(datas)
+        // Obtenir la date du jour au format YYYYMMDD
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = (today.getMonth() + 1).toString().padStart(2, '0');
+        var day = today.getDate().toString().padStart(2, '0');
+
+        var dateDuJour = year + month + day;
+
+        // Supposons que $nom est votre variable contenant le nom du client
+        var nom = this.nom_apporteur;
+
+        // Prendre les deux premiers caractères du nom
+        var deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase(); // Mettre en majuscules
+
+        // Générer le numéro de client en ajoutant "CL-" à la date du jour
+        var codeApporteur = "AP-" + deuxPremiersCaracteres + dateDuJour;
 
         try {
           const response = await axios.post("/api/auth/postApporteur", {
+            code_apporteur: codeApporteur,
             nom_apporteur: this.nom_apporteur,
             contact_apporteur: this.contact_apporteur,
             email_apporteur: this.email_apporteur,
@@ -237,7 +253,6 @@ export default {
           const updatedApporteurs = await this.fetchApporteurs();
 
           if (response.status === 200) {
-            console.log(response.data)
             toaster.success(`Compagnie ajouté avec succès`, {
               position: "top-right",
             });
@@ -247,7 +262,7 @@ export default {
           AppStorage.getApporteurs().then((existingApporteurs) => {
             if (existingApporteurs && updatedApporteurs) {
               // Comparaison des nouvelles compagnies avec ceux déjà existants
-              const newApporteurs = updatedApporteurs.filter((compagnie) => {
+              const newApporteurs = updatedApporteurs.filter((apporteur) => {
                 return !existingApporteurs.some((existingApporteur) => existingApporteur.id_apporteur === apporteur.id_apporteur);
               });
 
@@ -270,10 +285,7 @@ export default {
 
           AppStorage.storeDataInIndexedDB('tauxapporteurs', rates);
 
-
           this.$router.push("/listapporteur");
-
-
 
         } catch (error) {
           console.error("Erreur lors de l'ajout de la compagnie sur le serveur", error);
@@ -300,6 +312,22 @@ export default {
           datas.push(testing[i]["uuiBranche"]);
         }
 
+        // Obtenir la date du jour au format YYYYMMDD
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = (today.getMonth() + 1).toString().padStart(2, '0');
+        var day = today.getDate().toString().padStart(2, '0');
+
+        var dateDuJour = year + month + day;
+
+        // Supposons que $nom est votre variable contenant le nom du client
+        var nom = this.nom_apporteur;
+
+        // Prendre les deux premiers caractères du nom
+        var deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase(); // Mettre en majuscules
+
+        // Générer le numéro de client en ajoutant "CL-" à la date du jour
+        var codeApporteur = "AP-" + deuxPremiersCaracteres + dateDuJour;
 
         // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
         const newApporteurData = [{
@@ -314,6 +342,7 @@ export default {
           id_entreprise: entrepriseId,
           id: userId,
           uuidApporteur: uuid,
+          code_apporteur: codeApporteur,
         }];
 
         // Ajouter la nouvelle donnée dans IndexedDB
@@ -342,6 +371,7 @@ export default {
       }
 
     },
+
 
     // fetchApporteurs
     async fetchApporteurs() {

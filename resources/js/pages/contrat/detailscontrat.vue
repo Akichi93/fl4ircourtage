@@ -211,7 +211,7 @@
                     style="width: auto"><i class="fas fa-plus"></i> Ajouter un véhicule
                   </a>
 
-                 
+
                 </div>
               </div>
             </div>
@@ -361,10 +361,10 @@
           </div>
 
 
-          <addautomobile  @automobile-add="refresh"></addautomobile>
+          <addautomobile @automobile-add="refresh"></addautomobile>
           <flotte></flotte>
           <addgarantie></addgarantie>
-       
+
 
 
         </div>
@@ -377,7 +377,8 @@ import Sidebar from "../../layout/Sidebar.vue";
 import Header from "../../layout/Header.vue";
 import addautomobile from "./addAutomobile.vue";
 import flotte from "./flotte.vue";
-import addgarantie from "./addGarantie.vue"
+import addgarantie from "./addGarantie.vue";
+import AppStorage from "../../utils/helpers/AppStorage";
 export default {
   components: {
     Header,
@@ -404,10 +405,26 @@ export default {
     };
   },
   created() {
-    this.fetchData();
+    // this.fetchData();
+    this.fetchDataContrat()
   },
 
   methods: {
+
+    async fetchDataContrat() {
+      const uuidContrat = this.$route.params.uuidContrat;
+
+      try {
+        const infos  = await AppStorage.getInfoContratByUuid(uuidContrat);
+
+        this.infos  = infos;
+        console.log(infos)
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données :", error);
+      }
+    },
+
+
     fetchData() {
       var that = this;
       axios

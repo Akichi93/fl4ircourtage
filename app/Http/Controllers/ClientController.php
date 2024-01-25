@@ -59,28 +59,8 @@ class ClientController extends Controller
         $this->validate($request, $rules, $customMessages);
 
         try {
-
-            $lastID = Client::max('id_client');
-            if ($lastID == null) {
-                $id = 1;
-                $prefix = substr($request->nom_projet, 0, 2);
-                $day = date('d');
-                $month = date('m');
-                $year = date('Y');
-                $ref = '0' . '-' . $id . '-' . intval($month) . intval($day) . $year . strtoupper($prefix);
-            } else {
-                $id = intval($lastID) + 1;
-                $prefix = substr($request->nom_projet, 0, 2);
-                $day = date('d');
-                $month = date('m');
-                $year = date('Y');
-                $ref = '0' . '-' . $id . '-' . intval($month) . intval($day) . $year . strtoupper($prefix);
-            }
-
-
-
             $clients = new Client();
-            $clients->numero_client = $ref;
+            $clients->numero_client = $request->numero_client;
             $clients->civilite = $request->civilite;
             $clients->nom_client = $request->nom_client;
             $clients->tel_client = $request->tel_client;

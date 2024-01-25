@@ -44,7 +44,7 @@ class ApporteurController extends Controller
                 ->get();
             return response()->json($apporteurs);
         } else {
-            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->where('id_entreprise', $user->id_entreprise)->latest()->paginate(10);
+            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->where('id_entreprise', $user->id_entreprise)->get();
             return response()->json($apporteurs);
         }
     }
@@ -59,10 +59,10 @@ class ApporteurController extends Controller
       |
      */
 
-    public function postApporteur(ApporteurRequest $request)
+    public function postApporteur(Request $request)
     {
         // Validation du formulaire
-        $validated = $request->validated();
+        // $validated = $request->validated();
 
         // Récupération des données
         $data = $request->all();
@@ -71,8 +71,8 @@ class ApporteurController extends Controller
         $Data = $this->apporteur->postApporteur($data);
 
         if ($Data) {
-            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->where('id_entreprise', $data['id_entreprise'])->latest()->paginate(10);
-            return response()->json($apporteurs);
+            $apporteurs = Apporteur::where('supprimer_apporteur', '=', '0')->where('id_entreprise', $data['id_entreprise'])->get();
+            return response()->json($Data);
         }
 
         // return response()->json([

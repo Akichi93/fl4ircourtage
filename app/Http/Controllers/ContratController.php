@@ -70,7 +70,6 @@ class ContratController extends Controller
     {
         $validated = $request->validated();
         // try {
-
         $contrats = new Contrat();
         $contrats->id_branche = $request->id_branche;
         $contrats->id_client = $request->id_client;
@@ -794,8 +793,6 @@ class ContratController extends Controller
             ->where('id_branche', $request->branche)
             ->get()->first();
 
-
-
         return response()->json($tauxcompagnie);
     }
 
@@ -942,5 +939,12 @@ class ContratController extends Controller
 
             return response()->json(["listescontrats" => $listescontrats, "sommepayes" => $sommepayes]);
         }
+    }
+
+    public function getAvenants(){
+        $user =  JWTAuth::parseToken()->authenticate();
+        $avenants = Avenant::where('id_entreprise',$user->id_entreprise)->get();
+
+        return response()->json($avenants);
     }
 }

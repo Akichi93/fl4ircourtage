@@ -134,6 +134,25 @@ class AppStorage {
         return allClients.find(client => client.id_client === clientId);
     }
 
+    static async getClientNameByUUID(uuidClient) {
+        const allClients = await this.getData('clients') || [];
+
+        const client = allClients.find(client => client.uuidClient === uuidClient);
+
+        return client ? client.nom_client : null;
+    }
+
+
+    static async getClientCodeByUUID(uuidClient) {
+        const allClients = await this.getData('clients') || [];
+
+        const client = allClients.find(client => client.uuidClient === uuidClient);
+
+        return client ? client.numero_client : null;
+    }
+
+    // Prospects
+
     static async storeProspects(prospects) {
         await this.storeData('prospects', prospects);
     }
@@ -165,6 +184,62 @@ class AppStorage {
     }
 
 
+    static async getInfoContratByUuid(uuidContrat) {
+        const contrats = await this.getContrats();
+        const contratTrouve = contrats.find(contrat => contrat.uuidContrat === uuidContrat);
+
+        if (contratTrouve) {
+            return contratTrouve;
+        } else {
+            // Retourner quelque chose pour indiquer que le contrat n'a pas été trouvé
+            return null;
+        }
+    }
+
+
+    // Avenants
+
+
+    static async storeAvenants(avenants) {
+        await this.storeData('avenants', avenants);
+    }
+
+    static async getAvenants() {
+        return this.getData('avenants') || [];
+    }
+
+
+    static async getAvenantsSommeByUuid(uuidContrat) {
+        const avenantsData = this.getData('avenants') || [];
+    
+        // Filtrer les avenants en fonction de l'UUID du contrat
+        const avenantsFiltres = avenantsData.filter(avenant => avenant.uuidContrat === uuidContrat);
+    
+        // Calculer la somme des valeurs nécessaires
+        const sommePrimeNette = avenantsFiltres.reduce((acc, avenant) => acc + avenant.prime_nette, 0);
+        const sommeAccessoires = avenantsFiltres.reduce((acc, avenant) => acc + avenant.accessoires, 0);
+        const sommePrimeTTC = avenantsFiltres.reduce((acc, avenant) => acc + avenant.prime_ttc, 0);
+    
+        // Ajouter la somme des nouvelles valeurs
+        const sommeFraisCourtier = avenantsFiltres.reduce((acc, avenant) => acc + avenant.frais_courtier, 0);
+        const sommeTaxesTotales = avenantsFiltres.reduce((acc, avenant) => acc + avenant.taxes_totales, 0);
+        const sommeCommissionCourtier = avenantsFiltres.reduce((acc, avenant) => acc + avenant.commission_courtier, 0);
+        const sommeCommission = avenantsFiltres.reduce((acc, avenant) => acc + avenant.commission, 0);
+    
+        // Retourner un objet contenant toutes les sommes calculées
+        return {
+            sommePrimeNette,
+            sommeAccessoires,
+            sommePrimeTTC,
+            sommeFraisCourtier,
+            sommeTaxesTotales,
+            sommeCommissionCourtier,
+            sommeCommission
+        };
+    }
+    
+
+
     // Compagnies
     static async storeCompagnies(compagnies) {
         await this.storeData('compagnies', compagnies);
@@ -182,6 +257,14 @@ class AppStorage {
 
     static async storeTauxCompagnies(tauxcompagnies) {
         await this.storeData('tauxcompagnies', tauxcompagnies);
+    }
+
+    static async getCompagnieNameByUUID(uuidCompagnie) {
+        const allCompagnies = await this.getData('compagnies') || [];
+
+        const compagnie = allCompagnies.find(compagnie => compagnie.uuidCompagnie === uuidCompagnie);
+
+        return compagnie ? compagnie.nom_compagnie : null;
     }
 
     static async getCompanyNameById(idCompagnie) {
@@ -204,13 +287,13 @@ class AppStorage {
 
     static async getTauxParIdBrancheEtCompagnie(uuidBranche, uuidCompagnie) {
         const tauxCompagnies = await this.getTauxCompagnies();
-    
+
         // Recherche du taux en fonction des identifiants de branche et de compagnie
         const tauxTrouve = tauxCompagnies.find(tauxcomp => tauxcomp.uuidBranche === uuidBranche && tauxcomp.uuidCompagnie === uuidCompagnie);
-    
+
         return tauxTrouve || null; // Retourne le taux trouvé ou null si aucun taux correspondant n'est trouvé
     }
-    
+
     static async getTauxCompagniesByIdCompagnie(uuidCompagnie) {
         // Convertir l'ID de compagnie en entier
         // uuidCompagnie = +uuidCompagnie; 
@@ -219,7 +302,7 @@ class AppStorage {
 
         const tauxCompagniesByIdCompagnie = allTauxCompagnies.filter(tauxcompagnie => {
 
-        
+
             return tauxcompagnie.uuidCompagnie === uuidCompagnie;
         });
 
@@ -264,7 +347,7 @@ class AppStorage {
         const allTauxApporteurs = await this.fetchDataFromIndexedDB('tauxapporteurs') || [];
 
         const tauxApporteursByIdApporteur = allTauxApporteurs.filter(tauxApporteur => {
-     
+
             return tauxApporteur.uuidApporteur === uuidApporteur;
         });
 
@@ -273,10 +356,10 @@ class AppStorage {
 
     static async getTauxParIdBrancheEtApporteur(uuidBranche, uuidApporteur) {
         const tauxapporteurs = await this.getTauxApporteurs();
-    
+
         // Recherche du taux en fonction des identifiants de branche et de la branche
         const tauxTrouve = tauxapporteurs.find(taux => taux.uuidBranche === uuidBranche && taux.uuidApporteur === uuidApporteur);
-    
+
         return tauxTrouve || null; // Retourne le taux trouvé ou null si aucun taux correspondant n'est trouvé
     }
 

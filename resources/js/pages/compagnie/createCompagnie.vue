@@ -224,6 +224,24 @@ export default {
           datas.push(testing[i]["uuidBranche"]);
         }
 
+
+        // Obtenir la date du jour au format YYYYMMDD
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = (today.getMonth() + 1).toString().padStart(2, '0');
+        var day = today.getDate().toString().padStart(2, '0');
+
+        var dateDuJour = year + month + day;
+
+        // Supposons que $nom est votre variable contenant le nom du client
+        var nom = this.nom_compagnie;
+
+        // Prendre les deux premiers caractères du nom
+        var deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase(); // Mettre en majuscules
+
+        // Générer le numéro de client en ajoutant "CL-" à la date du jour
+        var codeCompagnie = "CO-" + deuxPremiersCaracteres + dateDuJour;
+
         try {
           const response = await axios.post("/api/auth/postCompagnie", {
             nom_compagnie: this.nom_compagnie,
@@ -235,10 +253,11 @@ export default {
             id_entreprise: entrepriseId,
             id: userId,
             uuidCompagnie: uuid,
+            code_compagnie: codeCompagnie,
           });
 
           const updatedCompagnies = await this.fetchCompagnies();
-          
+
           if (response.status === 200) {
             console.log(response.data)
             toaster.success(`Compagnie ajouté avec succès`, {
@@ -305,6 +324,23 @@ export default {
           datas.push(testing[i]["uuidBranche"]);
         }
 
+        // Obtenir la date du jour au format YYYYMMDD
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = (today.getMonth() + 1).toString().padStart(2, '0');
+        var day = today.getDate().toString().padStart(2, '0');
+
+        var dateDuJour = year + month + day;
+
+        // Supposons que $nom est votre variable contenant le nom du client
+        var nom = this.nom_compagnie;
+
+        // Prendre les deux premiers caractères du nom
+        var deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase(); // Mettre en majuscules
+
+        // Générer le numéro de client en ajoutant "CL-" à la date du jour
+        var codeCompagnie = "CO-" + deuxPremiersCaracteres + dateDuJour;
+
 
         // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
         const newCompagnieData = [{
@@ -319,6 +355,7 @@ export default {
           id_entreprise: entrepriseId,
           user_id: userId,
           uuidCompagnie: uuid,
+          code_compagnie: codeCompagnie,
         }];
 
         // Ajouter la nouvelle donnée dans IndexedDB

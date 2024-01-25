@@ -115,79 +115,31 @@ export default {
   },
   methods: {
     async storeClient() {
-      const response = await fetch(
-        "/api/check-internet-connection"
-      );
+      const isConnected = await this.checkInternetConnection();
 
-      const data = await response.json();
-
-      this.isConnected = data.connected;
-
-      if (this.isConnected) {
-        const userId = AppStorage.getId();
-        const entrepriseId = AppStorage.getEntreprise();
-
-        const { v4: uuidv4 } = require('uuid');
-        const uuid = uuidv4();
-
-        try {
-          const response = await axios.post("/api/auth/postClient", {
-            civilite: this.civilite,
-            nom_client: this.nom_client,
-            postal_client: this.postal_client,
-            adresse_client: this.adresse_client,
-            tel_client: this.tel_client,
-            profession_client: this.profession_client,
-            fax_client: this.fax_client,
-            email_client: this.email_client,
-            id: userId,
-            id_entreprise: entrepriseId,
-            uuidClient: uuid,
-          });
-
-          // Appeler fetchClients pour récupérer la liste mise à jour après l'insertion
-          const updatedClients = await this.fetchClients();
-
-          if (response.status === 200) {
-            toaster.success(`Client ajouté avec succès`, {
-              position: "top-right",
-            });
-          }
-
-          // Mettre à jour IndexedDB avec les clients récupérés après comparaison
-          AppStorage.getClients().then((existingClients) => {
-            if (existingClients && updatedClients) {
-              // Comparaison des nouveaux clients avec ceux déjà existants
-              const newClients = updatedClients.filter((client) => {
-                return !existingClients.some((existingClient) => existingClient.id_client === client.id_client);
-              });
-
-              // Insérer uniquement les nouveaux clients dans IndexedDB
-              if (newClients.length > 0) {
-                AppStorage.storeDataInIndexedDB('clients', newClients);
-              }
-            }
-          });
-
-          // Récuperer les données dans IndexedDB et actualiser le table
-          AppStorage.getClients().then((result) => {
-            this.$emit("client-add", result);
-          });
-
-
-        } catch (error) {
-          console.error("Erreur lors de l'ajout du client sur le serveur", error);
-        }
+      if (isConnected) {
+        await this.storeClientOnline();
       } else {
+        await this.storeClientOffline();
+      }
+    },
 
-        const { v4: uuidv4 } = require('uuid');
-        const uuid = uuidv4();
+    async checkInternetConnection() {
+      const response = await fetch("/api/check-internet-connection");
+      const data = await response.json();
+      this.isConnected = data.connected;
+      return this.isConnected;
+    },
 
-        const userId = parseInt(AppStorage.getId(), 10);
-        const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+    async storeClientOnline() {
+      const userId = AppStorage.getId();
+      const entrepriseId = AppStorage.getEntreprise();
+      const uuid = require('uuid').v4();
 
-        // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
-        const newClientData = [{
+      const numeroClient = this.generateNumeroClient();
+
+      try {
+        const response = await axios.post("/api/auth/postClient", {
           civilite: this.civilite,
           nom_client: this.nom_client,
           postal_client: this.postal_client,
@@ -196,25 +148,89 @@ export default {
           profession_client: this.profession_client,
           fax_client: this.fax_client,
           email_client: this.email_client,
-          sync: 0,
-          uuidClient: uuid,
+          id: userId,
           id_entreprise: entrepriseId,
-          user_id: userId,
-        }];
-
-        // Ajouter la nouvelle donnée dans IndexedDB
-        await AppStorage.storeDataInIndexedDB("clients", newClientData);
-
-        // Récuperer les données dans IndexedDB et actualiser le table
-        AppStorage.getClients().then((result) => {
-          this.$emit("client-add", result);
+          uuidClient: uuid,
+          numero_client: numeroClient,
         });
 
-        toaster.info(`Client ajouté localement (hors ligne)`, {
-          position: "top-right",
-        });
+        if (response.status === 200) {
+          toaster.success(`Client ajouté avec succès`, { position: "top-right" });
+        }
+
+        const updatedClients = await this.fetchClients();
+        await this.updateIndexedDBWithNewClients(updatedClients);
+
+        this.emitClientAddEvent();
+
+      } catch (error) {
+        console.error("Erreur lors de l'ajout du client sur le serveur", error);
       }
     },
+
+    async storeClientOffline() {
+      const uuid = require('uuid').v4();
+      const userId = parseInt(AppStorage.getId(), 10);
+      const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+
+      const numeroClient = this.generateNumeroClient();
+
+      const newClientData = [{
+        civilite: this.civilite,
+        nom_client: this.nom_client,
+        postal_client: this.postal_client,
+        adresse_client: this.adresse_client,
+        tel_client: this.tel_client,
+        profession_client: this.profession_client,
+        fax_client: this.fax_client,
+        email_client: this.email_client,
+        sync: 0,
+        uuidClient: uuid,
+        id_entreprise: entrepriseId,
+        user_id: userId,
+        numero_client: numeroClient,
+      }];
+
+      await AppStorage.storeDataInIndexedDB("clients", newClientData);
+      const result = await AppStorage.getClients();
+      this.emitClientAddEvent();
+
+      toaster.info(`Client ajouté localement (hors ligne)`, { position: "top-right" });
+    },
+
+    generateNumeroClient() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = (today.getMonth() + 1).toString().padStart(2, '0');
+      const day = today.getDate().toString().padStart(2, '0');
+      const dateDuJour = year + month + day;
+
+      const nom = this.nom_client;
+      const deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase();
+
+      return `CL-${deuxPremiersCaracteres}-${dateDuJour}`;
+    },
+
+    async updateIndexedDBWithNewClients(updatedClients) {
+      const existingClients = await AppStorage.getClients();
+      if (existingClients && updatedClients) {
+        const newClients = updatedClients.filter((client) => {
+          return !existingClients.some((existingClient) => existingClient.id_client === client.id_client);
+        });
+
+        if (newClients.length > 0) {
+          AppStorage.storeDataInIndexedDB('clients', newClients);
+        }
+      }
+    },
+
+    emitClientAddEvent() {
+      AppStorage.getClients().then((result) => {
+        this.$emit("client-add", result);
+      });
+    },
+
+
 
     // fetchClients
     async fetchClients() {
