@@ -793,8 +793,8 @@ import addcouleur from "../../pages/form/addcouleur.vue";
 import addmarque from "../../pages/form/addmarque.vue";
 import addclient from "../../pages/clients/addclient.vue";
 import AppStorage from '../../utils/helpers/AppStorage';
+import { apiUrl } from "../../utils/constants/apiUrl"
 import {
-  // getBrancheList,
   getAdresseList,
   getCategoriesList,
   getMarquesList,
@@ -802,7 +802,6 @@ import {
   getCouleursList,
   getEnergiesList
 } from "../../services/formservice";
-// import { getClientSelect } from "../../services/clientservice";
 
 import { createToaster } from "@meforma/vue-toaster";
 const toaster = createToaster({
@@ -1023,10 +1022,10 @@ export default {
     async storeContratOnline() {
       try {
         const uuid = require('uuid').v4();
-        const userId = AppStorage.getId();
-        const entrepriseId = AppStorage.getEntreprise();
+        const userId = parseInt(AppStorage.getId(), 10);
+        const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
 
-        const response = await axios.post("/api/auth/postContrat", {
+        const response = await axios.post(apiUrl.postcontrat, {
           id: userId,
           uuidContrat: uuid,
           id_entreprise: entrepriseId,
@@ -1087,11 +1086,35 @@ export default {
             this.taxes_totales,
         });
 
+        const updatedContrats = await this.fetchContrats();
+
         if (response.status === 200) {
           toaster.success(`Contrat ajouté avec succès`, { position: "top-right" });
           this.contrats = response.data;
           this.$router.push("/listcontrat");
         }
+
+        // Mettre à jour IndexedDB avec les contrats récupérés après comparaison
+        AppStorage.getContrats().then((existingContrats) => {
+          if (existingContrats && updatedContrats) {
+            // Comparaison des nouvelles contrats avec ceux déjà existants
+            const newContrats = updatedContrats.filter((compagnie) => {
+              return !existingContrats.some((existingContrat) => existingContrat.id_contrat === compagnie.id_contrat);
+            });
+
+            // Insérer uniquement les nouvelles contrats dans IndexedDB
+            if (newContrats.length > 0) {
+              AppStorage.storeDataInIndexedDB('contrats', newContrats);
+            }
+          }
+        });
+
+        // Mettre à jour IndexedDB avec l'avenant récupéré
+
+        const newAvenant = response.data;
+
+        AppStorage.storeDataInIndexedDB('avenants', newAvenant);
+
       } catch (error) {
         this.handleStoreContratError(error);
       }
@@ -1106,6 +1129,7 @@ export default {
         const clientName = await AppStorage.getClientNameByUUID(this.client_id);
         const clientCode = await AppStorage.getClientCodeByUUID(this.client_id);
         const compagnieName = await AppStorage.getCompagnieNameByUUID(this.compagnie_id);
+        const apporteurName = await AppStorage.getApporteurNameByUUID(this.apporteur_id);
 
         const newContratData = [{
           id: userId,
@@ -1117,6 +1141,7 @@ export default {
           nom_client: clientName,
           numero_client: clientCode,
           nom_compagnie: compagnieName,
+          nom_apporteur: apporteurName,
           uuidCompagnie: this.compagnie_id,
           uuidApporteur: this.apporteur_id,
           numero_police: this.numero_police,
@@ -1146,12 +1171,64 @@ export default {
             this.cfga +
             this.taxes_totales,
           sync: 0,
+          solde: 0,
+          reverse: 0
         }];
 
         // Enregistré les contrats dans IndexedDB
         await AppStorage.storeDataInIndexedDB("contrats", newContratData);
 
-        // Enregistré les automobiles dans IndexedDB
+        // Enregistré les avenants dans IndexedDB
+        let type = 'Terme'
+
+        const [annee, mois, day] = this.souscrit_le.split('-');
+
+
+        let totalPrimeTtc =
+          this.primes_nette +
+          this.frais_courtier +
+          this.accessoires +
+          this.cfga +
+          this.taxes_totales;
+
+        const calculateCommission = () => {
+          return this.primes_nette *
+            this.taux.taux *
+            0.01 *
+            this.tauxcomp.tauxcomp *
+            0.01;
+        };
+
+        const calculateCommissionCourtier = () => {
+          return this.primes_nette * this.tauxcomp.tauxcomp * 0.01;
+        };
+
+        const newAvenantsData = [{
+          uuidContrat: uuid,
+          annee: annee,
+          mois: mois,
+          type: type,
+          prime_ttc: totalPrimeTtc,
+          retrocession: this.retrocession,
+          commission: calculateCommission(),
+          commission_courtier: calculateCommissionCourtier(),
+          prise_charge: this.prise_charge,
+          ristourne: this.ristourne,
+          prime_nette: this.prime_nette,
+          date_emission: this.souscrit_le,
+          date_debut: this.effet_police,
+          date_fin: this.expire_le,
+          accessoires: this.accessoires,
+          frais_courtier: this.frais_courtier,
+          cfga: this.cfga,
+          taxes_totales: this.taxes_totales,
+          code_avenant: this.taxes_totales,
+          sync: 0
+        }];
+
+        // Enregistré les avenants dans IndexedDB
+        await AppStorage.storeDataInIndexedDB("avenants", newAvenantsData);
+
 
         // const newAutoData = [{
         //   uuidContrat: uuid,
@@ -1221,6 +1298,29 @@ export default {
         console.log("Request error:", error.request);
       } else {
         console.log("Error:", error.message);
+      }
+    },
+
+    // fetchContrats
+    async fetchContrats() {
+      const token = AppStorage.getToken();
+
+      // Configurez les en-têtes de la requête
+      const headers = {
+        Authorization: "Bearer " + token,
+        "x-access-token": token,
+      };
+
+      try {
+        const response = await axios.get(apiUrl.getcontrat, { headers });
+
+        // Vous pouvez traiter les données comme vous le souhaitez
+        const contrats = response.data;
+
+        // Retourner les contrats pour une utilisation éventuelle
+        return contrats;
+      } catch (error) {
+        console.error("Erreur lors de la récupération des clients sur le serveur", error);
       }
     },
 
@@ -1386,8 +1486,15 @@ export default {
       alert(this.event.target.value);
     },
 
-    refresh(clients) {
-      this.clients = clients.data;
+    // refresh(clients) {
+    //   this.clients = clients.data;
+    // },
+
+    refresh() {
+      // Récupérer les clients depuis IndexedDB après l'ajout d'un nouveau client
+      AppStorage.getClients().then((result) => {
+        this.clients = result;
+      });
     },
 
     handleClientsChange(localisations) {

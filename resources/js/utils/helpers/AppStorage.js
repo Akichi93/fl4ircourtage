@@ -1,8 +1,9 @@
 // AppStorage.js
 import { openDB } from 'idb';
-
 class AppStorage {
+    
     static dbName = 'fl4ir';
+    // static storeUser = (user) =>  `Bonjour ${user.name}`
 
     static async storeToken(token) {
         localStorage.setItem('token', token);
@@ -157,6 +158,7 @@ class AppStorage {
         await this.storeData('prospects', prospects);
     }
 
+
     static async getProspects() {
         return this.getData('prospects') || [];
     }
@@ -168,7 +170,6 @@ class AppStorage {
     }
 
     // Contrats
-
     static async storeContrats(contrats) {
         await this.storeData('contrats', contrats);
     }
@@ -210,21 +211,19 @@ class AppStorage {
 
 
     static async getAvenantsSommeByUuid(uuidContrat) {
-        const avenantsData = this.getData('avenants') || [];
+        const avenantsData = await this.getAvenants();
     
         // Filtrer les avenants en fonction de l'UUID du contrat
         const avenantsFiltres = avenantsData.filter(avenant => avenant.uuidContrat === uuidContrat);
     
-        // Calculer la somme des valeurs nécessaires
-        const sommePrimeNette = avenantsFiltres.reduce((acc, avenant) => acc + avenant.prime_nette, 0);
-        const sommeAccessoires = avenantsFiltres.reduce((acc, avenant) => acc + avenant.accessoires, 0);
-        const sommePrimeTTC = avenantsFiltres.reduce((acc, avenant) => acc + avenant.prime_ttc, 0);
-    
-        // Ajouter la somme des nouvelles valeurs
-        const sommeFraisCourtier = avenantsFiltres.reduce((acc, avenant) => acc + avenant.frais_courtier, 0);
-        const sommeTaxesTotales = avenantsFiltres.reduce((acc, avenant) => acc + avenant.taxes_totales, 0);
-        const sommeCommissionCourtier = avenantsFiltres.reduce((acc, avenant) => acc + avenant.commission_courtier, 0);
-        const sommeCommission = avenantsFiltres.reduce((acc, avenant) => acc + avenant.commission, 0);
+        // Convertir les valeurs en nombres avant de les additionner
+        const sommePrimeNette = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.prime_nette), 0);
+        const sommeAccessoires = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.accessoires), 0);
+        const sommePrimeTTC = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.prime_ttc), 0);
+        const sommeFraisCourtier = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.frais_courtier), 0);
+        const sommeTaxesTotales = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.taxes_totales), 0);
+        const sommeCommissionCourtier = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.commission_courtier), 0);
+        const sommeCommission = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.commission), 0);
     
         // Retourner un objet contenant toutes les sommes calculées
         return {
@@ -237,6 +236,18 @@ class AppStorage {
             sommeCommission
         };
     }
+
+
+    static async getAvenantsByUuidContrat(uuidContrat) {
+        const allAvenants = await this.getAvenants();
+        
+        // Filtrer les avenants en fonction de l'uuidContrat
+        const avenantsByUuidContrat = allAvenants.filter(avenant => avenant.uuidContrat === uuidContrat);
+    
+        return avenantsByUuidContrat;
+    }
+    
+    
     
 
 
@@ -314,9 +325,6 @@ class AppStorage {
         return allTauxCompagnies.find(tauxcompagnie => tauxcompagnie.id_tauxcomp === tauxcompagnieId);
     }
 
-
-
-
     // Apporteurs
     static async storeApporteurs(apporteurs) {
         await this.storeData('apporteurs', apporteurs);
@@ -361,6 +369,14 @@ class AppStorage {
         const tauxTrouve = tauxapporteurs.find(taux => taux.uuidBranche === uuidBranche && taux.uuidApporteur === uuidApporteur);
 
         return tauxTrouve || null; // Retourne le taux trouvé ou null si aucun taux correspondant n'est trouvé
+    }
+
+    static async getApporteurNameByUUID(uuidApporteur) {
+        const allApporteurs = await this.getData('apporteurs') || [];
+
+        const apporteur = allApporteurs.find(apporteur => apporteur.uuidApporteur === uuidApporteur);
+
+        return apporteur ? apporteur.nom_apporteur : null;
     }
 
     // Branches

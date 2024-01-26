@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AutomobileRequest;
 use Carbon\Carbon;
+use App\Models\Client;
 use App\Models\Avenant;
 use App\Models\Branche;
 use App\Models\Contrat;
@@ -16,10 +16,14 @@ use Illuminate\Http\Request;
 use App\Models\TauxApporteur;
 use App\Models\TauxCompagnie;
 use Illuminate\Support\Facades\DB;
-use App\Repositories\ContratRepository;
-use App\Http\Requests\StoreContratRequest;
-use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Repositories\ContratRepository;
+use App\Http\Requests\AutomobileRequest;
+use App\Http\Requests\ContratRequest;
+use App\Http\Requests\StoreContratRequest;
+use App\Models\Apporteur;
+use App\Models\Compagnie;
+use Symfony\Component\HttpFoundation\Response;
 
 class ContratController extends Controller
 {
@@ -70,11 +74,25 @@ class ContratController extends Controller
     {
         $validated = $request->validated();
         // try {
+
+        // recuperer l'id_branche
+        $idBranche = Branche::where('uuidBranche', $request->id_branche)->value('id_branche');
+
+        // recuperer l'id_client
+        $idClient = Client::where('uuidClient', $request->id_client)->value('id_client');
+
+        // recuperer l'id_compagnie
+        $idCompagnie = Compagnie::where('uuidCompagnie', $request->id_compagnie)->value('id_compagnie');
+
+        // recuperer l'id_apporteur
+        $idApporteur = Apporteur::where('uuidApporteur', $request->id_apporteur)->value('id_apporteur');
+
         $contrats = new Contrat();
-        $contrats->id_branche = $request->id_branche;
-        $contrats->id_client = $request->id_client;
-        $contrats->id_compagnie = $request->id_compagnie;
-        $contrats->id_apporteur = $request->id_apporteur;
+        $contrats->id_branche = $idBranche;
+        $contrats->id_client = $idClient;
+        $contrats->id_compagnie = $idCompagnie;
+        $contrats->id_apporteur = $idApporteur;
+        $contrats->uuidContrat = $request->uuidContrat;
         $contrats->numero_police = $request->numero_police;
         $contrats->souscrit_le = $request->souscrit_le;
         $contrats->effet_police = $request->effet_police;
@@ -132,6 +150,7 @@ class ContratController extends Controller
         $avenants->id_entreprise = $request->id_entreprise;
         $avenants->user_id = $request->id;
         $avenants->code_avenant = $numeroFacture;
+        $avenants->uuidContrat = $request->uuidContrat;
         $avenants->save();
 
         // Obtenir le nom de la branche
@@ -199,7 +218,8 @@ class ContratController extends Controller
         }
 
 
-        return ['message' => 'Insertion avec succes'];
+        return response()->json($avenants);
+
         // } catch (\Exception $exception) {
         //     die("Impossible de se connecter à la base de données.  Veuillez vérifier votre configuration. erreur:" . $exception);
         //     return response()->json(['message' => 'Contrat non enregistré'], 422);
@@ -941,9 +961,10 @@ class ContratController extends Controller
         }
     }
 
-    public function getAvenants(){
+    public function getAvenants()
+    {
         $user =  JWTAuth::parseToken()->authenticate();
-        $avenants = Avenant::where('id_entreprise',$user->id_entreprise)->get();
+        $avenants = Avenant::where('id_entreprise', $user->id_entreprise)->get();
 
         return response()->json($avenants);
     }

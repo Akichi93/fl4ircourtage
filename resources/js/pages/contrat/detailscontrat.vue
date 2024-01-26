@@ -111,23 +111,23 @@
                     <ul class="personal-info">
                       <li>
                         <div class="title">Prime nette</div>
-                        <div class="text" v-text="contrats.primes"></div>
+                        <div class="text" v-text="sommes.sommePrimeNette"></div>
                       </li>
                       <li>
                         <div class="title">Accessoires</div>
-                        <div class="text">{{ contrats.accessoire }}</div>
+                        <div class="text">{{ sommes.sommeAccessoires }}</div>
                       </li>
                       <li>
                         <div class="title">Frais courtier</div>
-                        <div class="text" v-text="contrats.frais"></div>
+                        <div class="text" v-text="sommes.sommeFraisCourtier"></div>
                       </li>
                       <li>
                         <div class="title">Taxes totales</div>
-                        <div class="text" v-text="contrats.taxes"></div>
+                        <div class="text" v-text="sommes.sommeTaxesTotales"></div>
                       </li>
                       <li>
                         <div class="title">Prime TTC</div>
-                        <div class="text" v-text="contrats.prime"></div>
+                        <div class="text" v-text="sommes.sommePrimeTTC"></div>
                       </li>
                     </ul>
                   </div>
@@ -140,7 +140,7 @@
                     <ul class="personal-info">
                       <li>
                         <div class="title">Commission courtier:</div>
-                        <div class="text" v-text="contrats.commission"></div>
+                        <div class="text" v-text="sommes.sommeCommissionCourtier"></div>
                       </li>
                       <li>
                         <div class="title">Gestion</div>
@@ -149,7 +149,7 @@
                       </li>
                       <li>
                         <div class="title">Commission apporteur:</div>
-                        <div class="text" v-text="contrats.commission_apporteur"></div>
+                        <div class="text" v-text="sommes.sommeCommission"></div>
                       </li>
                       <li>
                         <div class="title">Apporteur</div>
@@ -219,7 +219,7 @@
               <div class="card-body">
                 <h3 class="card-title">Listes des véhicules</h3>
                 <div class="table-responsive">
-                  <table class="table">
+                  <table class="table"> 
                     <thead>
                       <tr>
                         <th>Immatriculation</th>
@@ -402,11 +402,13 @@ export default {
       value: null,
       typegarantie: [],
       localisations: {},
+      sommes: null,
     };
   },
   created() {
-    // this.fetchData();
+    this.calculateSomme();
     this.fetchDataContrat()
+    this.fetchDataAvenant()
   },
 
   methods: {
@@ -415,14 +417,32 @@ export default {
       const uuidContrat = this.$route.params.uuidContrat;
 
       try {
-        const infos  = await AppStorage.getInfoContratByUuid(uuidContrat);
+        const infos = await AppStorage.getInfoContratByUuid(uuidContrat);
 
-        this.infos  = infos;
-        console.log(infos)
+        this.infos = infos;
       } catch (error) {
         console.error("Erreur lors de la récupération des données :", error);
       }
     },
+
+    async calculateSomme() {
+      const uuidContrat = this.$route.params.uuidContrat;
+
+      // Await the resolution of the Promise
+      const sommes = await AppStorage.getAvenantsSommeByUuid(uuidContrat);
+
+      // Assign the result to the component data if needed
+      this.sommes = sommes;
+    },
+
+    async fetchDataAvenant() { 
+      const uuidContrat = this.$route.params.uuidContrat;
+
+      const avenants = await AppStorage.getAvenantsByUuidContrat(uuidContrat);
+
+      this.avenants = avenants;
+    },
+
 
 
     fetchData() {

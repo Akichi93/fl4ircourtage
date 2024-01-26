@@ -219,21 +219,21 @@ export default {
         }
 
         // Obtenir la date du jour au format YYYYMMDD
-        var today = new Date();
-        var year = today.getFullYear();
-        var month = (today.getMonth() + 1).toString().padStart(2, '0');
-        var day = today.getDate().toString().padStart(2, '0');
+        let today = new Date();
+        let year = today.getFullYear();
+        let month = (today.getMonth() + 1).toString().padStart(2, '0');
+        let day = today.getDate().toString().padStart(2, '0');
 
-        var dateDuJour = year + month + day;
+        let dateDuJour = year + month + day;
 
         // Supposons que $nom est votre variable contenant le nom du client
-        var nom = this.nom_apporteur;
+        let nom = this.nom_apporteur;
 
         // Prendre les deux premiers caractères du nom
-        var deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase(); // Mettre en majuscules
+        let deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase(); // Mettre en majuscules
 
         // Générer le numéro de client en ajoutant "CL-" à la date du jour
-        var codeApporteur = "AP-" + deuxPremiersCaracteres + dateDuJour;
+        let codeApporteur = "AP-" + deuxPremiersCaracteres + dateDuJour;
 
         try {
           const response = await axios.post("/api/auth/postApporteur", {
@@ -313,21 +313,21 @@ export default {
         }
 
         // Obtenir la date du jour au format YYYYMMDD
-        var today = new Date();
-        var year = today.getFullYear();
-        var month = (today.getMonth() + 1).toString().padStart(2, '0');
-        var day = today.getDate().toString().padStart(2, '0');
+        let today = new Date();
+        let year = today.getFullYear();
+        let month = (today.getMonth() + 1).toString().padStart(2, '0');
+        let day = today.getDate().toString().padStart(2, '0');
 
-        var dateDuJour = year + month + day;
+        let dateDuJour = year + month + day;
 
         // Supposons que $nom est votre variable contenant le nom du client
-        var nom = this.nom_apporteur;
+        let nom = this.nom_apporteur;
 
         // Prendre les deux premiers caractères du nom
-        var deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase(); // Mettre en majuscules
+        let deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase(); // Mettre en majuscules
 
         // Générer le numéro de client en ajoutant "CL-" à la date du jour
-        var codeApporteur = "AP-" + deuxPremiersCaracteres + dateDuJour;
+        let codeApporteur = "AP-" + deuxPremiersCaracteres + dateDuJour;
 
         // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
         const newApporteurData = [{
@@ -350,7 +350,9 @@ export default {
 
         const branchesMap = await AppStorage.getBranches();
         for (let i = 0; i < datas.length; i++) {
+          // console.log(`Processing data for index ${i}`);
           const nom_branche = branchesMap[datas[i]];
+          // console.log(`Nom branche: ${nom_branche}`);
 
           let newTauxApporteur = {
             uuidApporteur: uuid,
@@ -360,6 +362,7 @@ export default {
             uuidBranche: datas[i],
           };
 
+          console.log("Adding data to tauxapporteurs:", newTauxApporteur);
           await AppStorage.storeDataInIndexedDB("tauxapporteurs", newTauxApporteur);
         }
 

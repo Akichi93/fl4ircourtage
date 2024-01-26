@@ -15,7 +15,8 @@ class CreateAvenantsTable extends Migration
     {
         Schema::create('avenants', function (Blueprint $table) {
             $table->bigIncrements('id_avenant');
-            $table->uuid('uuid');
+            $table->uuid('uuidAvenant')->nullable();
+            $table->uuid('uuidContrat');
 
             $table->foreignId('id_contrat');
             $table->foreign('id_contrat')

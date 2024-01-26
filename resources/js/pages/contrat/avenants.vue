@@ -127,7 +127,7 @@
             <!-- <editavenant v-bind:avenantoedit="avenantoedit"></editavenant> -->
             <soldercontrat v-bind:avenantoedit="avenantoedit" @avenant-solder="refresh"></soldercontrat>
             <reversercontrat v-bind:avenantoedit="avenantoedit" @avenant-reverser="refresh"></reversercontrat>
-            <deleteavenant v-bind:avenantoedit="avenantoedit"  @avenant-delete="refresh"></deleteavenant>
+            <deleteavenant v-bind:avenantoedit="avenantoedit" @avenant-delete="refresh"></deleteavenant>
             <viewfacture v-bind:facturetoedit="facturetoedit"></viewfacture>
             <addfile v-bind:avenantoedit="avenantoedit"></addfile>
             <viewfile v-bind:filetoedit="filetoedit"></viewfile>
@@ -148,7 +148,7 @@ import deleteavenant from '../contrat/deleteavenant.vue';
 import viewfacture from '../contrat/viewfacture.vue';
 import addfile from '../contrat/addfile.vue';
 import viewfile from '../contrat/viewfile.vue';
-
+import AppStorage from "../../utils/helpers/AppStorage";
 export default {
   components: {
     Header,
@@ -157,7 +157,7 @@ export default {
     soldercontrat,
     reversercontrat,
     deleteavenant,
-    viewfacture,
+    viewfacture, 
     addfile,
     viewfile
   },
@@ -174,10 +174,19 @@ export default {
     };
   },
   created() {
-    this.fetchTask();
+    this.fetchDataAvenant();
   },
 
   methods: {
+
+    async fetchDataAvenant() {
+      const uuidContrat = this.$route.params.uuidContrat;
+
+      const avenants = await AppStorage.getAvenantsByUuidContrat(uuidContrat);
+
+      this.avenants = avenants;
+    },
+
     editAvenant(id_avenant) {
       axios
         .get("/api/auth/editAvenant/" + id_avenant)
@@ -208,21 +217,21 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    fetchTask() {
-      var that = this;
-      axios
-        .all([
-          axios.get(`/api/auth/getAvenantContrat/${this.$route.params.id_contrat}`),
-          axios.get("/api/auth/getInfoAvenant/?contrat=" + this.$route.params.id_contrat),
-        ])
-        .then(
-          axios.spread(function (avenants, contrats) {
-            that.avenants = avenants.data;
-            that.contrats = contrats.data;
+    // fetchTask() {
+    //   var that = this;
+    //   axios
+    //     .all([
+    //       axios.get(`/api/auth/getAvenantContrat/${this.$route.params.id_contrat}`),
+    //       axios.get("/api/auth/getInfoAvenant/?contrat=" + this.$route.params.id_contrat),
+    //     ])
+    //     .then(
+    //       axios.spread(function (avenants, contrats) {
+    //         that.avenants = avenants.data;
+    //         that.contrats = contrats.data;
 
-          })
-        );
-    },
+    //       })
+    //     );
+    // },
 
     refresh(avenants) {
       this.avenants = avenants.data;

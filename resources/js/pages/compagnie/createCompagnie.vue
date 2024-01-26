@@ -363,14 +363,13 @@ export default {
 
         const branchesMap = await AppStorage.getBranches();
         for (let i = 0; i < datas.length; i++) {
-          // Use the branchesMap to get nom_branche corresponding to id_branche
           const nom_branche = branchesMap[datas[i]];
 
           let newTauxCompagnie = {
             uuidCompagnie: uuid,
             sync: 0,
             tauxcomp: donnees[i],
-            nom_branche: nom_branche, // Use the retrieved nom_branche value
+            nom_branche: nom_branche,
             uuidBranche: datas[i],
 
           };
