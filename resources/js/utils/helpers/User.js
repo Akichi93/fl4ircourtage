@@ -9,16 +9,23 @@ class User {
         await AppStorage.store(access_token, name, user_id, id_entreprise, role);
 
         const apiCalls = [
-            { endpoint: 'getClients', storageKey: 'clients' },
-            { endpoint: 'getProspects', storageKey: 'prospects' },
-            { endpoint: 'getContrats', storageKey: 'contrats' },
-            { endpoint: 'getCompagnies', storageKey: 'compagnies' },
-            { endpoint: 'getApporteurs', storageKey: 'apporteurs' },
-            { endpoint: 'getBranches', storageKey: 'branches' },
-            { endpoint: 'getAvenants', storageKey: 'avenants' },
+            { endpoint: 'getclients', storageKey: 'clients' },
+            { endpoint: 'getprospects', storageKey: 'prospects' },
+            { endpoint: 'getcontrats', storageKey: 'contrats' },
+            { endpoint: 'getcompagnies', storageKey: 'compagnies' },
+            { endpoint: 'getapporteurs', storageKey: 'apporteurs' },
+            { endpoint: 'getbranches', storageKey: 'branches' },
+            { endpoint: 'getavenants', storageKey: 'avenants' },
 
-            { endpoint: 'getTauxCompagnies', storageKey: 'tauxcompagnies' },
-            { endpoint: 'getTauxApporteurs', storageKey: 'tauxapporteurs' },
+            { endpoint: 'getlocalisations', storageKey: 'localisations' },
+            { endpoint: 'getprofessions', storageKey: 'professions' },
+            { endpoint: 'getmarques', storageKey: 'marques' },
+            { endpoint: 'getenergies', storageKey: 'energies' },
+            { endpoint: 'getcouleurs', storageKey: 'couleurs' },
+            { endpoint: 'getgenres', storageKey: 'genres' },
+
+            { endpoint: 'gettauxcompagnies', storageKey: 'tauxcompagnies' },
+            { endpoint: 'gettauxapporteurs', storageKey: 'tauxapporteurs' },
         ];
 
         const accessToken = AppStorage.getToken();

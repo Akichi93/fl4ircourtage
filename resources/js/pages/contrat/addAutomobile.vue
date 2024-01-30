@@ -372,7 +372,7 @@ import {
   getGenresList,
   getCouleursList,
   getEnergiesList
-} from "../../services/formservice";
+} from "../../services/formService";
 
 import { createToaster } from "@meforma/vue-toaster";
 const toaster = createToaster({

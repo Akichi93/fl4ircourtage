@@ -142,8 +142,8 @@ import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import inputText from "../../components/input/inputText.vue";
 import addadresse from "../../pages/form/addadresse.vue";
-import { getBrancheList, getAdresseList } from "../../services/formservice";
 import AppStorage from '../../utils/helpers/AppStorage';
+import { apiUrl } from "../../utils/constants/apiUrl";
 import { createToaster } from "@meforma/vue-toaster";
 // import $ from "jquery";
 const toaster = createToaster({
@@ -187,8 +187,8 @@ export default {
       });
     },
 
-    getAdresse() {
-      getAdresseList().then((result) => {
+    async getAdresse() {
+      AppStorage.getLocalisations().then((result) => {
         this.localisations = result;
       });
     },
@@ -243,7 +243,7 @@ export default {
         var codeCompagnie = "CO-" + deuxPremiersCaracteres + dateDuJour;
 
         try {
-          const response = await axios.post("/api/auth/postCompagnie", {
+          const response = await axios.post(apiUrl.postcompagnie, {
             nom_compagnie: this.nom_compagnie,
             contact_compagnie: this.contact_compagnie,
             email_compagnie: this.email_compagnie,
@@ -286,7 +286,7 @@ export default {
 
           const newCompanyId = response.data.id_compagnie;
 
-          const ratesEndpoint = `/api/auth/getTauxCompagnie/${newCompanyId}`;
+          const ratesEndpoint = `/api/auth/gettauxcompagnie/${newCompanyId}`;
 
           const ratesResponse = await axios.get(ratesEndpoint);
 
@@ -325,21 +325,21 @@ export default {
         }
 
         // Obtenir la date du jour au format YYYYMMDD
-        var today = new Date();
-        var year = today.getFullYear();
-        var month = (today.getMonth() + 1).toString().padStart(2, '0');
-        var day = today.getDate().toString().padStart(2, '0');
+        let today = new Date();
+        let year = today.getFullYear();
+        let month = (today.getMonth() + 1).toString().padStart(2, '0');
+        let day = today.getDate().toString().padStart(2, '0');
 
-        var dateDuJour = year + month + day;
+        let dateDuJour = year + month + day;
 
         // Supposons que $nom est votre variable contenant le nom du client
-        var nom = this.nom_compagnie;
+        let nom = this.nom_compagnie;
 
         // Prendre les deux premiers caractères du nom
-        var deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase(); // Mettre en majuscules
+        let deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase(); // Mettre en majuscules
 
         // Générer le numéro de client en ajoutant "CL-" à la date du jour
-        var codeCompagnie = "CO-" + deuxPremiersCaracteres + dateDuJour;
+        let codeCompagnie = "CO-" + deuxPremiersCaracteres + dateDuJour;
 
 
         // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
@@ -362,17 +362,17 @@ export default {
         await AppStorage.storeDataInIndexedDB("compagnies", newCompagnieData);
 
         const branchesMap = await AppStorage.getBranches();
+
         for (let i = 0; i < datas.length; i++) {
           const nom_branche = branchesMap[datas[i]];
 
-          let newTauxCompagnie = {
+          let newTauxCompagnie = [{
             uuidCompagnie: uuid,
             sync: 0,
             tauxcomp: donnees[i],
             nom_branche: nom_branche,
             uuidBranche: datas[i],
-
-          };
+          }];
 
           await AppStorage.storeDataInIndexedDB("tauxcompagnies", newTauxCompagnie);
         }
@@ -397,7 +397,7 @@ export default {
       };
 
       try {
-        const response = await axios.get("/api/auth/getCompagnies", { headers });
+        const response = await axios.get(apiUrl.getcompagnie, { headers });
 
         // Vous pouvez traiter les données comme vous le souhaitez
         const compagnies = response.data;

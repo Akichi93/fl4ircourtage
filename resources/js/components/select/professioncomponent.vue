@@ -1,11 +1,12 @@
 <template>
-    <Multiselect :value="civilite"  :options="professions" :custom-label="({ id_profession, profession }) => `${id_profession} - [${profession}]`
-        " valueProp="profession" :placeholder="placeholder" label="profession" track-by="profession" :searchable="true">
+    <Multiselect :value="civilite" :options="professions" :custom-label="({ id_profession, profession }) => `${id_profession} - [${profession}]`
+        " valueProp="profession" :placeholder="placeholder" label="profession" track-by="profession"
+        :searchable="true">
     </Multiselect>
 </template>
 <script>
 import Multiselect from "@vueform/multiselect";
-import { getProfessionList } from "../../services/formservice";
+import AppStorage from "../../utils/helpers/AppStorage";
 
 export default {
     name: "professioncomponent",
@@ -20,8 +21,8 @@ export default {
     },
 
     methods: {
-        getProfession: function () {
-            getProfessionList().then((result) => {
+        async getProfession() {
+            AppStorage.getProfessions().then((result) => {
                 this.professions = result;
             });
         },

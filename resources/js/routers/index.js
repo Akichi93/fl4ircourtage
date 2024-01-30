@@ -55,6 +55,7 @@ import notfound from "../pages/notfound";
 import tarification from "../pages/module/tarification";
 import listauto from "../pages/automobile/listauto";
 import createauto from "../pages/automobile/createauto";
+import detailsapporteur from "../pages/apporteur/detailsApporteur"
 
 // Fonction de vérification
 function isPageValid(route) {
@@ -134,6 +135,13 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/detailsapporteur/:uuidApporteur',
+    name: 'detailsapporteur',
+    component: detailsapporteur,
+    props: true,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/listcompagnie',
     name: 'listcompagnie',
     component: listcompagnie,
@@ -165,7 +173,7 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/detailsprospect/:id_prospect',
+    path: '/detailsprospect/:uuidProspect',
     name: 'detailsprospect',
     component: detailsprospect,
     props: true,

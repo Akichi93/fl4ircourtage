@@ -6,7 +6,7 @@
 </template>
 <script>
 import Multiselect from "@vueform/multiselect";
-import { getRoleList } from "../../services/formservice";
+import { getRoleList } from "../../services/formService";
 
 export default {
   name: "rolecomponent",

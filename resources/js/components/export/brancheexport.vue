@@ -3,7 +3,7 @@
   <button @click="exportToCSV">Exporter en CSV</button>
 </template>
 <script>
-import { getbrancheExport } from "../../services/brancheservice";
+import { getbrancheExport } from "../../services/brancheService";
 export default {
   created() {
     this.getBranche();

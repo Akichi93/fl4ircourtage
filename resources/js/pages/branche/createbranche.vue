@@ -55,10 +55,11 @@
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import { postBranche } from "../../services/brancheservice";
+import { postBranche } from "../../services/brancheService";
 import { useBranchesStore } from "../../store/branche";
 import { createToaster } from "@meforma/vue-toaster";
 import AppStorage from "../../utils/helpers/AppStorage";
+import { apiUrl } from "../../utils/constants/apiUrl";
 
 const toaster = createToaster({
   /* options */
@@ -167,7 +168,7 @@ export default {
       };
 
       try {
-        const response = await axios.get("/api/auth/getBranche", { headers });
+        const response = await axios.get(apiUrl.getbranche, { headers });
 
         // Vous pouvez traiter les données comme vous le souhaitez
         const branches = response.data;

@@ -91,7 +91,7 @@ import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import addclient from "./addclient.vue";
 // import { getClientsList } from "../../services/clientservice";
-import { getClientSelect } from "../../services/clientservice";
+import { getClientSelect } from "../../services/clientService";
 import editclient from "./editclient.vue";
 import searchbranche from "../../components/search/searchbranche.vue";
 import pagination from "laravel-vue-pagination";

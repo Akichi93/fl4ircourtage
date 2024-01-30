@@ -16,7 +16,7 @@
 <script>
 // import Vue from 'vue';  // Importez Vue
 import Multiselect from "@vueform/multiselect";
-import { getClientList } from "../../services/formservice";
+import { getClientList } from "../../services/formService";
 
 export default {
   name: "clientcomponent",

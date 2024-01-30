@@ -47,7 +47,6 @@
                     <h4 class="card-title mb-0">Général</h4>
                   </div>
                   <div class="card-body">
-                    <form action="#">
                       <div class="row">
                         <div class="col-md-6">
                           <div class="form-group">
@@ -110,7 +109,7 @@
                           </div>
                         </div>
                       </div>
-                    </form>
+                  
                   </div>
                 </div>
               </div>
@@ -150,10 +149,10 @@ import Multiselect from "@vueform/multiselect";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import inputText from "../../components/input/inputText.vue";
-import { getBrancheList, getAdresseList } from "../../services/formservice";
 import addadresse from "../../pages/form/addadresse.vue";
 import { createToaster } from "@meforma/vue-toaster";
 import AppStorage from '../../utils/helpers/AppStorage';
+import { apiUrl } from "../../utils/constants/apiUrl";
 const toaster = createToaster({
   /* options */
 });
@@ -236,7 +235,7 @@ export default {
         let codeApporteur = "AP-" + deuxPremiersCaracteres + dateDuJour;
 
         try {
-          const response = await axios.post("/api/auth/postApporteur", {
+          const response = await axios.post(apiUrl.postapporteur, {
             code_apporteur: codeApporteur,
             nom_apporteur: this.nom_apporteur,
             contact_apporteur: this.contact_apporteur,
@@ -350,19 +349,17 @@ export default {
 
         const branchesMap = await AppStorage.getBranches();
         for (let i = 0; i < datas.length; i++) {
-          // console.log(`Processing data for index ${i}`);
-          const nom_branche = branchesMap[datas[i]];
-          // console.log(`Nom branche: ${nom_branche}`);
 
-          let newTauxApporteur = {
+          const nom_branche = branchesMap[datas[i]];
+
+          let newTauxApporteur = [{
             uuidApporteur: uuid,
             sync: 0,
             taux: donnees[i],
             nom_branche: nom_branche,
             uuidBranche: datas[i],
-          };
+          }];
 
-          console.log("Adding data to tauxapporteurs:", newTauxApporteur);
           await AppStorage.storeDataInIndexedDB("tauxapporteurs", newTauxApporteur);
         }
 
@@ -387,7 +384,7 @@ export default {
       };
 
       try {
-        const response = await axios.get("/api/auth/getApporteurs", { headers });
+        const response = await axios.get(apiUrl.getapporteur, { headers });
 
         // Vous pouvez traiter les données comme vous le souhaitez
         const apporteurs = response.data;
@@ -398,16 +395,16 @@ export default {
         console.error("Erreur lors de la récupération des clients sur le serveur", error);
       }
     },
-    getAdresse() {
-      getAdresseList().then((result) => {
+
+    async getAdresse() {
+      AppStorage.getLocalisations().then((result) => {
         this.localisations = result;
       });
     },
 
     getBranche: function () {
-      getBrancheList().then((result) => {
+      AppStorage.getBranches().then((result) => {
         this.branches = result;
-
       });
     },
   },

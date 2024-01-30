@@ -7,7 +7,7 @@
 </template>
 <script>
 import Multiselect from "@vueform/multiselect";
-import { getGenresList } from "../../services/formservice";
+import { getGenresList } from "../../services/formService";
 
 export default {
     name: "genrecomponent",

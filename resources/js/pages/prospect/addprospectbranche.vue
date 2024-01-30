@@ -43,6 +43,7 @@
 </template>
 <script>
 import Multiselect from "@vueform/multiselect";
+import { apiUrl } from "../../utils/constants/apiUrl";
 import { createToaster } from "@meforma/vue-toaster";
 // import $ from "jquery";
 const toaster = createToaster({
@@ -79,7 +80,7 @@ export default {
 
     addBranche() {
       axios
-        .post("/api/auth/postBrancheProspect", {
+        .post(apiUrl.postbrancheprospect, {
           id: this.$route.params.id_prospect,
           id_branche: this.branche_id,
           description: this.description,

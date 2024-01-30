@@ -76,22 +76,22 @@
                           data-bs-toggle="modal" data-bs-target="#delete_project" title="Admettre comme un client"><i
                             class="fas fa-check"></i>
                         </a>
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#edit_department"
+                        <!-- <a href="#" data-bs-toggle="modal" data-bs-target="#edit_department"
                           @click="editProspect(prospect.id_prospect)" title="Modifier"><i class="fas fa-pen"></i>
                         </a>
                         <a href="#" data-bs-toggle="modal" data-bs-target="#change_statut"
                           @click="editProspect(prospect.id_prospect)" title="Changer d'etat"><i class="fas fa-edit"></i>
-                        </a>
+                        </a> -->
 
                         <router-link :to="{
                           name: 'detailsprospect',
-                          params: { id_prospect: prospect.id_prospect },
+                          params: { uuidProspect: prospect.uuidProspect },
 
                         }"><i class="fas fa-eye"></i></router-link>
 
-                        <a href="#" v-if="roleactif == 'ADMIN'" data-bs-toggle="modal" data-bs-target="#delete_prospect"
+                        <!-- <a href="#" v-if="roleactif == 'ADMIN'" data-bs-toggle="modal" data-bs-target="#delete_prospect"
                           @click="editProspect(prospect.id_prospect)" title="Modifier"><i class="fas fa-trash-alt"></i>
-                        </a>
+                        </a> -->
                       </td>
                     </tr>
                   </template>
@@ -116,7 +116,7 @@
 import pagination from "laravel-vue-pagination";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import { getProspectsExport } from "../../services/prospectservice";
+import { getProspectsExport } from "../../services/prospectService";
 import { getRoleActif } from "../../services/roleservice";
 import admettreProspect from "./admettreProspect.vue";
 import deleteProspect from "./deleteProspect.vue";

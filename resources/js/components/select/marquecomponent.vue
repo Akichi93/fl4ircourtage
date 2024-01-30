@@ -7,7 +7,7 @@
 </template>
 <script>
 import Multiselect from "@vueform/multiselect";
-import { getMarquesList } from "../../services/formservice";
+import { getMarquesList } from "../../services/formService";
 
 export default {
     name: "marquecomponent",

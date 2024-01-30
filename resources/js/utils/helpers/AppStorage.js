@@ -163,6 +163,18 @@ class AppStorage {
         return this.getData('prospects') || [];
     }
 
+    static async getNameProspectParUUID(uuidProspect) {
+        const prospects = await this.getProspects();
+        const prospectTrouve = prospects.find(prospect => prospect.uuidProspect === uuidProspect);
+
+        if (prospectTrouve) {
+            return prospectTrouve.nom_prospect;
+        } else {
+            return null; // Ou vous pouvez choisir de renvoyer une valeur par défaut ou générer une erreur, selon votre cas d'utilisation.
+        }
+    }
+
+
     static async searchProspectsByName(name) {
         const allProspects = await this.getData('prospects') || [];
         const filteredProspects = allProspects.filter(prospect => prospect.nom_prospect.toLowerCase().includes(name.toLowerCase()));
@@ -197,6 +209,31 @@ class AppStorage {
         }
     }
 
+
+    // Localisations
+    static async getLocalisations() {
+        return this.getData('localisations') || [];
+    }
+
+    static async getProfessions() {
+        return this.getData('professions') || [];
+    }
+
+    static async getMarques() {
+        return this.getData('marques') || [];
+    }
+
+    static async getEnergies() {
+        return this.getData('energies') || [];
+    }
+
+    static async getCouleurs() {
+        return this.getData('couleurs') || [];
+    }
+
+    static async getGenres() {
+        return this.getData('genres') || [];
+    }
 
     // Avenants
 

@@ -94,7 +94,7 @@
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import { getCompagniesExport } from "../../services/compagnieservice";
+import { getCompagniesExport } from "../../services/compagnieService";
 import { getRoleActif } from "../../services/roleservice";
 import searchbranche from "../../components/search/searchbranche.vue";
 import editCompagnie from "./editCompagnie.vue";
@@ -178,7 +178,7 @@ export default {
           this.compagnies = result;
         });
       } else {
-        this.getClients();
+        this.getCompagnies();
       }
     },
 

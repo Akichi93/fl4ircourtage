@@ -69,6 +69,12 @@
                         }">
                           <i class="fa fa-pen-fancy"></i>
                         </router-link>
+                        <router-link :to="{
+                          name: 'detailsapporteur',
+                          params: { uuidApporteur: apporteur.uuidApporteur },
+                        }">
+                          <i class="fa fa-eye"></i>
+                        </router-link>
                         <a href="#" data-bs-toggle="modal" data-bs-target="#edit_department"
                           @click="editApporteur(apporteur.id_apporteur)" title="Modifier"><i class="fas fa-pen"></i>
                         </a>
@@ -98,7 +104,7 @@
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import searchbranche from "../../components/search/searchbranche.vue";
-import { getApporteursExport } from "../../services/apporteurservice";
+import { getApporteursExport } from "../../services/apporteurService";
 import { getRoleActif } from "../../services/roleservice";
 import editApporteur from "./editApporteur.vue";
 import deleteApporteur from "./deleteApporteur.vue";

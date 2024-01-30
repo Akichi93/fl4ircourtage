@@ -6,7 +6,7 @@
     </select>
 </template>
 <script>
-import { getBrancheList } from "../../services/formservice";
+import { getBrancheList } from "../../services/formService";
 
 export default {
     name: "branchecomponent",

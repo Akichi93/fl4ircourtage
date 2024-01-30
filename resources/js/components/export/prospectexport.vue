@@ -3,7 +3,7 @@
     <button @click="exportToCSV">Exporter en CSV</button>
   </template>
   <script>
-  import { getProspectsExport } from "../../services/prospectservice";
+  import { getProspectsExport } from "../../services/prospectService";
   export default {
     created() {
       this.getProspect();

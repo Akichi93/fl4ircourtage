@@ -195,12 +195,12 @@ import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import Multiselect from "@vueform/multiselect";
 import axios from "axios";
-import { getClientSelect } from "../../services/clientservice";
-import { getApporteursExport } from "../../services/apporteurservice";
-import { getCompagniesExport } from "../../services/compagnieservice";
+import { getClientSelect } from "../../services/clientService";
+import { getApporteursExport } from "../../services/apporteurService";
+import { getCompagniesExport } from "../../services/compagnieService";
 import {
   getBrancheList,
-} from "../../services/formservice";
+} from "../../services/formService";
 import { createToaster } from "@meforma/vue-toaster";
 const toaster = createToaster({
   /* options */

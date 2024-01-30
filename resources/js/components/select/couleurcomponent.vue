@@ -8,7 +8,7 @@
 </template>
 <script>
 import Multiselect from "@vueform/multiselect";
-import { getCouleursList } from "../../services/formservice";
+import { getCouleursList } from "../../services/formService";
 
 export default {
     name: "couleurcomponent",

@@ -10,15 +10,15 @@
           <div class="col-md-12">
             <div class="page-head-box">
               <h3>
-                Listes des branches <em>{{ names.nom_prospect }}</em>
+                Listes des branches <em>{{ names }}</em>
               </h3>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="/home">Tableau de bord</a>
+                    <router-link to="/home">Tableau de bord</router-link>
                   </li>
                   <li class="breadcrumb-item">
-                    <a href="/prospect">Listes des prospects</a>
+                    <router-link to="/prospect">Listes des prospects</router-link>
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Ajout
@@ -79,6 +79,7 @@ import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import editprospectbranche from "../prospect/editprospectbranche.vue";
 import addprospectbranche from "../prospect/addprospectbranche.vue";
+import AppStorage from '../../utils/helpers/AppStorage';
 export default {
   name: "detailsprospect",
   components: {
@@ -95,24 +96,39 @@ export default {
   },
   created() {
     this.fetchData();
+    this.fetchNameProspect();
   },
   methods: {
+
+    async fetchNameProspect() {
+      const uuidProspect = this.$route.params.uuidProspect;
+
+      try {
+        const names = await AppStorage.getNameProspectParUUID(uuidProspect);
+
+        this.names = names;
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données :", error);
+      }
+
+    },
+
     fetchData() {
       var that = this;
       axios
         .all([
           axios.get("/api/auth/getBrancheProspect?prospect=" + this.$route.params.id_prospect),
-          axios.get("/api/auth/getNameProspect?prospect=" + this.$route.params.id_prospect),
+          // axios.get("/api/auth/getNameProspect?prospect=" + this.$route.params.id_prospect),
         ])
         .then(
-          axios.spread(function (prospects, names) {
+          axios.spread(function (prospects) {
             that.prospects = prospects.data;
-            that.names = names.data;
+            // that.names = names.data;
           })
         );
     },
 
-    getProspectBranche(id){
+    getProspectBranche(id) {
 
     },
 

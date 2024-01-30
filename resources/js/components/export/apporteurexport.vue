@@ -3,7 +3,7 @@
     <button @click="exportToCSV">Exporter en CSV</button>
   </template>
   <script>
-  import { getApporteursExport } from "../../services/apporteurservice";
+  import { getApporteursExport } from "../../services/apporteurService";
   export default {
     created() {
       this.getApporteur();

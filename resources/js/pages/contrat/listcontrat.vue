@@ -102,7 +102,7 @@
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import { getContratsExport } from "../../services/contratservice";
+import { getContratsExport } from "../../services/contratService";
 import { getRoleActif } from "../../services/roleservice";
 import deletecontrat from "../contrat/deletecontrat.vue";
 import pagination from "laravel-vue-pagination";

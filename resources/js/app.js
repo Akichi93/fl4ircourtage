@@ -59,6 +59,7 @@ import reporting from "../js/pages/statistiques/reporting";
 import tarification from "../js/pages/module/tarification";
 import listauto from "../js/pages/automobile/listauto";
 import createauto from "../js/pages/automobile/createauto";
+import detailsapporteur from "../js/pages/apporteur/detailsApporteur"
 
 
 const options = {
@@ -144,7 +145,8 @@ createApp({
         entreprise,
         upload,
         reporting,
-        tarification
+        tarification,
+        detailsapporteur
     }
 }).use(router)
     .use(BootstrapVue3)

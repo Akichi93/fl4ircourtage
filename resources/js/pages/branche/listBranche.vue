@@ -83,7 +83,7 @@
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import { getbrancheExport } from "../../services/brancheservice";
+import { getbrancheExport } from "../../services/brancheService";
 import { getRoleActif } from "../../services/roleservice";
 import editbranche from "./editbranche.vue";
 import deletebranche from "./deletebranche.vue";

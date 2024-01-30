@@ -40,7 +40,7 @@
 </template>
 <script>
 import AppStorage from "../utils/helpers/AppStorage";
-import syncservice from "../services/syncservice";
+import syncservice from "../services/syncService";
 export default {
   data() {
     return {

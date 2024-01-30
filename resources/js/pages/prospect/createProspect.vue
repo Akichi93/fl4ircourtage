@@ -191,10 +191,11 @@ import {
     getAdresseList,
     getProfessionList
 
-} from "../../services/formservice";
+} from "../../services/formService";
 import Multiselect from "@vueform/multiselect";
 
 import { createToaster } from "@meforma/vue-toaster";
+import { apiUrl } from "../../utils/constants/apiUrl";
 const toaster = createToaster({
     /* options */
 });
@@ -228,16 +229,16 @@ export default {
         this.getAdresse();
         this.getProfession();
     },
-    methods: {
 
-        getAdresse() {
-            getAdresseList().then((result) => {
+    methods: {
+        async getAdresse() {
+            AppStorage.getLocalisations().then((result) => {
                 this.localisations = result;
             });
         },
 
-        getProfession: function () {
-            getProfessionList().then((result) => {
+        async getProfession() {
+            AppStorage.getProfessions().then((result) => {
                 this.professions = result;
             });
         },
@@ -258,7 +259,7 @@ export default {
 
 
                 try {
-                    const response = await axios.post("/api/auth/postProspect", {
+                    const response = await axios.post(apiUrl.postprospect, {
                         civilite: this.civilite,
                         nom_prospect: this.nom_prospect,
                         postal_prospect: this.postal_prospect,
@@ -349,7 +350,7 @@ export default {
             };
 
             try {
-                const response = await axios.get("/api/auth/getProspects", { headers });
+                const response = await axios.get(apiUrl.getprospect, { headers });
 
                 // Vous pouvez traiter les données comme vous le souhaitez
                 const prospects = response.data;

@@ -53,6 +53,8 @@
                                 {{ branche.nom_branche }}
                               </option>
                             </select>
+
+                    
                             <p style="color: red" class="text-red" v-if="errors.branche_id" v-text="errors.id_branche[0]">
                             </p>
                           </div>
@@ -793,15 +795,10 @@ import addcouleur from "../../pages/form/addcouleur.vue";
 import addmarque from "../../pages/form/addmarque.vue";
 import addclient from "../../pages/clients/addclient.vue";
 import AppStorage from '../../utils/helpers/AppStorage';
-import { apiUrl } from "../../utils/constants/apiUrl"
+import { apiUrl } from "../../utils/constants/apiUrl";
 import {
-  getAdresseList,
   getCategoriesList,
-  getMarquesList,
-  getGenresList,
-  getCouleursList,
-  getEnergiesList
-} from "../../services/formservice";
+} from "../../services/formService";
 
 import { createToaster } from "@meforma/vue-toaster";
 const toaster = createToaster({
@@ -908,45 +905,44 @@ export default {
       });
     },
 
-    getClients() {
+    async getClients() {
       AppStorage.getClients().then((result) => {
         this.clients = result;
-
       });
     },
 
-    getAdresse() {
-      getAdresseList().then((result) => {
+    async getAdresse() {
+      AppStorage.getLocalisations().then((result) => {
         this.localisations = result;
       });
     },
 
-    getCategorie() {
+    async getCategorie() {
       getCategoriesList().then((result) => {
         this.categories = result;
       });
     },
 
-    getMarque() {
-      getMarquesList().then((result) => {
+    async getMarque() {
+      AppStorage.getMarques().then((result) => {
         this.marques = result;
       });
     },
 
-    getGenre() {
-      getGenresList().then((result) => {
+   async getGenre() {
+      AppStorage.getGenres().then((result) => {
         this.genres = result;
       });
     },
 
-    getCouleur() {
-      getCouleursList().then((result) => {
+   async getCouleur() {
+      AppStorage.getCouleurs().then((result) => {
         this.couleurs = result;
       });
     },
 
-    getEnergie() {
-      getEnergiesList().then((result) => {
+   async getEnergie() {
+      AppStorage.getEnergies().then((result) => {
         this.energies = result;
       });
     },

@@ -86,6 +86,7 @@ import professioncomponent from "../../components/select/professioncomponent.vue
 import civilitecomponent from "../../components/select/civilitecomponent.vue";
 import inputText from "../../components/input/inputText.vue";
 import AppStorage from "../../utils/helpers/AppStorage";
+import { apiUrl } from "../../utils/constants/apiUrl";
 import { createToaster } from "@meforma/vue-toaster";
 import axios from "axios";
 
@@ -139,7 +140,7 @@ export default {
       const numeroClient = this.generateNumeroClient();
 
       try {
-        const response = await axios.post("/api/auth/postClient", {
+        const response = await axios.post(apiUrl.postclient, {
           civilite: this.civilite,
           nom_client: this.nom_client,
           postal_client: this.postal_client,
@@ -243,7 +244,7 @@ export default {
       };
 
       try {
-        const response = await axios.get("/api/auth/getClients", { headers });
+        const response = await axios.get(apiUrl.getclient, { headers });
 
         // Vous pouvez traiter les données comme vous le souhaitez
         const clients = response.data;

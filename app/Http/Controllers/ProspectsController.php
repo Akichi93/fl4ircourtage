@@ -77,6 +77,7 @@ class ProspectsController extends Controller
         $prospects->id_entreprise = $request->id_entreprise;
         $prospects->user_id = $request->id;
         $prospects->statut = $request->etat;
+        $prospects->uuidProspect = $request->uuidProspect;
         $prospects->sync = 1;
         $prospects->save();
 
