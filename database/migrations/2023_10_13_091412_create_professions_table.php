@@ -15,7 +15,7 @@ class CreateProfessionsTable extends Migration
     {
         Schema::create('professions', function (Blueprint $table) {
             $table->bigIncrements('id_profession');
-            // $table->uuid('uuid');
+            $table->uuid('uuidProfession');
             $table->string('profession');
             $table->boolean('sync')->default(false);
             $table->timestamps();
