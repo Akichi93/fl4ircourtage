@@ -24,6 +24,8 @@ class User {
             { endpoint: 'getcouleurs', storageKey: 'couleurs' },
             { endpoint: 'getgenres', storageKey: 'genres' },
 
+            { endpoint: 'getbrancheprospects', storageKey: 'brancheprospects' },
+
             { endpoint: 'gettauxcompagnies', storageKey: 'tauxcompagnies' },
             { endpoint: 'gettauxapporteurs', storageKey: 'tauxapporteurs' },
         ];

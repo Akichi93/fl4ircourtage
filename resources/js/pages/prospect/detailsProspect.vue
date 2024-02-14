@@ -113,21 +113,26 @@ export default {
 
     },
 
-    fetchData() {
-      var that = this;
-      axios
-        .all([
-          axios.get("/api/auth/getBrancheProspect?prospect=" + this.$route.params.id_prospect),
-          // axios.get("/api/auth/getNameProspect?prospect=" + this.$route.params.id_prospect),
-        ])
-        .then(
-          axios.spread(function (prospects) {
-            that.prospects = prospects.data;
-            // that.names = names.data;
-          })
-        );
+    async fetchData(){
+
     },
 
+    // fetchData() {
+    //   var that = this;
+    //   axios
+    //     .all([
+    //       axios.get("/api/auth/getBrancheProspect?prospect=" + this.$route.params.id_prospect),
+    //       // axios.get("/api/auth/getNameProspect?prospect=" + this.$route.params.id_prospect),
+    //     ])
+    //     .then(
+    //       axios.spread(function (prospects) {
+    //         that.prospects = prospects.data;
+    //         // that.names = names.data;
+    //       })
+    //     );
+    // },
+
+    
     getProspectBranche(id) {
 
     },

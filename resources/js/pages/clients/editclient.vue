@@ -133,7 +133,6 @@ import adressecomponent from "../../components/select/adressecomponent.vue";
 import professioncomponent from "../../components/select/professioncomponent.vue";
 import civilitecomponent from "../../components/select/civilitecomponent.vue";
 import { createToaster } from "@meforma/vue-toaster";
-// import $ from "jquery";
 const toaster = createToaster({
   /* options */
 });

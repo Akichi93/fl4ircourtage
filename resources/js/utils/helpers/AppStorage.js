@@ -1,7 +1,7 @@
 // AppStorage.js
 import { openDB } from 'idb';
 class AppStorage {
-    
+
     static dbName = 'fl4ir';
     // static storeUser = (user) =>  `Bonjour ${user.name}`
 
@@ -41,6 +41,9 @@ class AppStorage {
         return data ? JSON.parse(data) : null;
     }
 
+
+    // storeDataInIndexedDB doit permettre d'ajouter une nouvelle donnée ,de fusionner les données et aussi de faire une mise à jour des données
+
     static async storeDataInIndexedDB(key, data) {
         const db = await openDB(this.dbName, 1, {
             upgrade(db) {
@@ -72,6 +75,7 @@ class AppStorage {
         // Terminer la transaction
         await tx.complete;
     }
+    
 
     static async clearData(key) {
         const db = await openDB(this.dbName, 1, {
@@ -130,9 +134,9 @@ class AppStorage {
         return this.paginateData('clients', pageIndex, pageSize);
     }
 
-    static async getClientById(clientId) {
+    static async getClientByUuid(clientUuid) {
         const allClients = await this.getData('clients') || [];
-        return allClients.find(client => client.id_client === clientId);
+        return allClients.find(client => client.uuidClient === clientUuid);
     }
 
     static async getClientNameByUUID(uuidClient) {
@@ -163,6 +167,30 @@ class AppStorage {
         return this.getData('prospects') || [];
     }
 
+    static async getProspectByUuid(ProspectUuid) {
+        const allProspects = await this.getData('prospects') || [];
+        return allProspects.find(prospect => prospect.uuidProspect === ProspectUuid);
+    }
+
+    static async updateProspectById(uuidProspect, updatedProspectData) {
+        const allProspects = await this.getData('prospects') || [];
+
+        // Recherche du prospect par son UUID
+        const prospectIndex = allProspects.findIndex(prospect => prospect.uuidProspect === uuidProspect);
+
+        if (prospectIndex !== -1) {
+            // Mettre à jour le prospect
+            allProspects[prospectIndex] = { ...allProspects[prospectIndex], ...updatedProspectData };
+
+            // Sauvegarder les données mises à jour
+            await this.storeData('prospects', allProspects);
+
+            return allProspects[prospectIndex];
+        } else {
+            throw new Error('Prospect non trouvé');
+        }
+    }
+
     static async getNameProspectParUUID(uuidProspect) {
         const prospects = await this.getProspects();
         const prospectTrouve = prospects.find(prospect => prospect.uuidProspect === uuidProspect);
@@ -175,14 +203,140 @@ class AppStorage {
     }
 
 
+
+    // static async updateProspectState(uuidProspect, newState, newSyncState) {
+    //     try {
+
+    //         const allProspectsBefore = await this.getData('prospects') || [];
+
+
+    //         // Recherche du prospect par son UUID
+    //         const prospectIndex = allProspectsBefore.findIndex(prospect => prospect.uuidProspect === uuidProspect);
+
+    //         if (prospectIndex !== -1) {
+    //             // Mettre à jour l'état du prospect
+
+    //             allProspectsBefore[prospectIndex].etat = newState;
+
+
+    //             // Mettre à jour l'état de synchronisation
+    //             allProspectsBefore[prospectIndex].sync = newSyncState;
+
+    //             // Sauvegarder les données mises à jour
+    //             await this.storeData('prospects', allProspectsBefore);
+
+    //             return allProspectsBefore[prospectIndex];
+    //         } else {
+    //             throw new Error('Prospect non trouvé');
+    //         }
+    //     } catch (error) {
+    //         console.error('Erreur lors de la mise à jour du prospect :', error);
+    //         throw error;
+    //     }
+    // }
+
+    static async updateProspectState(uuidProspect, newState, newSyncState) {
+        try {
+            const allProspects = await this.getData('prospects') || [];
+
+            // Find prospect by UUID
+            const prospectIndex = allProspects.findIndex(prospect => prospect.uuidProspect === uuidProspect);
+
+            if (prospectIndex !== -1) {
+                // Update prospect state
+                allProspects[prospectIndex].etat = newState;
+                // Update sync state
+                allProspects[prospectIndex].sync = newSyncState;
+
+                // Save only the updated prospect
+                await this.storeData('prospects', allProspects[prospectIndex]);
+
+                return allProspects[prospectIndex];
+            } else {
+                throw new Error('Prospect not found');
+            }
+        } catch (error) {
+            console.error('Error updating prospect:', error);
+            throw error;
+        }
+    }
+
+
+
+
+    static async updateProspectChange(uuidProspect, newState, newSyncState) {
+        // Obtenez la liste des prospects
+        const allProspects = await this.getData('prospects') || [];
+
+        // Recherche du prospect par son UUID
+        const prospectIndex = allProspects.findIndex(prospect => prospect.uuidProspect === uuidProspect);
+
+        if (prospectIndex !== -1) {
+            // Mettre à jour l'état du prospect
+            allProspects[prospectIndex].statut = newState;
+
+            // Mettre à jour l'état de synchronisation
+            allProspects[prospectIndex].sync = newSyncState;
+
+            // Sauvegarder les données mises à jour
+            await this.storeData('prospects', allProspects);
+
+            return allProspects[prospectIndex];
+        } else {
+            throw new Error('Prospect non trouvé');
+        }
+    }
+
+    static async updateProspect(uuidProspect, nouvellesInfos) {
+        // Obtenez la liste des prospects
+        const allProspects = await this.getData('prospects') || [];
+
+        // Recherche du prospect par son UUID
+        const prospectIndex = allProspects.findIndex(prospect => prospect.uuidProspect === uuidProspect);
+
+        if (prospectIndex !== -1) {
+            // Mettre à jour les informations du prospect
+            Object.assign(allProspects[prospectIndex], nouvellesInfos);
+
+            // Sauvegarder les données mises à jour
+            await this.storeData('prospects', allProspects);
+
+            return allProspects[prospectIndex];
+        } else {
+            throw new Error('Prospect non trouvé');
+        }
+    }
+
+
     static async searchProspectsByName(name) {
         const allProspects = await this.getData('prospects') || [];
         const filteredProspects = allProspects.filter(prospect => prospect.nom_prospect.toLowerCase().includes(name.toLowerCase()));
         return filteredProspects;
     }
 
+    // branche prospect
+    static async storeBrancheProspects(brancheprospects) {
+        await this.storeData('brancheprospects', brancheprospects);
+    }
+
+
+    static async getBrancheProspects() {
+        return this.getData('brancheprospects') || [];
+    }
+
+    static async getDifferenceOfBranches() {
+        const branches = await this.getBranches();
+        const brancheprospects = await this.getData('brancheprospects') || [];
+
+        // Exclure les branches présentes dans brancheprospects
+        const branchesDifference = branches.filter(branch => !brancheprospects.includes(branch));
+
+        return branchesDifference;
+    }
+
+
     // Contrats
-    static async storeContrats(contrats) {
+    static async storeBrancheProspects(contrats) {
         await this.storeData('contrats', contrats);
     }
 
@@ -249,10 +403,10 @@ class AppStorage {
 
     static async getAvenantsSommeByUuid(uuidContrat) {
         const avenantsData = await this.getAvenants();
-    
+
         // Filtrer les avenants en fonction de l'UUID du contrat
         const avenantsFiltres = avenantsData.filter(avenant => avenant.uuidContrat === uuidContrat);
-    
+
         // Convertir les valeurs en nombres avant de les additionner
         const sommePrimeNette = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.prime_nette), 0);
         const sommeAccessoires = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.accessoires), 0);
@@ -261,7 +415,7 @@ class AppStorage {
         const sommeTaxesTotales = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.taxes_totales), 0);
         const sommeCommissionCourtier = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.commission_courtier), 0);
         const sommeCommission = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.commission), 0);
-    
+
         // Retourner un objet contenant toutes les sommes calculées
         return {
             sommePrimeNette,
@@ -277,15 +431,15 @@ class AppStorage {
 
     static async getAvenantsByUuidContrat(uuidContrat) {
         const allAvenants = await this.getAvenants();
-        
+
         // Filtrer les avenants en fonction de l'uuidContrat
         const avenantsByUuidContrat = allAvenants.filter(avenant => avenant.uuidContrat === uuidContrat);
-    
+
         return avenantsByUuidContrat;
     }
-    
-    
-    
+
+
+
 
 
     // Compagnies

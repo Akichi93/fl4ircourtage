@@ -150,7 +150,7 @@ Route::group([
         Route::get('getBrancheDiffProspect/{id_prospect}',  'getBrancheDiffProspect'); // Obtenir branche
         Route::post('postbrancheprospect',  'postBrancheProspect');
         Route::get('getNameProspect',  'getNameProspect'); // Obtenir le nom de l'apporteur choisi
-        Route::get('getBrancheProspect',  'getBrancheProspect');
+        Route::get('getbrancheprospects',  'getBrancheProspect');
         Route::get('getprospects',  'getProspect'); // Obtenir les prospects
     });
 

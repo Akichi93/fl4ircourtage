@@ -79,8 +79,8 @@
                                                     <div class="form-group">
                                                         <label>Adresse</label>
                                                         <Multiselect v-model="adresse_prospect" :options="localisations"
-                                                            :custom-label="({ id_localisation, nom_ville }) =>
-                                                                `${id_localisation} - [${nom_ville}]`
+                                                            :custom-label="({ uuidLocalisation, nom_ville }) =>
+                                                                `${uuidLocalisation} - [${nom_ville}]`
                                                                 " valueProp="nom_ville" placeholder="Selectionnez zone"
                                                             label="nom_ville" track-by="nom_ville" :searchable="true">
                                                         </Multiselect>
@@ -141,8 +141,8 @@
                                                     <div class="form-group">
                                                         <label>Profession:</label>
                                                         <Multiselect v-model="profession_prospect" :options="professions"
-                                                            :custom-label="({ id_profession, profession }) =>
-                                                                `${id_profession} - [${profession}]`
+                                                            :custom-label="({ uuidProfession, profession }) =>
+                                                                `${uuidProfession} - [${profession}]`
                                                                 " valueProp="profession"
                                                             placeholder="Choisir une profession" label="profession"
                                                             track-by="profession" :searchable="true">
@@ -187,11 +187,6 @@ import civilitecomponent from "../../components/select/civilitecomponent.vue";
 import etatcomponent from "../../components/select/etatcomponent.vue";
 import inputText from "../../components/input/inputText.vue";
 import addadresse from "../../pages/form/addadresse.vue";
-import {
-    getAdresseList,
-    getProfessionList
-
-} from "../../services/formService";
 import Multiselect from "@vueform/multiselect";
 
 import { createToaster } from "@meforma/vue-toaster";
@@ -312,21 +307,29 @@ export default {
 
                 // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
                 const newProspectData = [{
+                    civilite: this.civilite,
                     nom_prospect: this.nom_prospect,
-                    adresse_prospect: this.adresse_prospect,
-                    email_compagnie: this.email_compagnie,
-                    tel_prospect: this.tel_prospect,
-                    contact_compagnie: this.contact_compagnie,
-                    profession_prospect: this.profession_prospect,
                     postal_prospect: this.postal_prospect,
-                    etat: this.etat,
-                    sync: 0,
+                    adresse_prospect: this.adresse_prospect,
+                    tel_prospect: this.tel_prospect,
+                    profession_prospect: this.profession_prospect,
+                    email_prospect: this.email_prospect,
+                    fax_prospect: this.fax_prospect,
+                    etat: 0,
+                    statut: this.etat,
                     id_entreprise: entrepriseId,
-                    user_id: userId,
+                    id: userId,
                     uuidProspect: uuid,
+                    sync: 0,
                 }];
 
-                await AppStorage.storeDataInIndexedDB("prospects", newProspectData);
+                try {
+                    await AppStorage.storeDataInIndexedDB("prospects", newProspectData);
+                    console.log("Données insérées avec succès dans IndexedDB.");
+                } catch (error) {
+                    console.error("Erreur lors de l'insertion des données dans IndexedDB:", error);
+                }
+
 
                 toaster.info(`Prospect ajouté localement (hors ligne)`, {
                     position: "top-right",

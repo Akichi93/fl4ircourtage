@@ -67,7 +67,7 @@
                       <td v-text="client.profession_client"></td>
                       <td class="text-end ico-sec d-flex justify-content-end">
                         <a href="#" data-bs-toggle="modal" data-bs-target="#edit_project"
-                          @click="editClient(client.id_client)"><i class="fas fa-pen"></i></a>
+                          @click="editClient(client.uuidClient)"><i class="fas fa-pen"></i></a>
                       </td>
                     </tr>
                   </template>
@@ -90,7 +90,6 @@
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import addclient from "./addclient.vue";
-// import { getClientsList } from "../../services/clientservice";
 import { getClientSelect } from "../../services/clientService";
 import editclient from "./editclient.vue";
 import searchbranche from "../../components/search/searchbranche.vue";
@@ -157,17 +156,13 @@ export default {
       }
     },
 
-
-
-    async editClient(id_client) {
+    async editClient(uuidClient) {
       try {
-        this.clientoedit = await AppStorage.getClientById(id_client);
+        this.clientoedit = await AppStorage.getClientByUuid(uuidClient);
       } catch (error) {
         console.log(error);
       }
     },
-
-
 
 
     searchtask() {

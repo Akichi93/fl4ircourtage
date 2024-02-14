@@ -77,6 +77,7 @@ export default {
         const response = await fetch(
           "/api/check-internet-connection"
         );
+        
         const data = await response.json();
 
         this.isConnected = data.connected;

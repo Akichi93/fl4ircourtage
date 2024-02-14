@@ -72,16 +72,16 @@
                       <td v-text="prospect.profession_prospect"></td>
                       <td v-text="prospect.statut"></td>
                       <td class="text-end ico-sec d-flex justify-content-end">
-                        <a href="#" v-if="prospect.etat == 0" @click="editProspect(prospect.id_prospect)"
+                        <a href="#" v-if="prospect.etat == 0" @click="editProspect(prospect.uuidProspect)"
                           data-bs-toggle="modal" data-bs-target="#delete_project" title="Admettre comme un client"><i
                             class="fas fa-check"></i>
                         </a>
-                        <!-- <a href="#" data-bs-toggle="modal" data-bs-target="#edit_department"
-                          @click="editProspect(prospect.id_prospect)" title="Modifier"><i class="fas fa-pen"></i>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#edit_department"
+                          @click="editProspect(prospect.uuidProspect)" title="Modifier"><i class="fas fa-pen"></i>
                         </a>
                         <a href="#" data-bs-toggle="modal" data-bs-target="#change_statut"
-                          @click="editProspect(prospect.id_prospect)" title="Changer d'etat"><i class="fas fa-edit"></i>
-                        </a> -->
+                          @click="editProspect(prospect.uuidProspect)" title="Changer d'etat"><i class="fas fa-edit"></i>
+                        </a>
 
                         <router-link :to="{
                           name: 'detailsprospect',
@@ -89,9 +89,9 @@
 
                         }"><i class="fas fa-eye"></i></router-link>
 
-                        <!-- <a href="#" v-if="roleactif == 'ADMIN'" data-bs-toggle="modal" data-bs-target="#delete_prospect"
-                          @click="editProspect(prospect.id_prospect)" title="Modifier"><i class="fas fa-trash-alt"></i>
-                        </a> -->
+                        <a href="#" v-if="roleactif == 'ADMIN'" data-bs-toggle="modal" data-bs-target="#delete_prospect"
+                          @click="editProspect(prospect.uuidProspect)" title="Modifier"><i class="fas fa-trash-alt"></i>
+                        </a>
                       </td>
                     </tr>
                   </template>
@@ -179,18 +179,20 @@ export default {
       }
 
     },
+    
     getRoleconnect() {
       getRoleActif().then((result) => {
         this.roleactif = result;
       });
     },
-    editProspect(id_prospect) {
-      axios
-        .get("/api/auth/editProspect/" + id_prospect)
-        .then((response) => {
-          this.prospectoedit = response.data;
-        })
-        .catch((error) => console.log(error));
+
+
+    async editProspect(uuidProspect) {
+      try {
+        this.prospectoedit = await AppStorage.getProspectByUuid(uuidProspect);
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     searchtask() {

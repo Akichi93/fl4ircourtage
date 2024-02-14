@@ -109,6 +109,7 @@ class ProspectsController extends Controller
 
     public function validateProspect(Request $request)
     {
+        $user =  JWTAuth::parseToken()->authenticate();
         $id = $request->id_prospect;
 
         $prospects = Prospect::where('id_prospect', $id)->update([
@@ -147,10 +148,9 @@ class ProspectsController extends Controller
         $client->save();
 
         if ($prospects) {
-            $prospects = Prospect::where('id_entreprise', $request->id_entreprise)
+            $prospects = Prospect::where('id_entreprise', $user->id_entreprise)
                 ->where('supprimer_prospect', '=', '0')
-                ->latest()
-                ->paginate(10);
+                ->get();
 
             return response()->json($prospects);
         }
@@ -158,15 +158,15 @@ class ProspectsController extends Controller
 
     public function deleteProspect(Request $request, $id_prospect)
     {
+        $user =  JWTAuth::parseToken()->authenticate();
         $prospects = Prospect::find($id_prospect);
         $prospects->supprimer_prospect = 1;
         $prospects->save();
 
         if ($prospects) {
-            $prospects = Prospect::where('id_entreprise', $request->id_entreprise)
+            $prospects = Prospect::where('id_entreprise', $user->id_entreprise)
                 ->where('supprimer_prospect', '=', '0')
-                ->latest()
-                ->paginate(10);
+                ->get();
 
             return response()->json($prospects);
         }
@@ -174,15 +174,15 @@ class ProspectsController extends Controller
 
     public function etatProspect(Request $request, $id_prospect)
     {
+        $user =  JWTAuth::parseToken()->authenticate();
         $prospects = Prospect::find($id_prospect);
         $prospects->statut = $request->etat;
         $prospects->save();
 
         if ($prospects) {
-            $prospects = Prospect::where('id_entreprise', $request->id_entreprise)
+            $prospects = Prospect::where('id_entreprise', $user->id_entreprise)
                 ->where('supprimer_prospect', '=', '0')
-                ->latest()
-                ->paginate(10);
+                ->get();
 
             return response()->json($prospects);
         }
@@ -228,8 +228,11 @@ class ProspectsController extends Controller
 
     public function getBrancheProspect(Request $request)
     {
+        // $prospects = BrancheProspect::join("branches", 'branche_prospects.id_branche', '=', 'branches.id_branche')
+        //     ->where('branche_prospects.id_prospect', $request->prospect)->get();
+
         $prospects = BrancheProspect::join("branches", 'branche_prospects.id_branche', '=', 'branches.id_branche')
-            ->where('branche_prospects.id_prospect', $request->prospect)->get();
+            ->get();
         return response()->json($prospects);
     }
 
