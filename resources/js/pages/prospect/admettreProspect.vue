@@ -79,46 +79,45 @@ export default {
       } else {
         // UUID du prospect que vous souhaitez mettre à jour
         const uuidProspectToUpdate = this.prospectoedit.uuidProspect;
+        // console.log(uuidProspectToUpdate);
 
         // Nouvel état du prospect
-        const nouveauEtat = 1;
-        const nouveauSyncState = 0;
+        const newState = 1;
+        const newSyncState = 0;
+
 
         try {
+          // Appeler la fonction pour mettre à jour les données dans IndexedDB
+          const prospectMisAJour = await AppStorage.updateProspectChange(uuidProspectToUpdate, newState, newSyncState);
 
-          const prospectMisAJour = await AppStorage.updateProspectState(
-            uuidProspectToUpdate,
-            nouveauEtat,
-            nouveauSyncState
-          );
+          const uuid = require('uuid').v4();
+          const userId = parseInt(AppStorage.getId(), 10);
+          const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
 
-          // const prospectMisAJour = await AppStorage.updateProspectState(uuidProspectToUpdate, nouveauEtat);
+          const numeroClient = this.generateNumeroClient();
 
-          // const uuid = require('uuid').v4();
-          // const userId = parseInt(AppStorage.getId(), 10);
-          // const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+          //Inserer le client
+          const newClientData = [{
+            civilite: this.prospectoedit.civilite,
+            nom_client: this.prospectoedit.nom_client,
+            postal_client: this.prospectoedit.postal_client,
+            adresse_client: this.prospectoedit.adresse_client,
+            tel_client: this.prospectoedit.tel_client,
+            profession_client: this.prospectoedit.profession_client,
+            fax_client: this.prospectoedit.fax_client,
+            email_client: this.prospectoedit.email_client,
+            sync: 0,
+            uuidClient: uuid,
+            id_entreprise: entrepriseId,
+            user_id: userId,
+            numero_client: numeroClient,
+          }];
 
-          // const numeroClient = this.generateNumeroClient();
+          await AppStorage.storeDataInIndexedDB("clients", newClientData);
 
-          // //Inserer le client
-          // const newClientData = [{
-          //   civilite: this.prospectoedit.civilite,
-          //   nom_client: this.prospectoedit.nom_client,
-          //   postal_client: this.prospectoedit.postal_client,
-          //   adresse_client: this.prospectoedit.adresse_client,
-          //   tel_client: this.prospectoedit.tel_client,
-          //   profession_client: this.prospectoedit.profession_client,
-          //   fax_client: this.prospectoedit.fax_client,
-          //   email_client: this.prospectoedit.email_client,
-          //   sync: 0,
-          //   uuidClient: uuid,
-          //   id_entreprise: entrepriseId,
-          //   user_id: userId,
-          //   numero_client: numeroClient,
-          // }];
-
-
-          // await AppStorage.storeDataInIndexedDB("clients", newClientData);
+          AppStorage.getProspects().then((result) => {
+            this.$emit("prospect-admettre", result);
+          });
 
           toaster.success(`Nouveau client enregistré`, {
             position: "top-right",

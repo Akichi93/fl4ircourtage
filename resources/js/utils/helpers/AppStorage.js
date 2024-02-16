@@ -43,7 +43,6 @@ class AppStorage {
 
 
     // storeDataInIndexedDB doit permettre d'ajouter une nouvelle donnée ,de fusionner les données et aussi de faire une mise à jour des données
-
     static async storeDataInIndexedDB(key, data) {
         const db = await openDB(this.dbName, 1, {
             upgrade(db) {
@@ -75,7 +74,22 @@ class AppStorage {
         // Terminer la transaction
         await tx.complete;
     }
-    
+
+
+    static async updateDataInIndexedDB(key, newData) {
+        const db = await openDB(this.dbName, 1);
+
+        const tx = db.transaction('apiData', 'readwrite');
+        const store = tx.objectStore('apiData');
+
+        // Remplacer les données existantes par les nouvelles données
+        await store.put(newData, key);
+
+        // Terminer la transaction
+        await tx.complete;
+    }
+
+
 
     static async clearData(key) {
         const db = await openDB(this.dbName, 1, {
@@ -95,6 +109,10 @@ class AppStorage {
 
         console.log(`Data cleared for ${key} in apiData in IndexedDB`);
     }
+
+
+
+
 
     static async fetchDataFromIndexedDB(key) {
         const db = await openDB(this.dbName, 1);
@@ -202,30 +220,29 @@ class AppStorage {
         }
     }
 
-
-
     // static async updateProspectState(uuidProspect, newState, newSyncState) {
     //     try {
-
-    //         const allProspectsBefore = await this.getData('prospects') || [];
-
+    //         // Obtenez la liste des prospects
+    //         const allProspects = await this.getData('prospects') || [];
 
     //         // Recherche du prospect par son UUID
-    //         const prospectIndex = allProspectsBefore.findIndex(prospect => prospect.uuidProspect === uuidProspect);
+    //         const prospectIndex = allProspects.findIndex(prospect => prospect.uuidProspect === uuidProspect);
 
     //         if (prospectIndex !== -1) {
+
+    //             // Récupération du prospect trouvé
+    //             const prospect = allProspects[prospectIndex];
+
     //             // Mettre à jour l'état du prospect
-
-    //             allProspectsBefore[prospectIndex].etat = newState;
-
+    //             prospect.statut = newState;
 
     //             // Mettre à jour l'état de synchronisation
-    //             allProspectsBefore[prospectIndex].sync = newSyncState;
+    //             prospect.sync = newSyncState;
+    //             ;
+    //             // Mettre à jour les données dans l'application
+    //             await this.updateDataInIndexedDB('prospects', prospectIndex);
 
-    //             // Sauvegarder les données mises à jour
-    //             await this.storeData('prospects', allProspectsBefore);
-
-    //             return allProspectsBefore[prospectIndex];
+    //             return prospect;
     //         } else {
     //             throw new Error('Prospect non trouvé');
     //         }
@@ -235,32 +252,6 @@ class AppStorage {
     //     }
     // }
 
-    static async updateProspectState(uuidProspect, newState, newSyncState) {
-        try {
-            const allProspects = await this.getData('prospects') || [];
-
-            // Find prospect by UUID
-            const prospectIndex = allProspects.findIndex(prospect => prospect.uuidProspect === uuidProspect);
-
-            if (prospectIndex !== -1) {
-                // Update prospect state
-                allProspects[prospectIndex].etat = newState;
-                // Update sync state
-                allProspects[prospectIndex].sync = newSyncState;
-
-                // Save only the updated prospect
-                await this.storeData('prospects', allProspects[prospectIndex]);
-
-                return allProspects[prospectIndex];
-            } else {
-                throw new Error('Prospect not found');
-            }
-        } catch (error) {
-            console.error('Error updating prospect:', error);
-            throw error;
-        }
-    }
-
 
 
 
@@ -268,20 +259,25 @@ class AppStorage {
         // Obtenez la liste des prospects
         const allProspects = await this.getData('prospects') || [];
 
+
+
         // Recherche du prospect par son UUID
         const prospectIndex = allProspects.findIndex(prospect => prospect.uuidProspect === uuidProspect);
+        console.log(allProspects);
 
         if (prospectIndex !== -1) {
             // Mettre à jour l'état du prospect
-            allProspects[prospectIndex].statut = newState;
+            allProspects[prospectIndex].etat = newState;
 
             // Mettre à jour l'état de synchronisation
             allProspects[prospectIndex].sync = newSyncState;
 
-            // Sauvegarder les données mises à jour
-            await this.storeData('prospects', allProspects);
 
-            return allProspects[prospectIndex];
+
+            // Sauvegarder les données mises à jour
+            await this.updateDataInIndexedDB('prospects', allProspects);
+
+            return allProspects;
         } else {
             throw new Error('Prospect non trouvé');
         }

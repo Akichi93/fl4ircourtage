@@ -24,7 +24,7 @@
                                             <label>Mot de passe</label>
                                         </div>
                                         <div class="col-auto">
-                                            <router-link class="text-muted" to="/forgot">
+                                            <router-link class="text-muted" to="/">
                                                 Mot de passe oublié?
                                             </router-link>
                                         </div>
@@ -52,7 +52,7 @@
 <script>
 import User from "../../utils/helpers/User";
 export default {
-  
+
     data() {
         return {
             form: {
@@ -62,7 +62,7 @@ export default {
             errors: []
         }
     },
-    methods: {       
+    methods: {
         login() {
             axios.post('/api/auth/login', this.form)
                 .then(res => {
